@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dokumen – Aether Nova</title>
+  <meta name="description" content="Manajemen dokumen dan lore world building.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+  <link rel="stylesheet" href="../styles/shared-workspace.css">
+  <style>
+    .doc-layout { flex: 1; display: flex; overflow: hidden; }
+
+    /* File Tree Panel */
+    .doc-tree-panel {
+      width: 220px; border-right: 1px solid var(--border); background: #0d121f;
+      padding: 0.75rem; display: flex; flex-direction: column; gap: 0.4rem;
+      flex-shrink: 0; overflow-y: auto;
+    }
+    .doc-tree-section-title {
+      font-size: 0.7rem; font-weight: 700; color: var(--text-faint);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 0.5rem 0.5rem 0.35rem; display: flex; align-items: center; justify-content: space-between;
+    }
+    .doc-tree-item {
+      padding: 0.45rem 0.65rem; border-radius: var(--radius-sm);
+      font-size: 0.8rem; color: var(--text-muted); cursor: pointer;
+      display: flex; align-items: center; gap: 0.5rem; transition: all 0.15s;
+    }
+    .doc-tree-item:hover { background: var(--bg-surface); color: var(--text-main); }
+    .doc-tree-item.active { background: rgba(139,92,246,0.12); color: #c4b5fd; font-weight: 600; }
+    .doc-tree-item.folder { font-weight: 600; }
+
+    /* Editor Area */
+    .doc-editor-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* Open Tabs Bar */
+    .doc-tabs-bar { display: flex; background: #0d121f; border-bottom: 1px solid var(--border); flex-shrink: 0; overflow-x: auto; }
+    .doc-tab {
+      padding: 0.55rem 1rem; font-size: 0.8rem; color: var(--text-muted);
+      border-right: 1px solid var(--border); display: flex; align-items: center;
+      gap: 0.5rem; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+      border-bottom: 2px solid transparent; transition: all 0.15s;
+    }
+    .doc-tab:hover { color: var(--text-main); background: rgba(255,255,255,0.03); }
+    .doc-tab.active { color: var(--text-main); background: var(--bg-dark); border-bottom-color: var(--primary); font-weight: 600; }
+    .doc-tab-close { opacity: 0.4; transition: opacity 0.15s; }
+    .doc-tab:hover .doc-tab-close, .doc-tab.active .doc-tab-close { opacity: 1; }
+
+    /* Format Toolbar */
+    .doc-format-bar {
+      padding: 0.5rem 1rem; border-bottom: 1px solid var(--border); background: var(--bg-card);
+      display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap; flex-shrink: 0;
+    }
+    .fmt-btn {
+      width: 30px; height: 30px; border-radius: var(--radius-sm);
+      background: transparent; border: none; color: var(--text-muted);
+      cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+    }
+    .fmt-btn:hover { background: var(--bg-surface); color: var(--text-main); }
+    .fmt-sep { width: 1px; height: 20px; background: var(--border); margin: 0 0.25rem; }
+    .fmt-dropdown {
+      padding: 0.3rem 0.65rem; background: transparent; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text-muted); font-size: 0.78rem; cursor: pointer;
+    }
+
+    /* Editor Body */
+    .doc-editor-body { flex: 1; display: flex; overflow: hidden; }
+    .doc-editor-pane {
+      flex: 1; padding: 2rem 3rem; outline: none; overflow-y: auto;
+      line-height: 1.7; font-size: 0.95rem; color: var(--text-main);
+    }
+    .doc-editor-pane h1 { font-family: var(--font-heading); font-size: 1.75rem; margin-bottom: 1rem; }
+    .doc-editor-pane h2 { font-size: 1.25rem; font-weight: 700; margin: 1.25rem 0 0.5rem; }
+    .doc-editor-pane p { margin-bottom: 0.75rem; color: var(--text-muted); }
+
+    /* Right Properties Panel */
+    .doc-right-panel {
+      width: 240px; border-left: 1px solid var(--border); background: #0d121f;
+      padding: 1rem; flex-shrink: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;
+    }
+    .prop-title { font-size: 0.7rem; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.06em; }
+    .prop-val { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.35rem; }
+    .prop-tag {
+      display: inline-flex; padding: 0.2rem 0.5rem; border-radius: 9999px;
+      font-size: 0.72rem; font-weight: 600; background: rgba(139,92,246,0.12); color: #c4b5fd; margin: 0.1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Titlebar -->
+  <header class="app-titlebar">
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <a href="buat-projeck.page.html" class="btn-back"><iconify-icon icon="lucide:arrow-left"></iconify-icon> Projeck</a>
+      <span class="brand-title">✦ AETHER NOVA</span>
+    </div>
+    <div class="titlebar-center">
+      <iconify-icon icon="lucide:globe"></iconify-icon>
+      <span>Aether Nova World</span>
+      <iconify-icon icon="lucide:chevron-down" style="opacity:0.5;"></iconify-icon>
+    </div>
+    <div class="titlebar-actions">
+      <button class="win-btn" title="Minimize"><iconify-icon icon="lucide:minus"></iconify-icon></button>
+      <button class="win-btn" title="Maximize"><iconify-icon icon="lucide:square"></iconify-icon></button>
+      <button class="win-btn close" title="Tutup"><iconify-icon icon="lucide:x"></iconify-icon></button>
+    </div>
+  </header>
+
+  <div class="workspace-layout">
+
+    <!-- Sidebar -->
+    <aside class="main-sidebar" id="main-sidebar">
+      <div class="sidebar-top-bar">
+        <div class="world-dropdown-box">
+          <span>Aether Nova World</span>
+          <iconify-icon icon="lucide:chevron-down"></iconify-icon>
+        </div>
+        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" title="Perkecil/Perbesar Sidebar">
+          <iconify-icon icon="lucide:panel-left-close" width="18"></iconify-icon>
+        </button>
+      </div>
+      <nav class="sidebar-nav-list">
+        <a class="side-nav-item" href="dashboard.page.html" data-label="Dashboard">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span>
+          <span class="side-item-text">Dashboard</span>
+        </a>
+        <a class="side-nav-item active" href="dokumen.page.html" data-label="Dokumen">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:book-open"></iconify-icon></span>
+          <span class="side-item-text">Dokumen</span>
+        </a>
+        <a class="side-nav-item" href="karakter.page.html" data-label="Karakter">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span>
+          <span class="side-item-text">Karakter</span>
+        </a>
+        <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span>
+          <span class="side-item-text">Element Dunia</span>
+        </a>
+        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span>
+          <span class="side-item-text">Linimasa</span>
+        </a>
+        <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span>
+          <span class="side-item-text">Hubungan</span>
+        </a>
+        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:git-fork"></iconify-icon></span>
+          <span class="side-item-text">Jaringan</span>
+        </a>
+        <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span>
+          <span class="side-item-text">Peta &amp; Denah</span>
+        </a>
+      </nav>
+      <div class="sidebar-bottom-list">
+        <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
+        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user"></iconify-icon></span><span class="side-item-text">Akun</span></a>
+        <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
+      </div>
+    </aside>
+
+    <!-- Document Content -->
+    <div class="workspace-content" style="padding:0;flex-direction:row;">
+
+      <!-- File Tree -->
+      <div class="doc-tree-panel">
+        <div class="doc-tree-section-title">
+          Dokumen
+          <button class="win-btn" style="width:22px;height:22px;" title="Tambah Dokumen"><iconify-icon icon="lucide:plus"></iconify-icon></button>
+        </div>
+
+        <div class="doc-tree-item folder">
+          <iconify-icon icon="lucide:folder-open" style="color:var(--warning);"></iconify-icon> Lore
+        </div>
+        <div class="doc-tree-item active" style="padding-left:1.5rem;">
+          <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon> Sejarah Aether Nova
+        </div>
+        <div class="doc-tree-item" style="padding-left:1.5rem;">
+          <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon> Legenda Kristal
+        </div>
+
+        <div class="doc-tree-item folder" style="margin-top:0.5rem;">
+          <iconify-icon icon="lucide:folder" style="color:var(--warning);"></iconify-icon> Sistem Dunia
+        </div>
+        <div class="doc-tree-item" style="padding-left:1.5rem;">
+          <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon> Resonansi Kristal
+        </div>
+        <div class="doc-tree-item" style="padding-left:1.5rem;">
+          <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon> Hukum Aetherial
+        </div>
+
+        <div class="doc-tree-item folder" style="margin-top:0.5rem;">
+          <iconify-icon icon="lucide:folder" style="color:var(--warning);"></iconify-icon> Catatan Penulis
+        </div>
+      </div>
+
+      <!-- Editor Area -->
+      <div class="doc-editor-area">
+
+        <!-- Open Tabs -->
+        <div class="doc-tabs-bar">
+          <div class="doc-tab active">
+            <iconify-icon icon="lucide:file-text"></iconify-icon>
+            Sejarah Aether Nova
+            <iconify-icon icon="lucide:x" class="doc-tab-close" width="14"></iconify-icon>
+          </div>
+          <div class="doc-tab">
+            <iconify-icon icon="lucide:file-text"></iconify-icon>
+            Resonansi Kristal
+            <iconify-icon icon="lucide:x" class="doc-tab-close" width="14"></iconify-icon>
+          </div>
+          <button class="win-btn" style="border-left:1px solid var(--border);border-radius:0;" title="Buka Dokumen Baru">
+            <iconify-icon icon="lucide:plus"></iconify-icon>
+          </button>
+        </div>
+
+        <!-- Format Toolbar -->
+        <div class="doc-format-bar">
+          <select class="fmt-dropdown"><option>Paragraf</option><option>Judul 1</option><option>Judul 2</option><option>Judul 3</option></select>
+          <div class="fmt-sep"></div>
+          <button class="fmt-btn" title="Bold"><iconify-icon icon="lucide:bold"></iconify-icon></button>
+          <button class="fmt-btn" title="Italic"><iconify-icon icon="lucide:italic"></iconify-icon></button>
+          <button class="fmt-btn" title="Underline"><iconify-icon icon="lucide:underline"></iconify-icon></button>
+          <button class="fmt-btn" title="Strikethrough"><iconify-icon icon="lucide:strikethrough"></iconify-icon></button>
+          <div class="fmt-sep"></div>
+          <button class="fmt-btn" title="List Biasa"><iconify-icon icon="lucide:list"></iconify-icon></button>
+          <button class="fmt-btn" title="List Nomor"><iconify-icon icon="lucide:list-ordered"></iconify-icon></button>
+          <button class="fmt-btn" title="Quote"><iconify-icon icon="lucide:quote"></iconify-icon></button>
+          <div class="fmt-sep"></div>
+          <button class="fmt-btn" title="Link"><iconify-icon icon="lucide:link"></iconify-icon></button>
+          <button class="fmt-btn" title="Gambar"><iconify-icon icon="lucide:image"></iconify-icon></button>
+          <div class="fmt-sep"></div>
+          <button class="fmt-btn" title="Simpan" style="margin-left:auto;"><iconify-icon icon="lucide:save"></iconify-icon></button>
+        </div>
+
+        <!-- Editor Body -->
+        <div class="doc-editor-body">
+          <div class="doc-editor-pane" contenteditable="true">
+            <h1>Sejarah Aether Nova</h1>
+            <h2>Asal Usul</h2>
+            <p>Di awal mula, ketika langit masih satu dengan bumi, terjadilah Perpecahan Besar — peristiwa kosmik yang memporak-porandakan daratan menjadi ribuan kepulauan terapung yang tersebar di angkasa.</p>
+            <p>Kepulauan-kepulauan ini terhubung satu sama lain melalui jaringan kristal aetherial yang memancarkan energi resonansi. Energi inilah yang menjaga kepulauan tetap melayang dan menopang kehidupan di atasnya.</p>
+            <h2>Era Resonansi</h2>
+            <p>Setelah berabad-abad dari Perpecahan Besar, para cendekiawan dari Akademi Kristal berhasil memahami dan memanfaatkan resonansi aetherial. Mereka menciptakan jalur komunikasi, transportasi, dan sumber energi dari kristal-kristal yang tersebar di setiap pulau.</p>
+            <p>Klik di sini untuk mengedit dokumen ini...</p>
+          </div>
+
+          <!-- Right Panel -->
+          <div class="doc-right-panel">
+            <div>
+              <div class="prop-title">Info Dokumen</div>
+              <div class="prop-val">Sejarah Aether Nova</div>
+            </div>
+            <div>
+              <div class="prop-title">Kategori</div>
+              <div class="prop-val">
+                <span class="prop-tag">Lore</span>
+                <span class="prop-tag">Sejarah</span>
+              </div>
+            </div>
+            <div>
+              <div class="prop-title">Dibuat</div>
+              <div class="prop-val">01 Sep 2026</div>
+            </div>
+            <div>
+              <div class="prop-title">Terakhir Diubah</div>
+              <div class="prop-val">08 Sep 2026</div>
+            </div>
+            <div>
+              <div class="prop-title">Karakter Terkait</div>
+              <div class="prop-val">
+                <span class="prop-tag">Kael Dawnward</span>
+                <span class="prop-tag">Valdris Aetheron</span>
+              </div>
+            </div>
+            <div>
+              <div class="prop-title">Jumlah Kata</div>
+              <div class="prop-val">248 kata</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('main-sidebar');
+    const btnToggle = document.getElementById('btn-toggle-sidebar');
+    btnToggle.addEventListener('click', () => {
+      const collapsed = sidebar.classList.toggle('collapsed');
+      btnToggle.querySelector('iconify-icon').setAttribute('icon', collapsed ? 'lucide:panel-left-open' : 'lucide:panel-left-close');
+    });
+  </script>
+</body>
+</html>

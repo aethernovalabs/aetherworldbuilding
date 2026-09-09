@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peta & Denah – Aether Nova</title>
+  <meta name="description" content="Peta dunia, wilayah, dan denah lokasi dalam world building.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+  <link rel="stylesheet" href="../styles/shared-workspace.css">
+  <style>
+    .map-toolbar {
+      padding: 1rem 1.75rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; background: #0d121f;
+    }
+    .map-action-btn {
+      padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600;
+      background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.3); color: #c4b5fd;
+      cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 0.4rem;
+    }
+    .map-action-btn:hover { background: rgba(139,92,246,0.2); }
+    .map-action-btn.danger { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.3); color: #fca5a5; }
+    .map-action-btn.danger:hover { background: rgba(239,68,68,0.2); }
+
+    .map-options-bar {
+      padding: 0.6rem 2rem; background: #0d121f; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 1.5rem; font-size: 0.8rem; flex-wrap: wrap;
+    }
+    .map-option-group { display: flex; align-items: center; gap: 0.4rem; }
+    .map-select {
+      padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.8rem;
+      background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-main);
+    }
+    .map-input {
+      width: 60px; padding: 0.2rem 0.4rem; border-radius: var(--radius-sm); font-size: 0.8rem;
+      background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-main); text-align: center;
+    }
+    .map-checkbox { accent-color: var(--primary); }
+
+    .map-canvas-area {
+      flex: 1; position: relative; background: #0d121f; overflow: hidden;
+    }
+
+    .map-radius-ring {
+      position: absolute; border-radius: 50%; border: 2px dashed;
+      display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;
+      pointer-events: none;
+    }
+    .map-radius-ring.kingdom { border-color: #a78bfa; color: #c4b5fd; }
+    .map-radius-ring.faction { border-color: #38bdf8; color: #38bdf8; }
+    .map-radius-ring.nation { border-color: #f87171; color: #f87171; }
+
+    .map-marker {
+      position: absolute; width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s; border: 2px solid;
+      background: var(--bg-card); font-size: 0.65rem; font-weight: 700; text-align: center;
+    }
+    .map-marker:hover { transform: scale(1.2); z-index: 10; }
+    .map-marker iconify-icon { font-size: 1rem; }
+    .map-marker.kingdom { border-color: #a78bfa; }
+    .map-marker.faction { border-color: #38bdf8; }
+    .map-marker.nation { border-color: #f87171; }
+    .map-marker.location { border-color: #7dd3fc; }
+
+    .map-path {
+      position: absolute; height: 2px; background: linear-gradient(90deg, #38bdf8, #7dd3fc);
+      transform-origin: left center; opacity: 0.7; pointer-events: none;
+    }
+
+    .map-info-panel {
+      position: absolute; bottom: 1.5rem; right: 1.5rem; z-index: 20;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem; min-width: 220px; max-width: 280px;
+    }
+    .map-info-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+    .map-info-row { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.4rem; }
+    .map-info-label { color: var(--text-faint); }
+    .map-info-value { color: var(--text-main); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <header class="app-titlebar">
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <a href="buat-projeck.page.html" class="btn-back"><iconify-icon icon="lucide:arrow-left"></iconify-icon> Projeck</a>
+      <span class="brand-title">✦ AETHER NOVA</span>
+    </div>
+    <div class="titlebar-center"><iconify-icon icon="lucide:globe"></iconify-icon><span>Aether Nova World</span></div>
+    <div class="titlebar-actions">
+      <button class="win-btn"><iconify-icon icon="lucide:minus"></iconify-icon></button>
+      <button class="win-btn"><iconify-icon icon="lucide:square"></iconify-icon></button>
+      <button class="win-btn close"><iconify-icon icon="lucide:x"></iconify-icon></button>
+    </div>
+  </header>
+
+  <div class="workspace-layout">
+    <aside class="main-sidebar" id="main-sidebar">
+      <div class="sidebar-top-bar">
+        <div class="world-dropdown-box"><span>Aether Nova World</span><iconify-icon icon="lucide:chevron-down"></iconify-icon></div>
+        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar"><iconify-icon icon="lucide:panel-left-close" width="18"></iconify-icon></button>
+      </div>
+      <nav class="sidebar-nav-list">
+        <a class="side-nav-item" href="dashboard.page.html" data-label="Dashboard"><span class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span><span class="side-item-text">Dashboard</span></a>
+        <a class="side-nav-item" href="dokumen.page.html" data-label="Dokumen"><span class="side-nav-icon"><iconify-icon icon="lucide:book-open"></iconify-icon></span><span class="side-item-text">Dokumen</span></a>
+        <a class="side-nav-item" href="karakter.page.html" data-label="Karakter"><span class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span><span class="side-item-text">Karakter</span></a>
+        <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia"><span class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span class="side-item-text">Element Dunia</span></a>
+        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span class="side-item-text">Linimasa</span></a>
+        <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan"><span class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span class="side-item-text">Hubungan</span></a>
+        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span class="side-nav-icon"><iconify-icon icon="lucide:git-fork"></iconify-icon></span><span class="side-item-text">Jaringan</span></a>
+        <a class="side-nav-item active" href="peta-denah.page.html" data-label="Peta & Denah"><span class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span class="side-item-text">Peta & Denah</span></a>
+      </nav>
+      <div class="sidebar-bottom-list">
+        <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
+        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user"></iconify-icon></span><span class="side-item-text">Akun</span></a>
+        <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
+      </div>
+    </aside>
+
+    <div class="workspace-content" style="padding:0;">
+      <div class="page-header" style="padding:1.25rem 1.75rem;">
+        <div><h1><iconify-icon icon="lucide:map"></iconify-icon> Peta & Denah</h1><p>Peta dunia, wilayah, dan rute perjalanan</p></div>
+        <div class="page-actions">
+          <button class="map-action-btn"><iconify-icon icon="lucide:edit-2"></iconify-icon> Rename</button>
+          <button class="map-action-btn danger"><iconify-icon icon="lucide:trash-2"></iconify-icon> Hapus</button>
+          <button class="map-action-btn"><iconify-icon icon="lucide:map-pin"></iconify-icon> + Wilayah</button>
+          <button class="map-action-btn"><iconify-icon icon="lucide:users"></iconify-icon> + Faksi</button>
+          <button class="map-action-btn"><iconify-icon icon="lucide:image"></iconify-icon> + Gambar Peta</button>
+          <button class="win-btn" title="Zoom Out"><iconify-icon icon="lucide:zoom-out"></iconify-icon></button>
+          <button class="win-btn" title="Zoom In"><iconify-icon icon="lucide:zoom-in"></iconify-icon></button>
+        </div>
+      </div>
+
+      <!-- Options Bar: Radius, Jalan Kaki -->
+      <div class="map-options-bar">
+        <div class="map-option-group">
+          <span>Pilihan Peta:</span>
+          <select class="map-select" id="map-select">
+            <option>Peta Dunia 1</option>
+            <option>Peta Pulau Nadir</option>
+            <option>Peta Pulau Aethelgard</option>
+          </select>
+        </div>
+        <div class="map-option-group">
+          <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;">
+            <input type="checkbox" class="map-checkbox" id="toggle-borders" checked> Batas Wilayah: Aktif
+          </label>
+        </div>
+        <div class="map-option-group">
+          <span>Atur luas wilayah:</span>
+          <input type="text" class="map-input" id="radius-input" value="200">
+        </div>
+        <div class="map-option-group">
+          <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;">
+            <input type="checkbox" class="map-checkbox" id="toggle-paths" checked> Jalur: Aktif
+          </label>
+        </div>
+        <div class="map-option-group">
+          <select class="map-select" id="path-speed">
+            <option>Jalan Kaki (25 KM/Hari)</option>
+            <option>Kuda (50 KM/Hari)</option>
+            <option>Kereta Aetherial (200 KM/Hari)</option>
+            <option>Portal (Instan)</option>
+          </select>
+        </div>
+        <div class="map-option-group" style="margin-left:auto;display:flex;gap:0.4rem;">
+          <button class="map-action-btn" style="padding:0.25rem 0.6rem;font-size:0.75rem;" id="btn-add-path"><iconify-icon icon="lucide:plus"></iconify-icon> + Tambah Jalur</button>
+          <button class="map-action-btn danger" style="padding:0.25rem 0.6rem;font-size:0.75rem;" id="btn-del-path"><iconify-icon icon="lucide:trash-2"></iconify-icon> Hapus Jalur</button>
+        </div>
+      </div>
+
+      <!-- Map Canvas -->
+      <div class="map-canvas-area" id="map-canvas">
+        <!-- Radius Rings (dashed circles) -->
+        <div class="map-radius-ring kingdom" style="width:360px;height:360px;top:12%;left:10%;">
+          Kerajaan: Aethelgard
+        </div>
+        <div class="map-radius-ring faction" style="width:280px;height:280px;top:35%;left:38%;">
+          Faksi: Akademi Kristal
+        </div>
+        <div class="map-radius-ring nation" style="width:380px;height:380px;top:10%;left:55%;">
+          Negara: Valerius Dominion
+        </div>
+
+        <!-- Paths (lines between locations) -->
+        <div class="map-path" id="path-kael-lyra" style="width:280px;top:25%;left:22%;transform:rotate(25deg);"></div>
+        <div class="map-path" id="path-kael-valdris" style="width:320px;top:45%;left:30%;transform:rotate(-15deg);"></div>
+        <div class="map-path" id="path-lyra-nadir" style="width:220px;top:50%;left:12%;transform:rotate(40deg);"></div>
+
+        <!-- Markers -->
+        <div class="map-marker kingdom" style="top:22%;left:18%;" data-id="aethelgard" data-type="kingdom" title="Kerajaan Aethelgard">
+          <iconify-icon icon="lucide:crown" style="color:#c4b5fd;"></iconify-icon>
+        </div>
+        <div class="map-marker faction" style="top:20%;left:52%;" data-id="akademi" data-type="faksi" title="Akademi Kristal">
+          <iconify-icon icon="lucide:building-2" style="color:#38bdf8;"></iconify-icon>
+        </div>
+        <div class="map-marker nation" style="top:25%;left:72%;" data-id="valerius" data-type="nation" title="Valerius Dominion">
+          <iconify-icon icon="lucide:flag" style="color:#f87171;"></iconify-icon>
+        </div>
+        <div class="map-marker location" style="top:42%;left:12%;" data-id="nadir" data-type="location" title="Pulau Nadir">
+          <iconify-icon icon="lucide:map-pin" style="color:#7dd3fc;"></iconify-icon>
+        </div>
+        <div class="map-marker location" style="top:68%;left:38%;" data-id="rift" data-type="location" title="Lembah Rift">
+          <iconify-icon icon="lucide:mountain" style="color:#fcd34d;"></iconify-icon>
+        </div>
+        <div class="map-marker location" style="top:72%;left:58%;" data-id="tower" data-type="location" title="Menara Penjaga">
+          <iconify-icon icon="lucide:tower" style="color:#6ee7b7;"></iconify-icon>
+        </div>
+
+        <!-- Info Panel -->
+        <div class="map-info-panel" id="map-info">
+          <div class="map-info-title"><iconify-icon icon="lucide:map-pin"></iconify-icon> Pulau Nadir</div>
+          <div class="map-info-row"><span class="map-info-label">Tipe</span><span class="map-info-value">Lokasi Utama</span></div>
+          <div class="map-info-row"><span class="map-info-label">Koordinat</span><span class="map-info-value">12°S, 45°E</span></div>
+          <div class="map-info-row"><span class="map-info-label">Populasi</span><span class="map-info-value">~12.000</span></div>
+          <div class="map-info-row"><span class="map-info-label">Faksi Dominan</span><span class="map-info-value"><span class="badge badge-blue">Akademi Kristal</span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('main-sidebar');
+    document.getElementById('btn-toggle-sidebar').addEventListener('click', () => {
+      const c = sidebar.classList.toggle('collapsed');
+      document.querySelector('#btn-toggle-sidebar iconify-icon').setAttribute('icon', c ? 'lucide:panel-left-open' : 'lucide:panel-left-close');
+    });
+
+    // Marker click to show info
+    document.querySelectorAll('.map-marker').forEach(marker => {
+      marker.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const info = document.getElementById('map-info');
+        const title = marker.getAttribute('title') || 'Lokasi';
+        info.querySelector('.map-info-title').innerHTML = `<iconify-icon icon="lucide:map-pin"></iconify-icon> ${title}`;
+      });
+    });
+
+    // Toggle borders
+    document.getElementById('toggle-borders').addEventListener('change', (e) => {
+      document.querySelectorAll('.map-radius-ring').forEach(ring => {
+        ring.style.display = e.target.checked ? 'flex' : 'none';
+      });
+    });
+
+    // Toggle paths
+    document.getElementById('toggle-paths').addEventListener('change', (e) => {
+      document.querySelectorAll('.map-path').forEach(path => {
+        path.style.display = e.target.checked ? 'block' : 'none';
+      });
+    });
+
+    // Radius input
+    document.getElementById('radius-input').addEventListener('input', (e) => {
+      const val = parseInt(e.target.value) || 200;
+      document.querySelectorAll('.map-radius-ring.kingdom').forEach(ring => {
+        ring.style.width = ring.style.height = val + 'px';
+      });
+    });
+  </script>
+</body>
+</html>

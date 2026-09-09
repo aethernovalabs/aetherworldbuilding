@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jaringan – Aether Nova</title>
+  <meta name="description" content="Visualisasi jaringan hubungan dan power tree antar karakter.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+  <link rel="stylesheet" href="../styles/shared-workspace.css">
+  <style>
+    .net-toolbar {
+      padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; background: #0d121f;
+    }
+    .net-mode-btn {
+      padding: 0.4rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 600;
+      background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-muted);
+      cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 0.4rem;
+    }
+    .net-mode-btn:hover { color: var(--text-main); border-color: var(--border-hover); }
+    .net-mode-btn.active { background: rgba(139,92,246,0.15); border-color: var(--primary); color: #c4b5fd; }
+
+    .net-filter-bar {
+      padding: 0.5rem 2rem; background: #0d121f; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; flex-wrap: wrap;
+    }
+    .net-filter-btn {
+      padding: 0.2rem 0.6rem; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 600;
+      background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.3); color: #c4b5fd;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .net-filter-btn:hover { background: rgba(139,92,246,0.2); }
+
+    .net-canvas-area {
+      flex: 1; position: relative; background: #0d121f; display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .net-svg { position: absolute; inset: 0; pointer-events: none; }
+
+    .net-node {
+      position: absolute; width: 80px; height: 80px; border-radius: 50%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s; border: 2px solid var(--border);
+      background: var(--bg-card); font-size: 0.7rem; font-weight: 600; text-align: center;
+      gap: 0.2rem; padding: 0.25rem;
+    }
+    .net-node:hover { transform: scale(1.1); border-color: var(--primary); z-index: 10; box-shadow: 0 0 16px var(--primary-glow); }
+    .net-node iconify-icon { font-size: 1.5rem; }
+    .net-node-main { border-color: var(--primary); background: rgba(139,92,246,0.12); }
+    .net-node-secondary { border-color: var(--accent); background: rgba(56,189,248,0.08); }
+    .net-node-antagonist { border-color: var(--danger); background: rgba(239,68,68,0.08); }
+    .net-node-location { border-color: var(--warning); background: rgba(245,158,11,0.08); }
+    .net-node-faction { border-color: var(--success); background: rgba(16,185,129,0.08); }
+
+    .net-node-label {
+      position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      white-space: nowrap; font-size: 0.65rem; color: var(--text-muted); margin-top: 4px;
+      background: #0d121f; padding: 0.15rem 0.4rem; border-radius: 9999px; border: 1px solid var(--border);
+    }
+
+    .net-legend {
+      position: absolute; bottom: 1rem; left: 1rem; z-index: 20;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+      padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.75rem;
+    }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid; }
+  </style>
+</head>
+<body>
+
+  <header class="app-titlebar">
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <a href="buat-projeck.page.html" class="btn-back"><iconify-icon icon="lucide:arrow-left"></iconify-icon> Projeck</a>
+      <span class="brand-title">✦ AETHER NOVA</span>
+    </div>
+    <div class="titlebar-center"><iconify-icon icon="lucide:globe"></iconify-icon><span>Aether Nova World</span></div>
+    <div class="titlebar-actions">
+      <button class="win-btn"><iconify-icon icon="lucide:minus"></iconify-icon></button>
+      <button class="win-btn"><iconify-icon icon="lucide:square"></iconify-icon></button>
+      <button class="win-btn close"><iconify-icon icon="lucide:x"></iconify-icon></button>
+    </div>
+  </header>
+
+  <div class="workspace-layout">
+    <aside class="main-sidebar" id="main-sidebar">
+      <div class="sidebar-top-bar">
+        <div class="world-dropdown-box"><span>Aether Nova World</span><iconify-icon icon="lucide:chevron-down"></iconify-icon></div>
+        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar"><iconify-icon icon="lucide:panel-left-close" width="18"></iconify-icon></button>
+      </div>
+      <nav class="sidebar-nav-list">
+        <a class="side-nav-item" href="dashboard.page.html" data-label="Dashboard"><span class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span><span class="side-item-text">Dashboard</span></a>
+        <a class="side-nav-item" href="dokumen.page.html" data-label="Dokumen"><span class="side-nav-icon"><iconify-icon icon="lucide:book-open"></iconify-icon></span><span class="side-item-text">Dokumen</span></a>
+        <a class="side-nav-item" href="karakter.page.html" data-label="Karakter"><span class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span><span class="side-item-text">Karakter</span></a>
+        <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia"><span class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span class="side-item-text">Element Dunia</span></a>
+        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span class="side-item-text">Linimasa</span></a>
+        <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan"><span class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span class="side-item-text">Hubungan</span></a>
+        <a class="side-nav-item active" href="jaringan.page.html" data-label="Jaringan"><span class="side-nav-icon"><iconify-icon icon="lucide:git-fork"></iconify-icon></span><span class="side-item-text">Jaringan</span></a>
+        <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah"><span class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span class="side-item-text">Peta & Denah</span></a>
+      </nav>
+      <div class="sidebar-bottom-list">
+        <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
+        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user"></iconify-icon></span><span class="side-item-text">Akun</span></a>
+        <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
+      </div>
+    </aside>
+
+    <div class="workspace-content" style="padding:0;">
+      <div class="page-header" style="padding:1.25rem 1.75rem;">
+        <div><h1><iconify-icon icon="lucide:git-fork"></iconify-icon> Jaringan</h1><p>Visualisasi jaringan hubungan, power tree, dan keterkaitan</p></div>
+        <div class="page-actions">
+          <button class="btn-action primary"><iconify-icon icon="lucide:plus"></iconify-icon> Tambah Node</button>
+        </div>
+      </div>
+
+      <!-- Mode Switch: Graph Hubungan / Power Tree -->
+      <div class="net-toolbar">
+        <span style="font-size:0.85rem;font-weight:600;color:var(--text-muted);">Mode:</span>
+        <button class="net-mode-btn active" data-mode="graph"><iconify-icon icon="lucide:git-branch"></iconify-icon> Graph Hubungan</button>
+        <button class="net-mode-btn" data-mode="power"><iconify-icon icon="lucide:tree-2"></iconify-icon> Power Tree</button>
+        <div style="width:1px;height:20px;background:var(--border);margin:0 0.5rem;"></div>
+        <button class="win-btn" title="Zoom Out"><iconify-icon icon="lucide:zoom-out"></iconify-icon></button>
+        <button class="win-btn" title="Zoom In"><iconify-icon icon="lucide:zoom-in"></iconify-icon></button>
+        <button class="win-btn" title="Reset View"><iconify-icon icon="lucide:maximize-2"></iconify-icon></button>
+      </div>
+
+      <!-- Node Filter Bar -->
+      <div class="net-filter-bar">
+        <span>Node Filter:</span>
+        <button class="net-filter-btn" data-filter="karakter">Karakter</button>
+        <button class="net-filter-btn" data-filter="lokasi">Lokasi</button>
+        <button class="net-filter-btn" data-filter="faksi">Faksi</button>
+        <button class="net-filter-btn" data-filter="organisasi">Organisasi</button>
+        <button class="net-filter-btn" data-filter="item">Item & Artefak</button>
+        <button class="net-filter-btn" data-filter="event">Peristiwa</button>
+      </div>
+
+      <!-- Canvas Area -->
+      <div class="net-canvas-area" id="net-canvas">
+        <svg class="net-svg" id="net-svg"></svg>
+
+        <!-- Nodes will be rendered by JS -->
+        <div class="net-node net-node-main" style="left:50%;top:35%;transform:translate(-50%,-50%);" data-id="kael" data-type="karakter">
+          <iconify-icon icon="lucide:user"></iconify-icon>
+          <span>Kael<br>Dawnward</span>
+          <span class="net-node-label">Utama</span>
+        </div>
+
+        <div class="net-node net-node-secondary" style="left:25%;top:20%;" data-id="lyra" data-type="karakter">
+          <iconify-icon icon="lucide:user"></iconify-icon>
+          <span>Lyra<br>Stormweave</span>
+          <span class="net-node-label">Sekunder</span>
+        </div>
+
+        <div class="net-node net-node-antagonist" style="right:25%;top:55%;" data-id="valdris" data-type="karakter">
+          <iconify-icon icon="lucide:user"></iconify-icon>
+          <span>Valdris<br>Aetheron</span>
+          <span class="net-node-label">Antagonis</span>
+        </div>
+
+        <div class="net-node net-node-location" style="left:15%;top:65%;" data-id="nadir" data-type="lokasi">
+          <iconify-icon icon="lucide:map-pin"></iconify-icon>
+          <span>Pulau<br>Nadir</span>
+          <span class="net-node-label">Lokasi</span>
+        </div>
+
+        <div class="net-node net-node-faction" style="right:15%;top:20%;" data-id="akademi" data-type="faksi">
+          <iconify-icon icon="lucide:building-2"></iconify-icon>
+          <span>Akademi<br>Kristal</span>
+          <span class="net-node-label">Faksi</span>
+        </div>
+
+        <div class="net-node net-node-location" style="left:50%;top:75%;transform:translateX(-50%);" data-id="aethelgard" data-type="lokasi">
+          <iconify-icon icon="lucide:landmark"></iconify-icon>
+          <span>Benteng<br>Aethelgard</span>
+          <span class="net-node-label">Lokasi</span>
+        </div>
+
+        <!-- Legend -->
+        <div class="net-legend">
+          <div class="legend-item"><span class="legend-dot" style="border-color:var(--primary);background:rgba(139,92,246,0.12);"></span><span>Karakter Utama</span></div>
+          <div class="legend-item"><span class="legend-dot" style="border-color:var(--accent);background:rgba(56,189,248,0.08);"></span><span>Karakter Sekunder</span></div>
+          <div class="legend-item"><span class="legend-dot" style="border-color:var(--danger);background:rgba(239,68,68,0.08);"></span><span>Antagonis</span></div>
+          <div class="legend-item"><span class="legend-dot" style="border-color:var(--warning);background:rgba(245,158,11,0.08);"></span><span>Lokasi</span></div>
+          <div class="legend-item"><span class="legend-dot" style="border-color:var(--success);background:rgba(16,185,129,0.08);"></span><span>Faksi / Organisasi</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('main-sidebar');
+    document.getElementById('btn-toggle-sidebar').addEventListener('click', () => {
+      const c = sidebar.classList.toggle('collapsed');
+      document.querySelector('#btn-toggle-sidebar iconify-icon').setAttribute('icon', c ? 'lucide:panel-left-open' : 'lucide:panel-left-close');
+    });
+
+    // Mode switch
+    document.querySelectorAll('.net-mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.net-mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Filter buttons
+    document.querySelectorAll('.net-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('active');
+        // Filter logic would go here
+      });
+    });
+
+    // Draw connection lines with SVG
+    function drawLines() {
+      const canvas = document.getElementById('net-canvas');
+      const svg = document.getElementById('net-svg');
+      const cRect = canvas.getBoundingClientRect();
+      const nodes = {
+        kael: document.querySelector('[data-id="kael"]'),
+        lyra: document.querySelector('[data-id="lyra"]'),
+        valdris: document.querySelector('[data-id="valdris"]'),
+        nadir: document.querySelector('[data-id="nadir"]'),
+        akademi: document.querySelector('[data-id="akademi"]'),
+        aethelgard: document.querySelector('[data-id="aethelgard"]')
+      };
+      const centers = {};
+      for (const [k, el] of Object.entries(nodes)) {
+        if (el) {
+          const r = el.getBoundingClientRect();
+          centers[k] = { x: r.left - cRect.left + r.width/2, y: r.top - cRect.top + r.height/2 };
+        }
+      }
+      const lines = [
+        { from: 'kael', to: 'lyra', color: '#10b981', dash: '' },
+        { from: 'kael', to: 'valdris', color: '#ef4444', dash: '6,4' },
+        { from: 'lyra', to: 'valdris', color: '#f59e0b', dash: '4,4' },
+        { from: 'kael', to: 'nadir', color: '#38bdf8', dash: '3,3' },
+        { from: 'lyra', to: 'akademi', color: '#c4b5fd', dash: '' },
+        { from: 'valdris', to: 'aethelgard', color: '#ef4444', dash: '' },
+        { from: 'akademi', to: 'aethelgard', color: '#10b981', dash: '4,4' },
+      ];
+      svg.innerHTML = lines
+        .filter(l => centers[l.from] && centers[l.to])
+        .map(l => `<line x1="${centers[l.from].x}" y1="${centers[l.from].y}" x2="${centers[l.to].x}" y2="${centers[l.to].y}" stroke="${l.color}" stroke-width="2" stroke-dasharray="${l.dash}" opacity="0.6"/>`)
+        .join('');
+    }
+    setTimeout(drawLines, 200);
+    window.addEventListener('resize', drawLines);
+  </script>
+</body>
+</html>

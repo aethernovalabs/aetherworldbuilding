@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – Aether Nova</title>
+  <meta name="description" content="Dashboard ringkasan dunia world building Anda.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+  <link rel="stylesheet" href="../styles/shared-workspace.css">
+  <style>
+    .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    @media (max-width: 900px) { .dash-grid { grid-template-columns: 1fr; } }
+    .world-info-card {
+      grid-column: 1 / -1; background: linear-gradient(135deg, #1a1f3a 0%, #111726 100%);
+      border: 1px solid var(--border-hover); border-radius: var(--radius-lg);
+      padding: 1.5rem; position: relative; overflow: hidden;
+    }
+    .world-info-card::before {
+      content: ''; position: absolute; top: -40px; right: -40px;
+      width: 160px; height: 160px; border-radius: 50%;
+      background: var(--primary-glow); filter: blur(40px);
+    }
+    .world-name { font-family: var(--font-heading); font-size: 1.75rem; font-weight: 800; }
+    .world-desc { font-size: 0.9rem; color: var(--text-muted); margin-top: 0.4rem; max-width: 600px; line-height: 1.5; }
+    .world-meta { display: flex; gap: 1.5rem; margin-top: 1rem; }
+    .world-meta-item { font-size: 0.8rem; color: var(--text-faint); display: flex; align-items: center; gap: 0.4rem; }
+
+    .mini-map-card { aspect-ratio: 16/9; background: #0a0f1a; border-radius: var(--radius-md); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); }
+    .mini-map-placeholder { color: var(--text-faint); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; font-size: 0.85rem; }
+
+    .activity-item { display: flex; align-items: flex-start; gap: 0.85rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); flex-shrink: 0; margin-top: 5px; }
+    .activity-text { font-size: 0.85rem; }
+    .activity-time { font-size: 0.75rem; color: var(--text-faint); margin-top: 0.2rem; }
+
+    .recent-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+    .recent-item:hover { opacity: 0.8; }
+    .recent-item:last-child { border-bottom: none; }
+    .recent-icon { width: 34px; height: 34px; border-radius: var(--radius-sm); background: rgba(139,92,246,0.12); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .recent-info { flex: 1; min-width: 0; }
+    .recent-name { font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .recent-meta { font-size: 0.75rem; color: var(--text-faint); margin-top: 0.15rem; }
+  </style>
+</head>
+<body>
+
+  <!-- Titlebar -->
+  <header class="app-titlebar">
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <a href="buat-projeck.page.html" class="btn-back"><iconify-icon icon="lucide:arrow-left"></iconify-icon> Projeck</a>
+      <span class="brand-title">✦ AETHER NOVA</span>
+    </div>
+    <div class="titlebar-center">
+      <iconify-icon icon="lucide:globe"></iconify-icon>
+      <span id="world-name-display">Aether Nova World</span>
+      <iconify-icon icon="lucide:chevron-down" style="opacity:0.5;"></iconify-icon>
+    </div>
+    <div class="titlebar-actions">
+      <button class="win-btn" title="Minimize"><iconify-icon icon="lucide:minus"></iconify-icon></button>
+      <button class="win-btn" title="Maximize"><iconify-icon icon="lucide:square"></iconify-icon></button>
+      <button class="win-btn close" title="Tutup"><iconify-icon icon="lucide:x"></iconify-icon></button>
+    </div>
+  </header>
+
+  <!-- Workspace Layout -->
+  <div class="workspace-layout">
+
+    <!-- Sidebar -->
+    <aside class="main-sidebar" id="main-sidebar">
+      <div class="sidebar-top-bar">
+        <div class="world-dropdown-box">
+          <span>Aether Nova World</span>
+          <iconify-icon icon="lucide:chevron-down"></iconify-icon>
+        </div>
+        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" title="Perkecil/Perbesar Sidebar">
+          <iconify-icon icon="lucide:panel-left-close" width="18"></iconify-icon>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav-list">
+        <a class="side-nav-item active" href="dashboard.page.html" data-label="Dashboard">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span>
+          <span class="side-item-text">Dashboard</span>
+        </a>
+        <a class="side-nav-item" href="dokumen.page.html" data-label="Dokumen">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:book-open"></iconify-icon></span>
+          <span class="side-item-text">Dokumen</span>
+        </a>
+        <a class="side-nav-item" href="karakter.page.html" data-label="Karakter">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span>
+          <span class="side-item-text">Karakter</span>
+        </a>
+        <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span>
+          <span class="side-item-text">Element Dunia</span>
+        </a>
+        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span>
+          <span class="side-item-text">Linimasa</span>
+        </a>
+        <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span>
+          <span class="side-item-text">Hubungan</span>
+        </a>
+        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:git-fork"></iconify-icon></span>
+          <span class="side-item-text">Jaringan</span>
+        </a>
+        <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span>
+          <span class="side-item-text">Peta &amp; Denah</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom-list">
+        <a class="side-nav-item" href="#" data-label="Pencarian">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:search"></iconify-icon></span>
+          <span class="side-item-text">Pencarian</span>
+        </a>
+        <a class="side-nav-item" href="#" data-label="Akun">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:circle-user"></iconify-icon></span>
+          <span class="side-item-text">Akun</span>
+        </a>
+        <a class="side-nav-item" href="#" data-label="Pengaturan">
+          <span class="side-nav-icon"><iconify-icon icon="lucide:settings-2"></iconify-icon></span>
+          <span class="side-item-text">Pengaturan</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <div class="workspace-content">
+      <div class="page-header">
+        <div>
+          <h1><iconify-icon icon="lucide:layout-dashboard"></iconify-icon> Dashboard</h1>
+          <p>Ringkasan keseluruhan dunia Anda</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn-action"><iconify-icon icon="lucide:edit-2"></iconify-icon> Edit Dunia</button>
+          <button class="btn-action primary"><iconify-icon icon="lucide:user-plus"></iconify-icon> Buat Karakter</button>
+        </div>
+      </div>
+
+      <div class="page-body">
+        <!-- Stats Row -->
+        <div class="stats-row" style="margin-bottom:1.25rem;">
+          <div class="stat-tile"><div class="stat-val">12</div><div class="stat-lbl">Karakter</div></div>
+          <div class="stat-tile"><div class="stat-val">4</div><div class="stat-lbl">Dokumen</div></div>
+          <div class="stat-tile"><div class="stat-val">8</div><div class="stat-lbl">Elemen Dunia</div></div>
+          <div class="stat-tile"><div class="stat-val">23</div><div class="stat-lbl">Peristiwa</div></div>
+          <div class="stat-tile"><div class="stat-val">3</div><div class="stat-lbl">Hubungan</div></div>
+          <div class="stat-tile"><div class="stat-val">2</div><div class="stat-lbl">Peta</div></div>
+        </div>
+
+        <div class="dash-grid">
+          <!-- World Info -->
+          <div class="world-info-card">
+            <div class="world-name">Aether Nova</div>
+            <p class="world-desc">Semesta pecahan kepulauan terapung yang saling terhubung oleh resonansi kristal aetherial. Di sinilah kisah dimulai.</p>
+            <div class="world-meta">
+              <span class="world-meta-item"><iconify-icon icon="lucide:calendar"></iconify-icon> Dibuat: 01 Sep 2026</span>
+              <span class="world-meta-item"><iconify-icon icon="lucide:pencil"></iconify-icon> Terakhir diubah: 09 Sep 2026</span>
+              <span class="world-meta-item"><iconify-icon icon="lucide:folder"></iconify-icon> /home/dokument/aethernova</span>
+            </div>
+          </div>
+
+          <!-- Mini Map -->
+          <div class="panel-card">
+            <div class="panel-card-title"><iconify-icon icon="lucide:map"></iconify-icon> Peta Mini Dunia</div>
+            <div class="mini-map-card">
+              <div class="mini-map-placeholder">
+                <iconify-icon icon="lucide:map" width="48"></iconify-icon>
+                <span>Belum ada peta. <a href="peta-denah.page.html" style="color:var(--accent);">Buat Peta</a></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Perubahan Terakhir -->
+          <div class="panel-card">
+            <div class="panel-card-title"><iconify-icon icon="lucide:activity"></iconify-icon> Perubahan Terakhir</div>
+            <div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background:var(--success);"></div>
+                <div>
+                  <div class="activity-text">Karakter <strong>Kael Dawnward</strong> ditambahkan</div>
+                  <div class="activity-time">09 Sep 2026, 02:15</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background:var(--accent);"></div>
+                <div>
+                  <div class="activity-text">Dokumen <strong>Sejarah Aether Nova</strong> diperbarui</div>
+                  <div class="activity-time">08 Sep 2026, 20:44</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background:var(--warning);"></div>
+                <div>
+                  <div class="activity-text">Elemen <strong>Kristal Aetherial</strong> diedit</div>
+                  <div class="activity-time">08 Sep 2026, 19:30</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot"></div>
+                <div>
+                  <div class="activity-text">Projeck <strong>Aether Nova World</strong> dibuat</div>
+                  <div class="activity-time">01 Sep 2026, 00:12</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Karakter Terbaru -->
+          <div class="panel-card">
+            <div class="panel-card-title"><iconify-icon icon="lucide:users"></iconify-icon> Karakter Terbaru</div>
+            <div>
+              <div class="recent-item" onclick="location.href='/karakter'">
+                <div class="recent-icon"><iconify-icon icon="lucide:user" style="color:#c4b5fd;"></iconify-icon></div>
+                <div class="recent-info">
+                  <div class="recent-name">Kael Dawnward</div>
+                  <div class="recent-meta">Protagonis · Ditambahkan 09 Sep 2026</div>
+                </div>
+                <span class="badge badge-purple">Utama</span>
+              </div>
+              <div class="recent-item" onclick="location.href='/karakter'">
+                <div class="recent-icon"><iconify-icon icon="lucide:user" style="color:#7dd3fc;"></iconify-icon></div>
+                <div class="recent-info">
+                  <div class="recent-name">Lyra Stormweave</div>
+                  <div class="recent-meta">Pendukung · Ditambahkan 08 Sep 2026</div>
+                </div>
+                <span class="badge badge-blue">Sekunder</span>
+              </div>
+              <div class="recent-item" onclick="location.href='/karakter'">
+                <div class="recent-icon"><iconify-icon icon="lucide:user" style="color:#fca5a5;"></iconify-icon></div>
+                <div class="recent-info">
+                  <div class="recent-name">Valdris Aetheron</div>
+                  <div class="recent-meta">Antagonis · Ditambahkan 07 Sep 2026</div>
+                </div>
+                <span class="badge badge-red">Antagonis</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dokumen Terbaru -->
+          <div class="panel-card">
+            <div class="panel-card-title"><iconify-icon icon="lucide:file-text"></iconify-icon> Dokumen Terbaru</div>
+            <div>
+              <div class="recent-item" onclick="location.href='/dokumen'">
+                <div class="recent-icon"><iconify-icon icon="lucide:scroll" style="color:#fcd34d;"></iconify-icon></div>
+                <div class="recent-info">
+                  <div class="recent-name">Sejarah Aether Nova</div>
+                  <div class="recent-meta">Lore · Diperbarui 08 Sep 2026</div>
+                </div>
+              </div>
+              <div class="recent-item" onclick="location.href='/dokumen'">
+                <div class="recent-icon"><iconify-icon icon="lucide:book" style="color:#6ee7b7;"></iconify-icon></div>
+                <div class="recent-info">
+                  <div class="recent-name">Sistem Resonansi Kristal</div>
+                  <div class="recent-meta">Sistem Dunia · Diperbarui 07 Sep 2026</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sidebar toggle
+    const sidebar = document.getElementById('main-sidebar');
+    const btnToggle = document.getElementById('btn-toggle-sidebar');
+    btnToggle.addEventListener('click', () => {
+      const collapsed = sidebar.classList.toggle('collapsed');
+      btnToggle.querySelector('iconify-icon').setAttribute('icon', collapsed ? 'lucide:panel-left-open' : 'lucide:panel-left-close');
+    });
+
+    // Set world name from URL param
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('world')) {
+      document.getElementById('world-name-display').textContent = params.get('world');
+      document.querySelector('.world-name').textContent = params.get('world');
+      document.querySelector('.world-dropdown-box span').textContent = params.get('world');
+    }
+  </script>
+</body>
+</html>
