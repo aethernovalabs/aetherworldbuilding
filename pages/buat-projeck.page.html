@@ -362,23 +362,12 @@
   </div>
 
   <script>
-    // ---- Penyimpanan projeck (lokal di browser) ----
-    // Daftar projeck disimpan di localStorage agar halaman pembuka (index.html)
-    // tahu apakah projeck sudah ada → buka Dashboard atau halaman Buat Projeck.
-    const STORAGE_KEY = 'aether_projects';
+    // ---- Penyimpanan projeck (IndexedDB via Dexie.js, module public/js/aether-state.js) ----
+    // Projeck disimpan di tabel `projects`; halaman terakhir dibuka disimpan
+    // otomatis di tabel `state` oleh skrip yang ditambahkan di setiap halaman.
 
     function getProjects() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        const list = raw ? JSON.parse(raw) : [];
-        return Array.isArray(list) ? list : [];
-      } catch {
-        return [];
-      }
-    }
-
-    function saveProjects(list) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      return AetherState.getProjects();
     }
 
     // Tab switch
@@ -402,14 +391,12 @@
     document.getElementById('btn-open-create-popup').addEventListener('click', () => modal.classList.add('open'));
     document.getElementById('btn-close-create-modal').addEventListener('click', () => modal.classList.remove('open'));
     document.getElementById('btn-cancel-create-modal').addEventListener('click', () => modal.classList.remove('open'));
-    document.getElementById('btn-submit-create-modal').addEventListener('click', () => {
+    document.getElementById('btn-submit-create-modal').addEventListener('click', async () => {
       const nama = document.getElementById('input-nama-dunia').value.trim() || 'Projeck Baru';
       const desc = document.getElementById('input-deskripsi').value.trim();
 
-      // Simpan projeck baru → selanjutnya halaman pembuka membuka Dashboard
-      const projects = getProjects();
-      projects.push({ name: nama, desc, createdAt: new Date().toISOString() });
-      saveProjects(projects);
+      // Simpan projeck baru ke IndexedDB
+      await AetherState.addProject({ name: nama, desc, createdAt: new Date().toISOString() });
 
       modal.classList.remove('open');
       openProject(nama);
@@ -417,12 +404,13 @@
 
     // Open project → simpan projeck yang dibuka lalu navigasi ke Dashboard
     function openProject(name) {
-      const projects = getProjects();
-      if (!projects.some((p) => p.name === name)) {
-        projects.push({ name, desc: '', createdAt: new Date().toISOString() });
-        saveProjects(projects);
-      }
-      window.location.href = 'dashboard.page.html?world=' + encodeURIComponent(name);
+      AetherState.projectExists(name).then((exists) => {
+        if (!exists) {
+          return AetherState.addProject({ name, desc: '', createdAt: new Date().toISOString() });
+        }
+      }).then(() => {
+        window.location.href = 'dashboard.page.html?world=' + encodeURIComponent(name);
+      });
     }
   </script>
 </body>

@@ -44,33 +44,15 @@
 			<span>Memuat Aether Nova…</span>
 		</div>
 
+		<script src="https://cdn.jsdelivr.net/npm/dexie@4.0.8/dist/dexie.min.js"></script>
+		<script src="/js/aether-state.js"></script>
 		<script>
-			// Logika halaman pembuka (landing):
-			// - Jika sudah ada projeck  → buka Dashboard (pages/dashboard.page.html)
-			// - Jika belum ada projeck  → buka halaman Buat Projeck
-			const STORAGE_KEY = "aether_projects";
-
-			function getProjects() {
-				try {
-					const raw = localStorage.getItem(STORAGE_KEY);
-					const list = raw ? JSON.parse(raw) : [];
-					return Array.isArray(list) ? list : [];
-				} catch {
-					return [];
-				}
-			}
-
-			function targetUrl() {
-				const projects = getProjects();
-				if (projects.length > 0) {
-					const latest = projects[projects.length - 1];
-					const world = latest && latest.name ? encodeURIComponent(latest.name) : "";
-					return "/dashboard" + (world ? "?world=" + world : "");
-				}
-				return "/buat-projeck";
-			}
-
-			location.replace(targetUrl());
+			// Logika halaman awal (landing):
+			// - Buka halaman yang terakhir dibuka oleh user (disimpan di IndexedDB)
+			// - Belum pernah membuka halaman apa pun → buka halaman "buat projeck"
+			AetherState.getLastPage().then(function (lastPage) {
+				location.replace(lastPage || "/buat-projeck");
+			});
 		</script>
 	</body>
 </html>
