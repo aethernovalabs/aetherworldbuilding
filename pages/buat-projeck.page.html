@@ -362,6 +362,25 @@
   </div>
 
   <script>
+    // ---- Penyimpanan projeck (lokal di browser) ----
+    // Daftar projeck disimpan di localStorage agar halaman pembuka (index.html)
+    // tahu apakah projeck sudah ada → buka Dashboard atau halaman Buat Projeck.
+    const STORAGE_KEY = 'aether_projects';
+
+    function getProjects() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const list = raw ? JSON.parse(raw) : [];
+        return Array.isArray(list) ? list : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveProjects(list) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
     // Tab switch
     const tabTerbaru = document.getElementById('tab-btn-terbaru');
     const tabBackup = document.getElementById('tab-btn-backup');
@@ -384,12 +403,25 @@
     document.getElementById('btn-close-create-modal').addEventListener('click', () => modal.classList.remove('open'));
     document.getElementById('btn-cancel-create-modal').addEventListener('click', () => modal.classList.remove('open'));
     document.getElementById('btn-submit-create-modal').addEventListener('click', () => {
+      const nama = document.getElementById('input-nama-dunia').value.trim() || 'Projeck Baru';
+      const desc = document.getElementById('input-deskripsi').value.trim();
+
+      // Simpan projeck baru → selanjutnya halaman pembuka membuka Dashboard
+      const projects = getProjects();
+      projects.push({ name: nama, desc, createdAt: new Date().toISOString() });
+      saveProjects(projects);
+
       modal.classList.remove('open');
-      openProject(document.getElementById('input-nama-dunia').value || 'Projeck Baru');
+      openProject(nama);
     });
 
-    // Open project → navigate to Dashboard
+    // Open project → simpan projeck yang dibuka lalu navigasi ke Dashboard
     function openProject(name) {
+      const projects = getProjects();
+      if (!projects.some((p) => p.name === name)) {
+        projects.push({ name, desc: '', createdAt: new Date().toISOString() });
+        saveProjects(projects);
+      }
       window.location.href = 'dashboard.page.html?world=' + encodeURIComponent(name);
     }
   </script>
