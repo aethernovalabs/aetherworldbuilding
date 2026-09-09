@@ -44,15 +44,51 @@
 			<span>Memuat Aether Nova…</span>
 		</div>
 
-		<script src="https://cdn.jsdelivr.net/npm/dexie@4.0.8/dist/dexie.min.js"></script>
+		<script src="/js/dexie.min.js"></script>
 		<script src="/js/aether-state.js"></script>
 		<script>
 			// Logika halaman awal (landing):
 			// - Buka halaman yang terakhir dibuka oleh user (disimpan di IndexedDB)
 			// - Belum pernah membuka halaman apa pun → buka halaman "buat projeck"
-			AetherState.getLastPage().then(function (lastPage) {
-				location.replace(lastPage || "/buat-projeck");
-			});
+			//
+			// Anti-loop: redirect dilakukan HANYA bila kita berada di path root "/".
+			// Bila index.html diserve untuk path non-root lain (mis. mode
+			// SPA-fallback), tidak redirect lagi → render menu fallback.
+			var currentPath = (window.location.pathname || "/").replace(/\/+$/, "");
+			if (currentPath === "" ) currentPath = "/";
+			var isRoot = currentPath === "/";
+
+			function renderFallbackMenu() {
+				var links = [
+					"buat-projeck", "dashboard", "dokumen", "element-dunia",
+					"hubungan", "jaringan", "karakter", "linimasa", "peta-denah",
+				];
+				var menu = document.createElement("div");
+				menu.style.cssText = "display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;margin-top:1.25rem;";
+				links.forEach(function (slug) {
+					var a = document.createElement("a");
+					a.href = "/" + slug;
+					a.textContent = slug.replace("-", " ");
+					a.style.cssText = "padding:0.4rem 0.9rem;border-radius:8px;background:#1d2840;color:#c4b5fd;text-decoration:none;font-size:0.8rem;";
+					menu.appendChild(a);
+				});
+				document.querySelector(".loading").appendChild(menu);
+			}
+
+			function redirect(target) {
+				if (!target || target === "/") { renderFallbackMenu(); return; }
+				var targetPath = target.split("?")[0].replace(/\/+$/, "");
+				if (targetPath === currentPath) { renderFallbackMenu(); return; }
+				location.replace(target);
+			}
+
+			if (!isRoot) {
+				renderFallbackMenu();
+			} else {
+				AetherState.getLastPage().then(function (lastPage) {
+					redirect(lastPage || "/buat-projeck");
+				});
+			}
 		</script>
 	</body>
 </html>

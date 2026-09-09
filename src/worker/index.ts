@@ -8,7 +8,7 @@ const app = new Hono<{ Bindings: Env }>();
 // sebagai aset statis di URL `/js/aether-state.js`.
 // ---------------------------------------------------------------------------
 const PAGE_STATE_SCRIPTS = [
-	'<script src="https://cdn.jsdelivr.net/npm/dexie@4.0.8/dist/dexie.min.js"></script>',
+	'<script src="/js/dexie.min.js"></script>',
 	'<script src="/js/aether-state.js"></script>',
 	"<script>AetherState.trackCurrentPage();</script>",
 ].join("");
