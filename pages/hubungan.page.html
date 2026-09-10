@@ -9,55 +9,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
-  <link rel="stylesheet" href="../styles/shared-workspace.css">
+  <link rel="stylesheet" href="/styles/shared-workspace.css">
   <style>
-    .rel-layout { display: flex; flex: 1; overflow: hidden; }
-
-    /* List Panel */
-    .rel-list-panel { width: 280px; border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
-    .rel-list-header { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border); background: #0d121f; }
-    .rel-list-header h3 { font-size: 0.85rem; font-weight: 700; }
-    .rel-list-scroll { flex: 1; overflow-y: auto; }
-    .rel-item {
-      padding: 0.85rem 1rem; border-bottom: 1px solid var(--border);
-      cursor: pointer; transition: background 0.15s; display: flex; flex-direction: column; gap: 0.35rem;
-    }
-    .rel-item:hover { background: var(--bg-card-hover); }
-    .rel-item.active { background: rgba(139,92,246,0.08); border-left: 3px solid var(--primary); }
-    .rel-pair { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 600; }
-    .rel-pair iconify-icon { color: var(--text-faint); font-size: 0.75rem; }
-    .rel-type { font-size: 0.75rem; color: var(--text-faint); }
-
-    /* Detail / Graph Panel */
-    .rel-detail-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-    .rel-detail-toolbar { padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 1rem; background: #0d121f; }
-    .rel-graph-area {
-      flex: 1; display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden; background: radial-gradient(ellipse at center, #111726 0%, #0a0e17 100%);
-    }
-
-    /* Node-like visual representation */
-    .rel-node {
-      position: absolute; width: 80px; height: 80px; border-radius: 50%;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.2s; border: 2px solid var(--border);
-      background: var(--bg-card); font-size: 0.7rem; font-weight: 600; text-align: center;
-      gap: 0.2rem; padding: 0.25rem;
-    }
-    .rel-node:hover { transform: scale(1.1); border-color: var(--primary); z-index: 10; }
-    .rel-node iconify-icon { font-size: 1.5rem; }
-    .rel-node-main { border-color: var(--primary); background: rgba(139,92,246,0.12); }
-    .rel-node-secondary { border-color: var(--accent); background: rgba(56,189,248,0.08); }
-    .rel-node-antagonist { border-color: var(--danger); background: rgba(239,68,68,0.08); }
-
-    /* Connection lines - SVG overlay */
-    .rel-svg { position: absolute; inset: 0; pointer-events: none; }
-
-    .rel-detail-info { padding: 1.25rem 1.5rem; border-top: 1px solid var(--border); background: #0d121f; flex-shrink: 0; }
-    .rel-info-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .rel-info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
-    .rel-info-item { font-size: 0.8rem; }
-    .rel-info-label { color: var(--text-faint); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .rel-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 0.85rem; }
+    .rel-card { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card); padding: 0.7rem 0.8rem; display: flex; flex-direction: column; gap: 0.45rem; min-width: 0; }
+    .rel-card-type { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+    .rel-link { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; }
+    .rel-name { border: 1px solid var(--border); border-radius: 4px; padding: 0.15rem 0.45rem; background: var(--bg-dark); white-space: nowrap; }
+    .rel-arrow { border: 1px solid var(--border); border-radius: 4px; padding: 0.15rem 0.45rem; background: var(--bg-surface); color: var(--text-muted); font-size: 0.7rem; white-space: nowrap; }
+    .rel-desc { font-size: 0.75rem; color: var(--text-muted); }
   </style>
 </head>
 <body>
@@ -86,118 +46,51 @@
         <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia"><span class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span class="side-item-text">Element Dunia</span></a>
         <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span class="side-item-text">Linimasa</span></a>
         <a class="side-nav-item active" href="hubungan.page.html" data-label="Hubungan"><span class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span class="side-item-text">Hubungan</span></a>
-        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span class="side-nav-icon"><iconify-icon icon="lucide:git-fork"></iconify-icon></span><span class="side-item-text">Jaringan</span></a>
+        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span><span class="side-item-text">Jaringan</span></a>
         <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah"><span class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span class="side-item-text">Peta &amp; Denah</span></a>
       </nav>
       <div class="sidebar-bottom-list">
         <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
-        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user"></iconify-icon></span><span class="side-item-text">Akun</span></a>
+        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
         <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
       </div>
     </aside>
-    <div class="workspace-content" style="padding:0;">
-      <div class="page-header" style="padding:1.25rem 1.75rem;">
-        <div><h1><iconify-icon icon="lucide:heart-handshake"></iconify-icon> Hubungan</h1><p>Peta hubungan antar karakter</p></div>
-        <div class="page-actions">
-          <button class="btn-action primary"><iconify-icon icon="lucide:plus"></iconify-icon> Tambah Hubungan</button>
-        </div>
+    <div class="workspace-content">
+      <div class="page-header">
+        <div><h1>Hubungan Karakter</h1><p>Hubungan Antara Karakter</p></div>
       </div>
-      <div class="rel-layout">
-        <!-- List Panel -->
-        <div class="rel-list-panel">
-          <div class="rel-list-header">
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <h3>Daftar Hubungan</h3>
-              <span class="badge badge-purple">3</span>
-            </div>
-            <div class="search-wrap" style="margin-top:0.65rem;">
-              <iconify-icon icon="lucide:search"></iconify-icon>
-              <input type="text" class="search-field" placeholder="Cari...">
-            </div>
+      <div class="page-body">
+        <div class="search-panel" style="border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-card);padding:0.7rem 0.85rem;display:flex;gap:0.75rem;align-items:center;">
+          <div class="search-wrap" style="flex:1;">
+            <iconify-icon icon="lucide:search"></iconify-icon>
+            <input type="text" class="search-field" placeholder="Search">
           </div>
-          <div class="rel-list-scroll">
-            <div class="rel-item active">
-              <div class="rel-pair">
-                <span>Kael Dawnward</span>
-                <iconify-icon icon="lucide:arrow-right-left"></iconify-icon>
-                <span>Lyra Stormweave</span>
-              </div>
-              <div class="rel-type"><span class="badge badge-green">Sekutu / Teman</span></div>
-            </div>
-            <div class="rel-item">
-              <div class="rel-pair">
-                <span>Kael Dawnward</span>
-                <iconify-icon icon="lucide:arrow-right-left"></iconify-icon>
-                <span>Valdris Aetheron</span>
-              </div>
-              <div class="rel-type"><span class="badge badge-red">Musuh</span></div>
-            </div>
-            <div class="rel-item">
-              <div class="rel-pair">
-                <span>Lyra Stormweave</span>
-                <iconify-icon icon="lucide:arrow-right-left"></iconify-icon>
-                <span>Valdris Aetheron</span>
-              </div>
-              <div class="rel-type"><span class="badge badge-yellow">Mantan Murid</span></div>
-            </div>
-          </div>
+          <select class="fmt-dropdown" style="padding:0.45rem 0.7rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-main);font-size:0.8rem;"><option>Kategori</option><option>Keluarga</option><option>Konflik</option></select>
         </div>
-
-        <!-- Detail / Graph Panel -->
-        <div class="rel-detail-panel">
-          <div class="rel-detail-toolbar">
-            <span style="font-size:0.85rem;font-weight:600;color:var(--text-muted);">Visualisasi Hubungan</span>
-            <div style="display:flex;gap:0.35rem;margin-left:auto;">
-              <button class="btn-action"><iconify-icon icon="lucide:zoom-in"></iconify-icon></button>
-              <button class="btn-action"><iconify-icon icon="lucide:zoom-out"></iconify-icon></button>
-              <button class="btn-action"><iconify-icon icon="lucide:maximize-2"></iconify-icon></button>
-            </div>
+        <div class="rel-cards" style="margin-top:1rem;">
+          <div class="rel-card">
+            <div class="rel-card-type">Konflik</div>
+            <div class="rel-link"><span class="rel-name">Name1</span><span class="rel-arrow">Musuh &gt;</span><span class="rel-name">Name2</span></div>
+            <div class="rel-link"><span class="rel-name">Name2</span><span class="rel-arrow">Musuh &gt;</span><span class="rel-name">Name1</span></div>
+            <div class="rel-desc">Deskripsi</div>
           </div>
-
-          <!-- Graph Area with Nodes -->
-          <div class="rel-graph-area" id="rel-graph">
-            <svg class="rel-svg" id="rel-svg"></svg>
-
-            <div class="rel-node rel-node-main" style="left:50%;top:50%;transform:translate(-50%,-50%);" id="node-kael">
-              <iconify-icon icon="lucide:user"></iconify-icon>
-              Kael<br>Dawnward
-            </div>
-            <div class="rel-node rel-node-secondary" style="left:25%;top:30%;" id="node-lyra">
-              <iconify-icon icon="lucide:user"></iconify-icon>
-              Lyra<br>Stormweave
-            </div>
-            <div class="rel-node rel-node-antagonist" style="right:25%;top:65%;" id="node-valdris">
-              <iconify-icon icon="lucide:user"></iconify-icon>
-              Valdris<br>Aetheron
-            </div>
+          <div class="rel-card">
+            <div class="rel-card-type">Keluarga</div>
+            <div class="rel-link"><span class="rel-name">Name1</span><span class="rel-arrow">Anak &gt;</span><span class="rel-name">Name2</span></div>
+            <div class="rel-link"><span class="rel-name">Name2</span><span class="rel-arrow">Ibu &gt;</span><span class="rel-name">Name1</span></div>
+            <div class="rel-desc">Deskripsi</div>
           </div>
-
-          <!-- Info Panel bawah -->
-          <div class="rel-detail-info">
-            <div class="rel-info-title">Kael Dawnward ↔ Lyra Stormweave</div>
-            <div class="rel-info-grid">
-              <div class="rel-info-item">
-                <div class="rel-info-label">Tipe</div>
-                <div><span class="badge badge-green">Sekutu / Teman</span></div>
-              </div>
-              <div class="rel-info-item">
-                <div class="rel-info-label">Kekuatan</div>
-                <div>
-                  <div style="display:flex;gap:2px;margin-top:0.25rem;">
-                    <div style="height:6px;width:30px;background:var(--success);border-radius:2px;"></div>
-                    <div style="height:6px;width:30px;background:var(--success);border-radius:2px;"></div>
-                    <div style="height:6px;width:30px;background:var(--success);border-radius:2px;"></div>
-                    <div style="height:6px;width:30px;background:var(--border);border-radius:2px;"></div>
-                    <div style="height:6px;width:30px;background:var(--border);border-radius:2px;"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="rel-info-item">
-                <div class="rel-info-label">Sejak</div>
-                <div>Tahun 890 ER</div>
-              </div>
-            </div>
-            <div style="margin-top:0.75rem;font-size:0.85rem;color:var(--text-muted);">Mereka bertemu di Akademi Kristal dan berbagi kemampuan resonansi yang langka.</div>
+          <div class="rel-card">
+            <div class="rel-card-type">Konflik</div>
+            <div class="rel-link"><span class="rel-name">Name1</span><span class="rel-arrow">Musuh &gt;</span><span class="rel-name">Name2</span></div>
+            <div class="rel-link"><span class="rel-name">Name2</span><span class="rel-arrow">Musuh &gt;</span><span class="rel-name">Name1</span></div>
+            <div class="rel-desc">Deskripsi</div>
+          </div>
+          <div class="rel-card">
+            <div class="rel-card-type">Konflik</div>
+            <div class="rel-link"><span class="rel-name">Name1</span><span class="rel-arrow">Musuh &gt;</span><span class="rel-name">Name2</span></div>
+            <div class="rel-link"><span class="rel-name">Name2</span><span class="rel-arrow">Musuh &gt;</span><span class="rel-name">Name1</span></div>
+            <div class="rel-desc">Deskripsi</div>
           </div>
         </div>
       </div>
@@ -209,30 +102,7 @@
       const c = sidebar.classList.toggle('collapsed');
       document.querySelector('#btn-toggle-sidebar iconify-icon').setAttribute('icon', c ? 'lucide:panel-left-open' : 'lucide:panel-left-close');
     });
-    document.querySelectorAll('.rel-item').forEach(item => {
-      item.addEventListener('click', () => { document.querySelectorAll('.rel-item').forEach(i => i.classList.remove('active')); item.classList.add('active'); });
-    });
 
-    // Draw connection lines with SVG
-    function drawLines() {
-      const graph = document.getElementById('rel-graph');
-      const svg = document.getElementById('rel-svg');
-      const gRect = graph.getBoundingClientRect();
-      const nodes = { kael: document.getElementById('node-kael'), lyra: document.getElementById('node-lyra'), valdris: document.getElementById('node-valdris') };
-      const centers = {};
-      for (const [k, el] of Object.entries(nodes)) {
-        const r = el.getBoundingClientRect();
-        centers[k] = { x: r.left - gRect.left + r.width/2, y: r.top - gRect.top + r.height/2 };
-      }
-      const lines = [
-        { from: 'kael', to: 'lyra', color: '#10b981', dash: '' },
-        { from: 'kael', to: 'valdris', color: '#ef4444', dash: '6,4' },
-        { from: 'lyra', to: 'valdris', color: '#f59e0b', dash: '4,4' },
-      ];
-      svg.innerHTML = lines.map(l => `<line x1="${centers[l.from].x}" y1="${centers[l.from].y}" x2="${centers[l.to].x}" y2="${centers[l.to].y}" stroke="${l.color}" stroke-width="2" stroke-dasharray="${l.dash}" opacity="0.6"/>`).join('');
-    }
-    setTimeout(drawLines, 200);
-    window.addEventListener('resize', drawLines);
   </script>
 </body>
 </html>

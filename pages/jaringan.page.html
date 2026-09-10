@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
-  <link rel="stylesheet" href="../styles/shared-workspace.css">
+  <link rel="stylesheet" href="/styles/shared-workspace.css">
   <style>
     .net-toolbar {
       padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--border);
@@ -97,19 +97,19 @@
         <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia"><span class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span class="side-item-text">Element Dunia</span></a>
         <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span class="side-item-text">Linimasa</span></a>
         <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan"><span class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span class="side-item-text">Hubungan</span></a>
-        <a class="side-nav-item active" href="jaringan.page.html" data-label="Jaringan"><span class="side-nav-icon"><iconify-icon icon="lucide:git-fork"></iconify-icon></span><span class="side-item-text">Jaringan</span></a>
+        <a class="side-nav-item active" href="jaringan.page.html" data-label="Jaringan"><span class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span><span class="side-item-text">Jaringan</span></a>
         <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah"><span class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span class="side-item-text">Peta & Denah</span></a>
       </nav>
       <div class="sidebar-bottom-list">
         <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
-        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user"></iconify-icon></span><span class="side-item-text">Akun</span></a>
+        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
         <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
       </div>
     </aside>
 
     <div class="workspace-content" style="padding:0;">
       <div class="page-header" style="padding:1.25rem 1.75rem;">
-        <div><h1><iconify-icon icon="lucide:git-fork"></iconify-icon> Jaringan</h1><p>Visualisasi jaringan hubungan, power tree, dan keterkaitan</p></div>
+        <div><h1><iconify-icon icon="lucide:network"></iconify-icon> Jaringan</h1><p>Visualisasi jaringan hubungan, power tree, dan keterkaitan</p></div>
         <div class="page-actions">
           <button class="btn-action primary"><iconify-icon icon="lucide:plus"></iconify-icon> Tambah Node</button>
         </div>
@@ -119,6 +119,7 @@
       <div class="net-toolbar">
         <span style="font-size:0.85rem;font-weight:600;color:var(--text-muted);">Mode:</span>
         <button class="net-mode-btn active" data-mode="graph"><iconify-icon icon="lucide:git-branch"></iconify-icon> Graph Hubungan</button>
+        <button class="net-mode-btn" data-mode="relasi"><iconify-icon icon="lucide:heart-handshake"></iconify-icon> Hubungan</button>
         <button class="net-mode-btn" data-mode="power"><iconify-icon icon="lucide:tree-2"></iconify-icon> Power Tree</button>
         <div style="width:1px;height:20px;background:var(--border);margin:0 0.5rem;"></div>
         <button class="win-btn" title="Zoom Out"><iconify-icon icon="lucide:zoom-out"></iconify-icon></button>

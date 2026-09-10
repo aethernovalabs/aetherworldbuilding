@@ -9,16 +9,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
-  <link rel="stylesheet" href="../styles/shared-workspace.css">
+  <link rel="stylesheet" href="/styles/shared-workspace.css">
   <style>
-    .doc-layout { flex: 1; display: flex; overflow: hidden; }
+    .doc-layout { flex: 1; min-height: 0; display: flex; overflow: hidden; }
 
-    /* File Tree Panel */
+    /* File Tree Panel — kolom kiri: Dokumen Lore + Naskah + Papan + Grid Plot */
     .doc-tree-panel {
-      width: 220px; border-right: 1px solid var(--border); background: #0d121f;
-      padding: 0.75rem; display: flex; flex-direction: column; gap: 0.4rem;
-      flex-shrink: 0; overflow-y: auto;
+      width: 230px; max-width: 72vw; border-right: 1px solid var(--border); background: #0d121f;
+      padding: 0.6rem; display: flex; flex-direction: column; gap: 0.65rem;
+      flex-shrink: 0; overflow-y: auto; min-height: 0;
     }
+    .doc-tree-block { display: flex; flex-direction: column; gap: 2px; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+    .doc-tree-block:last-child { border-bottom: none; }
+    .doc-caret { color: var(--text-faint); font-size: 0.85rem; width: 10px; }
     .doc-tree-section-title {
       font-size: 0.7rem; font-weight: 700; color: var(--text-faint);
       text-transform: uppercase; letter-spacing: 0.06em;
@@ -32,9 +35,24 @@
     .doc-tree-item:hover { background: var(--bg-surface); color: var(--text-main); }
     .doc-tree-item.active { background: rgba(139,92,246,0.12); color: #c4b5fd; font-weight: 600; }
     .doc-tree-item.folder { font-weight: 600; }
+    .doc-thumb { width: 26px; height: 26px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-surface); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .doc-side-block { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; background: var(--bg-dark); }
+    .doc-side-head { padding: 0.45rem 0.6rem; font-size: 0.75rem; font-weight: 700; background: var(--bg-surface); display: flex; align-items: center; gap: 0.4rem; border-bottom: 1px solid var(--border); }
+    .doc-side-row { display: flex; align-items: center; gap: 0.45rem; padding: 0.45rem 0.55rem; border-top: 1px solid var(--border); font-size: 0.78rem; color: var(--text-muted); min-width: 0; }
+    .doc-side-row:first-of-type { border-top: none; }
+    .doc-side-row iconify-icon { color: var(--text-faint); }
+
+    /* Papan & Grid Plot views */
+    .doc-subview { flex: 1; min-height: 0; overflow-y: auto; padding: 1.1rem 1.25rem; display: none; flex-direction: column; gap: 0.85rem; }
+    .doc-subview.active { display: flex; }
+    .doc-subview-title { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+    .papan-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0.6rem; }
+    .papan-cell { min-height: 110px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; }
+    .gridplot-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 0.6rem; }
+    .gridplot-col { min-height: 110px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card); padding: 0.6rem; font-size: 0.78rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.35rem; }
 
     /* Editor Area */
-    .doc-editor-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .doc-editor-area { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 
     /* Open Tabs Bar */
     .doc-tabs-bar { display: flex; background: #0d121f; border-bottom: 1px solid var(--border); flex-shrink: 0; overflow-x: auto; }
@@ -67,19 +85,19 @@
     }
 
     /* Editor Body */
-    .doc-editor-body { flex: 1; display: flex; overflow: hidden; }
+    .doc-editor-body { flex: 1; min-height: 0; display: flex; overflow: hidden; }
     .doc-editor-pane {
-      flex: 1; padding: 2rem 3rem; outline: none; overflow-y: auto;
-      line-height: 1.7; font-size: 0.95rem; color: var(--text-main);
+      flex: 1; min-width: 0; min-height: 0; padding: 2rem 3rem; outline: none; overflow-y: auto; overflow-x: hidden;
+      line-height: 1.7; font-size: 0.95rem; color: var(--text-main); overflow-wrap: anywhere; word-break: break-word;
     }
     .doc-editor-pane h1 { font-family: var(--font-heading); font-size: 1.75rem; margin-bottom: 1rem; }
     .doc-editor-pane h2 { font-size: 1.25rem; font-weight: 700; margin: 1.25rem 0 0.5rem; }
     .doc-editor-pane p { margin-bottom: 0.75rem; color: var(--text-muted); }
 
-    /* Right Properties Panel */
+    /* Right Properties Panel — Panel kanan: Karakter / Element Dunia / Catatan Plot */
     .doc-right-panel {
-      width: 240px; border-left: 1px solid var(--border); background: #0d121f;
-      padding: 1rem; flex-shrink: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;
+      width: 250px; max-width: 72vw; border-left: 1px solid var(--border); background: #0d121f;
+      padding: 0.75rem; flex-shrink: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; min-height: 0;
     }
     .prop-title { font-size: 0.7rem; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.06em; }
     .prop-val { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.35rem; }
@@ -148,7 +166,7 @@
           <span class="side-item-text">Hubungan</span>
         </a>
         <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan">
-          <span class="side-nav-icon"><iconify-icon icon="lucide:git-fork"></iconify-icon></span>
+          <span class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span>
           <span class="side-item-text">Jaringan</span>
         </a>
         <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah">
@@ -158,45 +176,91 @@
       </nav>
       <div class="sidebar-bottom-list">
         <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
-        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user"></iconify-icon></span><span class="side-item-text">Akun</span></a>
+        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
         <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
       </div>
     </aside>
 
     <!-- Document Content -->
-    <div class="workspace-content" style="padding:0;flex-direction:row;">
-
-      <!-- File Tree -->
-      <div class="doc-tree-panel">
-        <div class="doc-tree-section-title">
-          Dokumen
-          <button class="win-btn" style="width:22px;height:22px;" title="Tambah Dokumen"><iconify-icon icon="lucide:plus"></iconify-icon></button>
-        </div>
-
-        <div class="doc-tree-item folder">
-          <iconify-icon icon="lucide:folder-open" style="color:var(--warning);"></iconify-icon> Lore
-        </div>
-        <div class="doc-tree-item active" style="padding-left:1.5rem;">
-          <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon> Sejarah Aether Nova
-        </div>
-        <div class="doc-tree-item" style="padding-left:1.5rem;">
-          <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon> Legenda Kristal
-        </div>
-
-        <div class="doc-tree-item folder" style="margin-top:0.5rem;">
-          <iconify-icon icon="lucide:folder" style="color:var(--warning);"></iconify-icon> Sistem Dunia
-        </div>
-        <div class="doc-tree-item" style="padding-left:1.5rem;">
-          <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon> Resonansi Kristal
-        </div>
-        <div class="doc-tree-item" style="padding-left:1.5rem;">
-          <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon> Hukum Aetherial
-        </div>
-
-        <div class="doc-tree-item folder" style="margin-top:0.5rem;">
-          <iconify-icon icon="lucide:folder" style="color:var(--warning);"></iconify-icon> Catatan Penulis
+    <div class="workspace-content fill">
+      <div class="page-header" style="padding:0.85rem 1.25rem;flex-shrink:0;">
+        <div><h1 style="font-size:1.05rem;">Dokumen</h1><p>Dokumen dan data</p></div>
+        <div class="page-header-actions">
+          <button class="view-btn active" data-view="lore">Dokumen Lore</button>
+          <button class="view-btn" data-view="papan">Papan</button>
+          <button class="view-btn" data-view="grid">Grid Plot</button>
         </div>
       </div>
+
+      <!-- ============ VIEW: DOKUMEN LORE ============ -->
+      <div class="doc-layout" id="view-lore">
+
+        <!-- File Tree -->
+        <div class="doc-tree-panel">
+          <div class="doc-tree-block">
+            <div class="doc-tree-section-title">
+              Dokumen Lore
+              <button class="win-btn" style="width:22px;height:22px;" title="Tambah Dokumen"><iconify-icon icon="lucide:plus"></iconify-icon></button>
+            </div>
+
+            <div class="doc-tree-item" style="font-weight:600;">
+              <iconify-icon icon="lucide:search" style="color:var(--text-faint);"></iconify-icon>
+              <span style="flex:1;">Cari</span>
+            </div>
+
+            <div class="doc-tree-item folder">
+              <span class="doc-caret">›</span>
+              <iconify-icon icon="lucide:folder-open" style="color:var(--warning);"></iconify-icon> Folder1
+            </div>
+            <div class="doc-tree-item active" style="padding-left:1.5rem;">
+              <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon> Dokumen1
+            </div>
+            <div class="doc-tree-item" style="padding-left:1.5rem;">
+              <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon> Dokumen2
+            </div>
+          </div>
+
+          <div class="doc-tree-block">
+            <div class="doc-tree-section-title">
+              Naskah
+              <button class="win-btn" style="width:22px;height:22px;" title="Tambah Bab"><iconify-icon icon="lucide:plus"></iconify-icon></button>
+            </div>
+            <div class="doc-tree-item">
+              <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon>
+              <span style="flex:1;">Bab 1</span>
+            </div>
+            <div class="doc-tree-item">
+              <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon>
+              <span style="flex:1;">Bab 2</span>
+            </div>
+          </div>
+
+          <div class="doc-tree-block">
+            <div class="doc-tree-section-title">
+              Papan
+              <button class="win-btn" style="width:22px;height:22px;" title="Tambah Papan"><iconify-icon icon="lucide:plus"></iconify-icon></button>
+            </div>
+            <div class="doc-tree-item">
+              <iconify-icon icon="lucide:layout-grid" style="color:var(--text-faint);"></iconify-icon>
+              <span style="flex:1;">judul<br><span style="font-size:0.7rem;color:var(--text-faint);">2 x 4</span></span>
+              <button class="win-btn" style="width:22px;height:22px;" title="Edit"><iconify-icon icon="lucide:pen-line" width="13"></iconify-icon></button>
+              <button class="win-btn" style="width:22px;height:22px;color:var(--danger);" title="Hapus"><iconify-icon icon="lucide:trash-2" width="13"></iconify-icon></button>
+            </div>
+          </div>
+
+          <div class="doc-tree-block">
+            <div class="doc-tree-section-title">
+              Grid Plot
+              <button class="win-btn" style="width:22px;height:22px;" title="Tambah Grid"><iconify-icon icon="lucide:plus"></iconify-icon></button>
+            </div>
+            <div class="doc-tree-item">
+              <iconify-icon icon="lucide:grid-3x3" style="color:var(--text-faint);"></iconify-icon>
+              <span style="flex:1;">judul<br><span style="font-size:0.7rem;color:var(--text-faint);">3 x 3</span></span>
+              <button class="win-btn" style="width:22px;height:22px;" title="Edit"><iconify-icon icon="lucide:pen-line" width="13"></iconify-icon></button>
+              <button class="win-btn" style="width:22px;height:22px;color:var(--danger);" title="Hapus"><iconify-icon icon="lucide:trash-2" width="13"></iconify-icon></button>
+            </div>
+          </div>
+        </div>
 
       <!-- Editor Area -->
       <div class="doc-editor-area">
@@ -205,33 +269,41 @@
         <div class="doc-tabs-bar">
           <div class="doc-tab active">
             <iconify-icon icon="lucide:file-text"></iconify-icon>
-            Sejarah Aether Nova
+            Title
             <iconify-icon icon="lucide:x" class="doc-tab-close" width="14"></iconify-icon>
           </div>
           <div class="doc-tab">
             <iconify-icon icon="lucide:file-text"></iconify-icon>
-            Resonansi Kristal
+            Title
             <iconify-icon icon="lucide:x" class="doc-tab-close" width="14"></iconify-icon>
           </div>
-          <button class="win-btn" style="border-left:1px solid var(--border);border-radius:0;" title="Buka Dokumen Baru">
+          <button class="win-btn" style="border-left:1px solid var(--border);border-radius:0;flex-shrink:0;" title="Tab Baru">
+            <iconify-icon icon="lucide:plus"></iconify-icon>
+          </button>
+          <div class="doc-tab">
+            <iconify-icon icon="lucide:file-text"></iconify-icon>
+            Title
+            <iconify-icon icon="lucide:x" class="doc-tab-close" width="14"></iconify-icon>
+          </div>
+          <button class="win-btn" style="border-left:1px solid var(--border);border-radius:0;flex-shrink:0;" title="Tab Baru">
             <iconify-icon icon="lucide:plus"></iconify-icon>
           </button>
         </div>
 
         <!-- Format Toolbar -->
         <div class="doc-format-bar">
-          <select class="fmt-dropdown"><option>Paragraf</option><option>Judul 1</option><option>Judul 2</option><option>Judul 3</option></select>
-          <div class="fmt-sep"></div>
-          <button class="fmt-btn" title="Bold"><iconify-icon icon="lucide:bold"></iconify-icon></button>
-          <button class="fmt-btn" title="Italic"><iconify-icon icon="lucide:italic"></iconify-icon></button>
-          <button class="fmt-btn" title="Underline"><iconify-icon icon="lucide:underline"></iconify-icon></button>
-          <button class="fmt-btn" title="Strikethrough"><iconify-icon icon="lucide:strikethrough"></iconify-icon></button>
-          <div class="fmt-sep"></div>
-          <button class="fmt-btn" title="List Biasa"><iconify-icon icon="lucide:list"></iconify-icon></button>
-          <button class="fmt-btn" title="List Nomor"><iconify-icon icon="lucide:list-ordered"></iconify-icon></button>
+          <button class="fmt-btn" title="Bold" style="font-weight:800;">B</button>
+          <button class="fmt-btn" title="Italic" style="font-style:italic;">I</button>
+          <button class="fmt-btn" title="Underline" style="text-decoration:underline;">U</button>
+          <button class="fmt-btn" title="Strikethrough" style="text-decoration:line-through;">S</button>
+          <button class="fmt-btn" title="Heading"><iconify-icon icon="lucide:heading"></iconify-icon></button>
           <button class="fmt-btn" title="Quote"><iconify-icon icon="lucide:quote"></iconify-icon></button>
           <div class="fmt-sep"></div>
-          <button class="fmt-btn" title="Link"><iconify-icon icon="lucide:link"></iconify-icon></button>
+          <button class="fmt-btn" title="Rata Kiri"><iconify-icon icon="lucide:align-left"></iconify-icon></button>
+          <button class="fmt-btn" title="Rata Tengah"><iconify-icon icon="lucide:align-center"></iconify-icon></button>
+          <button class="fmt-btn" title="Undo"><iconify-icon icon="lucide:undo-2"></iconify-icon></button>
+          <button class="fmt-btn" title="Redo"><iconify-icon icon="lucide:redo-2"></iconify-icon></button>
+          <button class="fmt-btn" title="Tabel"><iconify-icon icon="lucide:table"></iconify-icon></button>
           <button class="fmt-btn" title="Gambar"><iconify-icon icon="lucide:image"></iconify-icon></button>
           <div class="fmt-sep"></div>
           <button class="fmt-btn" title="Simpan" style="margin-left:auto;"><iconify-icon icon="lucide:save"></iconify-icon></button>
@@ -240,51 +312,72 @@
         <!-- Editor Body -->
         <div class="doc-editor-body">
           <div class="doc-editor-pane" contenteditable="true">
-            <h1>Sejarah Aether Nova</h1>
-            <h2>Asal Usul</h2>
-            <p>Di awal mula, ketika langit masih satu dengan bumi, terjadilah Perpecahan Besar — peristiwa kosmik yang memporak-porandakan daratan menjadi ribuan kepulauan terapung yang tersebar di angkasa.</p>
-            <p>Kepulauan-kepulauan ini terhubung satu sama lain melalui jaringan kristal aetherial yang memancarkan energi resonansi. Energi inilah yang menjaga kepulauan tetap melayang dan menopang kehidupan di atasnya.</p>
-            <h2>Era Resonansi</h2>
-            <p>Setelah berabad-abad dari Perpecahan Besar, para cendekiawan dari Akademi Kristal berhasil memahami dan memanfaatkan resonansi aetherial. Mereka menciptakan jalur komunikasi, transportasi, dan sumber energi dari kristal-kristal yang tersebar di setiap pulau.</p>
-            <p>Klik di sini untuk mengedit dokumen ini...</p>
+            <p>isi dokumen</p>
+          </div>
+          <div class="doc-editor-pane" contenteditable="true" style="border-left:1px solid var(--border);">
+            <p>isi dokumen</p>
           </div>
 
           <!-- Right Panel -->
           <div class="doc-right-panel">
-            <div>
-              <div class="prop-title">Info Dokumen</div>
-              <div class="prop-val">Sejarah Aether Nova</div>
+            <div class="doc-side-block">
+              <div class="doc-side-head"><iconify-icon icon="lucide:users"></iconify-icon> Karakter</div>
+              <div class="doc-side-row"><span class="doc-thumb"><iconify-icon icon="lucide:image" width="14"></iconify-icon></span> karakter1 <iconify-icon icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></div>
+              <div class="doc-side-row"><span class="doc-thumb"><iconify-icon icon="lucide:image" width="14"></iconify-icon></span> karakter1 <iconify-icon icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></div>
+              <div class="doc-side-row"><span class="doc-thumb"><iconify-icon icon="lucide:image" width="14"></iconify-icon></span> karakter1 <iconify-icon icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></div>
             </div>
-            <div>
-              <div class="prop-title">Kategori</div>
-              <div class="prop-val">
-                <span class="prop-tag">Lore</span>
-                <span class="prop-tag">Sejarah</span>
+            <div class="doc-side-block">
+              <div class="doc-side-head"><iconify-icon icon="lucide:gem"></iconify-icon> Element Dunia</div>
+              <div class="doc-side-row"><span class="doc-thumb"><iconify-icon icon="lucide:image" width="14"></iconify-icon></span> Element1 <iconify-icon icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></div>
+              <div class="doc-side-row"><span class="doc-thumb"><iconify-icon icon="lucide:image" width="14"></iconify-icon></span> Element1 <iconify-icon icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></div>
+            </div>
+            <div class="doc-side-block">
+              <div class="doc-side-head"><iconify-icon icon="lucide:sticky-note"></iconify-icon> Catatan Plot</div>
+              <div class="doc-side-row" style="flex-direction:column;align-items:stretch;gap:0.35rem;">
+                <div style="display:flex;align-items:center;gap:0.4rem;">catatan1 <span style="margin-left:auto;display:flex;gap:0.35rem;"><iconify-icon icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></span></div>
+                <div style="font-size:0.75rem;color:var(--text-faint);">isi catatan</div>
               </div>
-            </div>
-            <div>
-              <div class="prop-title">Dibuat</div>
-              <div class="prop-val">01 Sep 2026</div>
-            </div>
-            <div>
-              <div class="prop-title">Terakhir Diubah</div>
-              <div class="prop-val">08 Sep 2026</div>
-            </div>
-            <div>
-              <div class="prop-title">Karakter Terkait</div>
-              <div class="prop-val">
-                <span class="prop-tag">Kael Dawnward</span>
-                <span class="prop-tag">Valdris Aetheron</span>
-              </div>
-            </div>
-            <div>
-              <div class="prop-title">Jumlah Kata</div>
-              <div class="prop-val">248 kata</div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- ============ VIEW: PAPAN ============ -->
+      <div class="doc-subview" id="view-papan">
+        <div class="doc-subview-title">Judul</div>
+        <div class="papan-grid">
+          <div class="papan-cell">Bab 1</div>
+          <div class="papan-cell">+<br>Tambah</div>
+          <div class="papan-cell">+<br>Tambah</div>
+          <div class="papan-cell">+<br>Tambah</div>
+          <div class="papan-cell">+<br>Tambah</div>
+          <div class="papan-cell">+<br>Tambah</div>
+        </div>
+      </div>
+
+      <!-- ============ VIEW: GRID PLOT ============ -->
+      <div class="doc-subview" id="view-grid">
+        <div class="doc-subview-title">Judul</div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+          <span class="badge badge-purple">Chapter</span>
+          <span class="badge">tanpa nama</span>
+          <span class="badge">tanpa nama</span>
+          <button class="win-btn" title="Tambah Chapter"><iconify-icon icon="lucide:plus"></iconify-icon></button>
+        </div>
+        <div class="gridplot-row">
+          <div class="gridplot-col"><strong>Bab 1</strong></div>
+          <div class="gridplot-col">+<br>Tambah Catatan</div>
+          <div class="gridplot-col">+<br>Tambah Catatan</div>
+          <div class="gridplot-col">+<br>Tambah Catatan</div>
+          <div class="gridplot-col">+<br>Bab</div>
+          <div class="gridplot-col">+<br>Tambah Catatan</div>
+          <div class="gridplot-col">+<br>Tambah Catatan</div>
+          <div class="gridplot-col">+<br>Tambah Catatan</div>
+        </div>
+      </div>
+
     </div>
+  </div>
   </div>
 
   <script>
@@ -294,6 +387,15 @@
       const collapsed = sidebar.classList.toggle('collapsed');
       btnToggle.querySelector('iconify-icon').setAttribute('icon', collapsed ? 'lucide:panel-left-open' : 'lucide:panel-left-close');
     });
+    const viewBtns = document.querySelectorAll('.view-btn[data-view]');
+    const views = { lore: document.getElementById('view-lore'), papan: document.getElementById('view-papan'), grid: document.getElementById('view-grid') };
+    function showView(name) {
+      viewBtns.forEach(b => b.classList.toggle('active', b.dataset.view === name));
+      Object.entries(views).forEach(([k, el]) => { if (!el) return; el.classList.toggle('active', k === name); el.style.display = (k === name) ? '' : 'none'; });
+      if (name === 'lore') { views.lore.style.display = 'flex'; }
+    }
+    viewBtns.forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));
+    showView('lore');
   </script>
 </body>
 </html>

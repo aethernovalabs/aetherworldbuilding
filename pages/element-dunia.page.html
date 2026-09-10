@@ -9,46 +9,24 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
-  <link rel="stylesheet" href="../styles/shared-workspace.css">
+  <link rel="stylesheet" href="/styles/shared-workspace.css">
   <style>
-    .elem-toolbar {
-      padding: 0.85rem 1.75rem; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 1rem; flex-shrink: 0; background: var(--bg-dark);
-    }
-    .type-tabs { display: flex; gap: 0.35rem; flex-wrap: wrap; }
-    .type-tab {
-      padding: 0.4rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600;
-      background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-muted);
-      cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 0.4rem;
-    }
-    .type-tab:hover { color: var(--text-main); border-color: var(--border-hover); }
-    .type-tab.active { background: rgba(139,92,246,0.15); border-color: var(--primary); color: #c4b5fd; }
-
-    .elem-layout { display: flex; flex: 1; overflow: hidden; }
-    .elem-list-panel { width: 320px; border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden; }
-    .elem-list-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); background: #0d121f; display: flex; align-items: center; justify-content: space-between; }
-    .elem-list-scroll { flex: 1; overflow-y: auto; }
-    .elem-list-item {
-      padding: 0.85rem 1rem; border-bottom: 1px solid var(--border);
-      cursor: pointer; transition: background 0.15s; display: flex; align-items: center; gap: 0.75rem;
-    }
-    .elem-list-item:hover { background: var(--bg-card-hover); }
-    .elem-list-item.active { background: rgba(139,92,246,0.08); border-left: 3px solid var(--primary); }
-    .elem-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); background: rgba(139,92,246,0.12); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .elem-item-name { font-size: 0.875rem; font-weight: 600; }
-    .elem-item-type { font-size: 0.75rem; color: var(--text-faint); margin-top: 0.1rem; }
-
-    .elem-detail-panel { flex: 1; overflow-y: auto; padding: 2rem; }
-    .elem-detail-header { margin-bottom: 1.5rem; }
-    .elem-detail-name { font-family: var(--font-heading); font-size: 1.75rem; font-weight: 800; }
-    .elem-detail-type { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem; }
-    .elem-detail-section { margin-top: 1.25rem; }
-    .elem-detail-section h3 { font-size: 0.8rem; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.65rem; }
-    .elem-detail-section p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.65; }
-    .elem-attrs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-top: 1rem; }
-    .elem-attr { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.85rem; }
-    .elem-attr-label { font-size: 0.72rem; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; }
-    .elem-attr-val { font-size: 0.9rem; font-weight: 600; margin-top: 0.25rem; }
+    .elem-cat { width: 200px; flex-shrink: 0; border: 1px solid var(--border); border-radius: var(--radius-md); background: #0d121f; padding: 0.5rem; display: flex; flex-direction: column; gap: 2px; position: sticky; top: 0; max-height: calc(100vh - 220px); overflow-y: auto; }
+    .elem-cat-item { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.4rem 0.6rem; border-radius: var(--radius-sm); background: transparent; border: none; color: var(--text-muted); font-size: 0.78rem; cursor: pointer; text-align: left; }
+    .elem-cat-item:hover { background: var(--bg-surface); color: var(--text-main); }
+    .elem-cat-item.active { background: rgba(139,92,246,0.14); color: #c4b5fd; font-weight: 700; }
+    .elem-count { font-size: 0.68rem; border: 1px solid var(--border); border-radius: 4px; padding: 0 0.3rem; color: var(--text-faint); }
+    .search-panel { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card); padding: 0.7rem 0.85rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .elem-group { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card); overflow: hidden; }
+    .elem-group-head { width: 100%; display: flex; align-items: center; padding: 0.6rem 0.85rem; background: var(--bg-surface); border: none; border-bottom: 1px solid var(--border); color: var(--text-main); font-size: 0.82rem; font-weight: 700; cursor: pointer; }
+    .elem-cards { padding: 0.85rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem; }
+    .elem-card { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-dark); padding: 0.7rem; display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
+    .elem-card-top { display: flex; align-items: center; gap: 0.5rem; }
+    .elem-thumb { width: 44px; height: 34px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-surface); display: inline-flex; align-items: center; justify-content: center; color: var(--text-faint); flex-shrink: 0; }
+    .elem-card-name { font-size: 0.85rem; font-weight: 700; }
+    .elem-card-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; }
+    .elem-card-foot { display: flex; align-items: center; justify-content: space-between; color: var(--text-faint); }
+    @media (max-width: 860px) { .page-body { flex-direction: column !important; } .elem-cat { width: 100%; max-height: 220px; position: static; } }
   </style>
 </head>
 <body>
@@ -77,106 +55,75 @@
         <a class="side-nav-item active" href="element-dunia.page.html" data-label="Element Dunia"><span class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span class="side-item-text">Element Dunia</span></a>
         <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span class="side-item-text">Linimasa</span></a>
         <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan"><span class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span class="side-item-text">Hubungan</span></a>
-        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span class="side-nav-icon"><iconify-icon icon="lucide:git-fork"></iconify-icon></span><span class="side-item-text">Jaringan</span></a>
+        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span><span class="side-item-text">Jaringan</span></a>
         <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah"><span class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span class="side-item-text">Peta &amp; Denah</span></a>
       </nav>
       <div class="sidebar-bottom-list">
         <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
-        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user"></iconify-icon></span><span class="side-item-text">Akun</span></a>
+        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
         <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
       </div>
     </aside>
-    <div class="workspace-content" style="padding:0;">
-      <div class="page-header" style="padding:1.25rem 1.75rem;">
-        <div><h1><iconify-icon icon="lucide:gem"></iconify-icon> Element Dunia</h1><p>Lokasi, Benda Ajaib, Organisasi, Budaya, dan lainnya</p></div>
-        <div class="page-actions">
-          <button class="btn-action primary"><iconify-icon icon="lucide:plus"></iconify-icon> Tambah Elemen</button>
+        <div class="workspace-content">
+      <div class="page-header">
+        <div><h1>Element Dunia</h1><p>Semua Element Dunia <span class="badge" style="margin-left:0.35rem;">3 Total</span></p><p style="font-size:0.78rem;color:var(--text-faint);">tampilkan semua element dunia</p></div>
+        <div class="page-header-actions">
+          <button class="btn-action">+ Tambah Element</button>
+          <button class="btn-action primary">+ Entry</button>
         </div>
       </div>
-      <!-- Type Filter Toolbar -->
-      <div class="elem-toolbar">
-        <div class="type-tabs">
-          <button class="type-tab active"><iconify-icon icon="lucide:layers"></iconify-icon> Semua</button>
-          <button class="type-tab"><iconify-icon icon="lucide:map-pin"></iconify-icon> Lokasi</button>
-          <button class="type-tab"><iconify-icon icon="lucide:sparkles"></iconify-icon> Benda Ajaib</button>
-          <button class="type-tab"><iconify-icon icon="lucide:building-2"></iconify-icon> Organisasi</button>
-          <button class="type-tab"><iconify-icon icon="lucide:landmark"></iconify-icon> Budaya</button>
-          <button class="type-tab"><iconify-icon icon="lucide:wand-2"></iconify-icon> Sistem Sihir</button>
-        </div>
-        <div class="search-wrap" style="max-width:260px;margin-left:auto;">
-          <iconify-icon icon="lucide:search"></iconify-icon>
-          <input type="text" class="search-field" placeholder="Cari elemen...">
-        </div>
-      </div>
-      <!-- Split Layout: List + Detail -->
-      <div class="elem-layout">
-        <!-- List Panel -->
-        <div class="elem-list-panel">
-          <div class="elem-list-header">
-            <span style="font-size:0.8rem;color:var(--text-faint);font-weight:600;">8 Elemen</span>
-            <button class="win-btn" title="Tampilan Grid"><iconify-icon icon="lucide:grid-3x3"></iconify-icon></button>
-          </div>
-          <div class="elem-list-scroll">
-            <div class="elem-list-item active">
-              <div class="elem-icon"><iconify-icon icon="lucide:gem" style="color:#c4b5fd;"></iconify-icon></div>
-              <div><div class="elem-item-name">Kristal Aetherial</div><div class="elem-item-type">Benda Ajaib</div></div>
+      <div class="page-body" style="display:flex;gap:1rem;align-items:flex-start;">
+        <aside class="elem-cat">
+          <button class="elem-cat-item active">Semua <span class="elem-count">1</span></button>
+          <button class="elem-cat-item">Makhluk <span class="elem-count">0</span></button>
+          <button class="elem-cat-item">Faksi <span class="elem-count">0</span></button>
+          <button class="elem-cat-item">Pekerjaan <span class="elem-count">0</span></button>
+          <button class="elem-cat-item">Lokasi <span class="elem-count">1</span></button>
+          <button class="elem-cat-item">Agama <span class="elem-count">0</span></button>
+          <button class="elem-cat-item">Sistem sihir <span class="elem-count">0</span></button>
+          <button class="elem-cat-item">Teknologi <span class="elem-count">0</span></button>
+          <button class="elem-cat-item">Bahasa <span class="elem-count">0</span></button>
+          <button class="elem-cat-item">Item <span class="elem-count">0</span></button>
+          <button class="elem-cat-item">Kelompok <span class="elem-count">0</span></button>
+          <button class="elem-cat-item">Dewa <span class="elem-count">0</span></button>
+          <button class="elem-cat-item">Gelar <span class="elem-count">0</span></button>
+          <button class="elem-cat-item">Races <span class="elem-count">1</span></button>
+          <button class="elem-cat-item">Power Sistem <span class="elem-count">0</span></button>
+          <button class="elem-cat-item">Element Custom1 <span class="elem-count">0</span></button>
+          <button class="elem-cat-item">Element Custom2 <span class="elem-count">0</span></button>
+        </aside>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1rem;">
+          <div class="search-panel">
+            <div class="search-wrap">
+              <iconify-icon icon="lucide:search"></iconify-icon>
+              <input type="text" class="search-field" placeholder="Search">
             </div>
-            <div class="elem-list-item">
-              <div class="elem-icon"><iconify-icon icon="lucide:map-pin" style="color:#7dd3fc;"></iconify-icon></div>
-              <div><div class="elem-item-name">Pulau Nadir</div><div class="elem-item-type">Lokasi</div></div>
-            </div>
-            <div class="elem-list-item">
-              <div class="elem-icon"><iconify-icon icon="lucide:building-2" style="color:#6ee7b7;"></iconify-icon></div>
-              <div><div class="elem-item-name">Akademi Kristal</div><div class="elem-item-type">Organisasi</div></div>
-            </div>
-            <div class="elem-list-item">
-              <div class="elem-icon"><iconify-icon icon="lucide:wand-2" style="color:#fcd34d;"></iconify-icon></div>
-              <div><div class="elem-item-name">Seni Resonansi</div><div class="elem-item-type">Sistem Sihir</div></div>
-            </div>
-            <div class="elem-list-item">
-              <div class="elem-icon"><iconify-icon icon="lucide:map-pin" style="color:#7dd3fc;"></iconify-icon></div>
-              <div><div class="elem-item-name">Menara Penjaga</div><div class="elem-item-type">Lokasi</div></div>
-            </div>
-            <div class="elem-list-item">
-              <div class="elem-icon"><iconify-icon icon="lucide:landmark" style="color:#fca5a5;"></iconify-icon></div>
-              <div><div class="elem-item-name">Festival Resonansi</div><div class="elem-item-type">Budaya</div></div>
+            <div style="font-size:0.78rem;color:var(--text-muted);">Tag: <span class="badge">tag1</span> <span class="badge">tag1</span> <span class="badge">tag1</span></div>
+            <div style="margin-left:auto;display:flex;gap:0.35rem;">
+              <button class="win-btn" title="Tampilan Grid"><iconify-icon icon="lucide:layout-grid"></iconify-icon></button>
+              <button class="win-btn" title="Tampilan List"><iconify-icon icon="lucide:list"></iconify-icon></button>
             </div>
           </div>
-        </div>
-        <!-- Detail Panel -->
-        <div class="elem-detail-panel">
-          <div class="elem-detail-header">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;">
-              <div>
-                <div class="elem-detail-name">Kristal Aetherial</div>
-                <div class="elem-detail-type"><span class="badge badge-purple">Benda Ajaib</span></div>
-              </div>
-              <div style="display:flex;gap:0.5rem;">
-                <button class="btn-action"><iconify-icon icon="lucide:edit-2"></iconify-icon> Edit</button>
-                <button class="btn-action" style="color:var(--danger);border-color:rgba(239,68,68,0.3);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button>
+          <div class="elem-group">
+            <button class="elem-group-head">Races <span style="margin-left:auto;">v</span></button>
+            <div class="elem-cards">
+              <div class="elem-card">
+                <div class="elem-card-top"><span class="elem-thumb"><iconify-icon icon="lucide:image" width="18"></iconify-icon></span><span style="font-size:0.75rem;color:var(--text-faint);">Races</span></div>
+                <div class="elem-card-name">Name</div>
+                <div class="elem-card-desc">Deskripsi<br>tag1 tag1</div>
+                <div class="elem-card-foot"><span></span><span style="display:flex;gap:0.3rem;"><iconify-icon icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></span></div>
               </div>
             </div>
           </div>
-          <div class="elem-attrs">
-            <div class="elem-attr"><div class="elem-attr-label">Asal</div><div class="elem-attr-val">Perpecahan Besar</div></div>
-            <div class="elem-attr"><div class="elem-attr-label">Kelangkaan</div><div class="elem-attr-val">Sangat Langka</div></div>
-            <div class="elem-attr"><div class="elem-attr-label">Resonansi</div><div class="elem-attr-val">Aetherial Tinggi</div></div>
-            <div class="elem-attr"><div class="elem-attr-label">Status</div><div class="elem-attr-val"><span class="badge badge-green">Aktif</span></div></div>
-          </div>
-          <div class="elem-detail-section">
-            <h3>Deskripsi</h3>
-            <p>Kristal aetherial adalah batu kristal langka yang terbentuk dari sisa-sisa energi Perpecahan Besar. Kristal ini memancarkan resonansi yang menjaga kepulauan terapung tetap berada di langit dan menopang kehidupan di atasnya.</p>
-          </div>
-          <div class="elem-detail-section">
-            <h3>Kegunaan</h3>
-            <p>Digunakan sebagai sumber energi, jalur komunikasi antar pulau, dan bahan dasar sistem sihir resonansi. Kristal dengan resonansi tinggi dapat membuka portal perjalanan antar kepulauan.</p>
-          </div>
-          <div class="elem-detail-section">
-            <h3>Karakter Terkait</h3>
-            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-              <span class="badge badge-purple">Kael Dawnward</span>
-              <span class="badge badge-blue">Lyra Stormweave</span>
-              <span class="badge badge-red">Valdris Aetheron</span>
+          <div class="elem-group">
+            <button class="elem-group-head">Lokasi <span style="margin-left:auto;">v</span></button>
+            <div class="elem-cards">
+              <div class="elem-card">
+                <div class="elem-card-top"><span class="elem-thumb"><iconify-icon icon="lucide:image" width="18"></iconify-icon></span><span style="font-size:0.75rem;color:var(--text-faint);">Lokasi</span></div>
+                <div class="elem-card-name">Name</div>
+                <div class="elem-card-desc">Deskripsi<br>tag1 tag1</div>
+                <div class="elem-card-foot"><span></span><span style="display:flex;gap:0.3rem;"><iconify-icon icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></span></div>
+              </div>
             </div>
           </div>
         </div>
@@ -189,12 +136,7 @@
       const c = sidebar.classList.toggle('collapsed');
       document.querySelector('#btn-toggle-sidebar iconify-icon').setAttribute('icon', c ? 'lucide:panel-left-open' : 'lucide:panel-left-close');
     });
-    document.querySelectorAll('.type-tab').forEach(tab => {
-      tab.addEventListener('click', () => { document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); });
-    });
-    document.querySelectorAll('.elem-list-item').forEach(item => {
-      item.addEventListener('click', () => { document.querySelectorAll('.elem-list-item').forEach(i => i.classList.remove('active')); item.classList.add('active'); });
-    });
+    document.querySelectorAll('.elem-cat-item').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.elem-cat-item').forEach(x => x.classList.remove('active')); b.classList.add('active'); }));
   </script>
 </body>
 </html>

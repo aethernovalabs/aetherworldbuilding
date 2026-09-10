@@ -130,7 +130,7 @@
 
     .proj-search-toolbar {
       padding: 0.85rem 1.5rem; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 1rem;
+      display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
     }
     .search-input-wrap { flex: 1; position: relative; display: flex; align-items: center; }
     .search-input-wrap iconify-icon { position: absolute; left: 0.85rem; color: var(--text-faint); }
@@ -149,11 +149,11 @@
 
     .proj-row-item {
       padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      cursor: pointer; transition: background 0.15s;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      cursor: pointer; transition: background 0.15s; min-width: 0;
     }
     .proj-row-item:hover { background: var(--bg-card-hover); }
-    .proj-row-meta { display: flex; align-items: center; gap: 1.25rem; margin-top: 0.25rem; font-size: 0.8rem; color: var(--text-muted); }
+    .proj-row-meta { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; margin-top: 0.25rem; font-size: 0.8rem; color: var(--text-muted); }
 
     .empty-proj-state {
       flex: 1; display: flex; align-items: center; justify-content: center;
@@ -168,14 +168,15 @@
     .modal-overlay.open { display: flex; }
     .modal-frame {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
-      width: 100%; max-width: 520px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+      width: 100%; max-width: min(560px, calc(100vw - 3rem)); max-height: calc(100vh - 3rem); max-height: calc(100dvh - 3rem);
+      display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.6);
     }
     .modal-header {
       padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between; background: #0d121f;
     }
     .modal-header h3 { font-size: 1rem; font-weight: 700; }
-    .modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+    .modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; min-height: 0; }
     .form-label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.35rem; display: block; }
     .form-input {
       width: 100%; background: var(--bg-dark); border: 1px solid var(--border);
@@ -229,7 +230,7 @@
         <div class="hero-box" id="btn-open-create-popup">
           <div class="hero-box-glow"></div>
           <div class="hero-box-top">
-            <div class="hero-box-icon"><iconify-icon icon="lucide:plus-circle" width="28"></iconify-icon></div>
+            <div class="hero-box-icon"><iconify-icon icon="lucide:circle-plus" width="28"></iconify-icon></div>
             <div>
               <div class="hero-box-title">Buat Projeck Baru</div>
               <p class="hero-box-desc">Mulai petualangan world building baru dari awal. Tentukan nama dunia, aturan, dan mulai berkreasi.</p>
@@ -355,7 +356,7 @@
       <div class="modal-footer">
         <button class="btn-cancel" id="btn-cancel-create-modal">Batal</button>
         <button class="btn-confirm" id="btn-submit-create-modal">
-          <iconify-icon icon="lucide:plus-circle"></iconify-icon> Buat Projeck
+          <iconify-icon icon="lucide:circle-plus"></iconify-icon> Buat Projeck
         </button>
       </div>
     </div>
