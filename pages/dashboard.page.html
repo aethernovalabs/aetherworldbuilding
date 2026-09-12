@@ -11,18 +11,244 @@
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
   <style>
-    .world-info-card {
+    /* ===== Sidebar header (brand + world picker) ===== */
+    .sidebar-brand-row {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 0.75rem 0.4rem; flex-shrink: 0;
+    }
+    .sidebar-brand {
+      font-family: var(--font-heading); font-weight: 800; font-size: 0.95rem;
+      letter-spacing: 0.04em; color: var(--text-main); white-space: nowrap;
+      display: flex; align-items: center; gap: 0.45rem; min-width: 0;
+    }
+    .sidebar-brand-mark {
+      width: 26px; height: 26px; border-radius: var(--radius-sm); flex-shrink: 0;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+    }
+    .wb-chip {
+      font-family: var(--font-body); font-size: 0.6rem; font-weight: 800;
+      padding: 0.1rem 0.4rem; border-radius: 4px; letter-spacing: 0.06em;
+      background: var(--bg-surface); border: 1px solid var(--border-hover); color: #c4b5fd;
+    }
+    .main-sidebar.collapsed .sidebar-brand-wrap { display: none; }
+    .main-sidebar.collapsed .sidebar-brand-row { justify-content: center; }
+
+    .world-picker { position: relative; padding: 0 0.75rem 0.55rem; flex-shrink: 0; }
+    .main-sidebar.collapsed .world-picker { display: none; }
+    .world-picker-btn {
+      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+      padding: 0.5rem 0.75rem; border-radius: var(--radius-sm);
+      background: var(--bg-surface); border: 1px solid var(--border);
+      color: var(--text-main); font-size: 0.85rem; font-weight: 600; cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .world-picker-btn:hover { border-color: var(--primary); }
+    .world-picker-btn .picker-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .world-picker-menu {
+      position: absolute; left: 0.75rem; right: 0.75rem; top: calc(100% - 0.15rem); z-index: 60;
+      background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: var(--radius-md);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.6); padding: 0.35rem; display: none;
+      max-height: 260px; overflow-y: auto;
+    }
+    .world-picker-menu.open { display: block; }
+    .world-picker-item {
+      display: flex; align-items: center; gap: 0.5rem; width: 100%;
+      padding: 0.5rem 0.6rem; border-radius: var(--radius-sm); border: none; background: transparent;
+      color: var(--text-muted); font-size: 0.84rem; font-weight: 500; cursor: pointer; text-align: left;
+    }
+    .world-picker-item:hover { background: var(--bg-surface); color: var(--text-main); }
+    .world-picker-item.active { color: #c4b5fd; background: rgba(139,92,246,0.12); font-weight: 600; }
+    .world-picker-item.add { color: var(--accent); border-top: 1px solid var(--border); border-radius: 0; margin-top: 0.2rem; padding-top: 0.55rem; }
+    .world-picker-empty { padding: 0.6rem; font-size: 0.78rem; color: var(--text-faint); text-align: center; }
+
+    /* Nav indikator aktif */
+    .side-nav-item.active .side-indicator {
+      position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 60%; border-radius: 3px; background: var(--primary);
+    }
+
+    /* ===== Dashboard layout ===== */
+    .dash-shell {
+      display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 350px);
+      gap: 1rem; align-items: start; width: 100%; min-width: 0;
+    }
+    .dash-main { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+    .dash-rail { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+    @media (max-width: 1180px) {
+      .dash-shell { grid-template-columns: 1fr; }
+    }
+
+    /* ===== World header card ===== */
+    .world-head {
       background: linear-gradient(135deg, #1a1f3a 0%, #111726 100%);
       border: 1px solid var(--border-hover); border-radius: var(--radius-lg);
-      padding: 1.25rem 1.4rem; position: relative; overflow: hidden;
+      padding: 1.35rem 1.5rem; position: relative; overflow: hidden;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
     }
-    .world-info-card::before {
+    .world-head::before {
       content: ''; position: absolute; top: -40px; right: -40px;
-      width: 140px; height: 140px; border-radius: 50%;
-      background: var(--primary-glow); filter: blur(40px); pointer-events: none;
+      width: 150px; height: 150px; border-radius: 50%;
+      background: var(--primary-glow); filter: blur(45px); pointer-events: none;
     }
-    .world-name { font-family: var(--font-heading); font-size: 1.55rem; font-weight: 800; }
-    .world-desc { font-size: 0.88rem; color: var(--text-muted); margin-top: 0.35rem; max-width: 560px; line-height: 1.5; }
+    .world-head-left { min-width: 0; position: relative; }
+    .world-name-row { display: flex; align-items: center; gap: 0.5rem; }
+    .world-name {
+      font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; letter-spacing: 0.02em;
+      min-width: 0; overflow-wrap: anywhere;
+    }
+    .btn-edit-name {
+      background: transparent; border: none; color: var(--text-faint); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; padding: 0.25rem;
+      border-radius: var(--radius-sm); transition: all 0.15s; flex-shrink: 0;
+    }
+    .btn-edit-name:hover { color: #c4b5fd; background: rgba(139,92,246,0.12); }
+    .world-desc { font-size: 0.88rem; color: var(--text-muted); margin-top: 0.4rem; max-width: 560px; line-height: 1.5; }
+
+    /* ===== Stat tiles (label atas, nilai bawah) ===== */
+    .stat-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.75rem; width: 100%;
+    }
+    .stat-tile {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+      padding: 0.9rem 0.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
+      text-align: center; transition: border-color 0.15s, transform 0.15s; cursor: pointer;
+    }
+    .stat-tile:hover { border-color: rgba(139,92,246,0.45); transform: translateY(-2px); }
+    .stat-tile .stat-lbl {
+      font-size: 0.7rem; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.3rem;
+    }
+    .stat-tile .stat-lbl iconify-icon { font-size: 0.8rem; color: var(--accent); }
+    .stat-tile .stat-val { font-size: 1.75rem; font-weight: 800; color: #c4b5fd; line-height: 1.1; }
+
+    /* ===== Rail panels ===== */
+    .rail-panel {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column;
+    }
+    .rail-panel-title {
+      padding: 0.8rem 1.1rem; font-size: 0.8rem; font-weight: 700; color: var(--text-faint);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+      border-bottom: 1px solid var(--border); background: #0d121f;
+    }
+    .rail-panel-title .title-txt { display: flex; align-items: center; gap: 0.45rem; }
+    .rail-panel-title .title-txt iconify-icon { color: var(--primary); }
+
+    /* -- Penyimpanan -- */
+    .store-body { padding: 0.85rem 1.1rem 1rem; display: flex; flex-direction: column; gap: 0.7rem; }
+    .store-status-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+      font-size: 0.82rem;
+    }
+    .store-status-row .st-label { color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 0.4rem; }
+    .store-status-row .st-label iconify-icon { color: var(--text-faint); }
+    .store-pill {
+      font-size: 0.74rem; font-weight: 700; padding: 0.2rem 0.6rem;
+      border-radius: 9999px; border: 1px solid var(--border);
+      display: inline-flex; align-items: center; gap: 0.3rem; cursor: pointer; user-select: none;
+      background: var(--bg-surface); color: var(--text-muted); transition: all 0.15s;
+    }
+    .store-pill.on { color: #10b981; border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.12); }
+    .store-pill.off { color: var(--text-muted); }
+    .store-divider { height: 1px; background: var(--border); margin: 0.15rem 0; }
+    .store-actions { display: flex; flex-direction: column; gap: 0.5rem; }
+    .store-btn {
+      display: flex; align-items: center; gap: 0.45rem; width: 100%;
+      padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600;
+      background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-main); cursor: pointer;
+      transition: all 0.15s; text-align: left;
+    }
+    .store-btn:hover { border-color: var(--primary); color: #c4b5fd; background: rgba(139,92,246,0.08); }
+    .store-btn iconify-icon { color: var(--text-faint); }
+    .store-meta { font-size: 0.78rem; color: var(--text-muted); display: flex; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
+    .store-meta b { color: var(--text-main); font-weight: 600; }
+    .backup-tags { display: flex; gap: 0.4rem; font-size: 0.72rem; }
+    .backup-tag { font-family: var(--font-mono); padding: 0.1rem 0.4rem; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-dark); color: var(--text-faint); }
+    .backup-tag.cloud { color: #4ade80; border-color: rgba(74,222,128,0.35); }
+
+    /* -- Perubahan Terakhir -- */
+    .change-row {
+      display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.7rem 1.1rem;
+      border-bottom: 1px solid var(--border); transition: background 0.15s; cursor: pointer;
+    }
+    .change-row:last-child { border-bottom: none; }
+    .change-row:hover { background: var(--bg-card-hover); }
+    .change-ico {
+      width: 34px; height: 34px; border-radius: var(--radius-sm); flex-shrink: 0;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; color: var(--accent);
+    }
+    .change-body { flex: 1; min-width: 0; }
+    .change-top { display: flex; align-items: center; gap: 0.5rem; }
+    .change-name { font-size: 0.86rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .change-desc { font-size: 0.76rem; color: var(--text-muted); margin-top: 0.15rem; }
+    .type-badge {
+      font-size: 0.66rem; font-weight: 700; margin-left: auto; flex-shrink: 0;
+      padding: 0.12rem 0.5rem; border-radius: 9999px;
+      background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.35);
+    }
+    .type-badge.blue { background: rgba(56,189,248,0.15); color: #7dd3fc; border-color: rgba(56,189,248,0.35); }
+    .type-badge.green { background: rgba(16,185,129,0.15); color: #6ee7b7; border-color: rgba(16,185,129,0.35); }
+    .type-badge.yellow { background: rgba(245,158,11,0.15); color: #fcd34d; border-color: rgba(245,158,11,0.35); }
+    .type-badge.red { background: rgba(239,68,68,0.15); color: #fca5a5; border-color: rgba(239,68,68,0.35); }
+    .empty-inner {
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      padding: 1.6rem 1rem; color: var(--text-faint); font-size: 0.85rem; text-align: center;
+    }
+    .empty-inner iconify-icon { opacity: 0.3; font-size: 1.6rem; }
+
+    /* -- Dokument -- */
+    .doc-tabs { display: flex; border-bottom: 1px solid var(--border); padding: 0 0.75rem; gap: 0.15rem; }
+    .doc-tab {
+      border: none; background: transparent; color: var(--text-muted); font-size: 0.78rem; font-weight: 600;
+      padding: 0.55rem 0.7rem; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap;
+    }
+    .doc-tab:hover { color: var(--text-main); }
+    .doc-tab.active { color: #c4b5fd; border-bottom-color: var(--primary); }
+    .doc-item {
+      display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 1.1rem;
+      border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s;
+    }
+    .doc-item:last-child { border-bottom: none; }
+    .doc-item:hover { background: var(--bg-card-hover); }
+    .doc-mark {
+      width: 30px; height: 30px; border-radius: var(--radius-sm); flex-shrink: 0;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; color: var(--text-faint);
+    }
+    .doc-item-name { font-size: 0.84rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .doc-item-meta { font-size: 0.72rem; color: var(--text-faint); margin-left: auto; flex-shrink: 0; font-family: var(--font-mono); }
+
+    /* ===== Peta Mini ===== */
+    .panel-card { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.2rem 1.25rem; background: var(--bg-card); }
+    .panel-card-title { font-size: 0.8rem; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+    .panel-card-title iconify-icon { color: var(--primary); }
+
+    /* ===== Wiki ===== */
+    .wiki-tabs {
+      display: flex; gap: 0.15rem; overflow-x: auto; border-bottom: 1px solid var(--border);
+      margin: 0 -1.25rem 0.85rem; padding: 0 1.25rem;
+    }
+    .wiki-tab {
+      border: none; background: transparent; color: var(--text-muted); font-size: 0.78rem; font-weight: 600;
+      padding: 0.5rem 0.6rem; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent;
+    }
+    .wiki-tab:hover { color: var(--text-main); }
+    .wiki-tab.active { color: #c4b5fd; border-bottom-color: var(--primary); }
+    .wiki-item { display: flex; gap: 0.75rem; padding: 0.7rem 0; border-bottom: 1px solid var(--border); cursor: pointer; align-items: flex-start; }
+    .wiki-item:last-child { border-bottom: none; }
+    .wiki-thumb {
+      width: 42px; height: 42px; border-radius: var(--radius-sm); flex-shrink: 0;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; color: var(--text-faint);
+    }
+    .wiki-item-body { flex: 1; min-width: 0; }
+    .wiki-item-top { display: flex; align-items: center; gap: 0.5rem; }
+    .wiki-item-name { font-size: 0.88rem; font-weight: 700; }
+    .wiki-item-desc { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.1rem; }
   </style>
 </head>
 <body>
@@ -48,176 +274,300 @@
 
   <div class="workspace-layout">
     <aside class="main-sidebar" id="main-sidebar">
-      <div class="sidebar-top-bar">
-        <div class="world-dropdown-box">
-          <span>Aether Nova World</span>
-          <iconify-icon icon="lucide:chevron-down"></iconify-icon>
+
+      <div class="sidebar-brand-row">
+        <div class="sidebar-brand-wrap sidebar-brand">
+          <span class="sidebar-brand-mark"><iconify-icon icon="lucide:globe" width="14"></iconify-icon></span>
+          Aether Nova <span class="wb-chip">WB</span>
         </div>
+      </div>
+
+      <div class="world-picker" id="world-picker">
+        <button class="world-picker-btn" id="btn-world-picker">
+          <span class="picker-name" id="picker-world-name">Pilih Dunia</span>
+          <iconify-icon icon="lucide:chevron-down" style="flex-shrink:0;"></iconify-icon>
+        </button>
+        <div class="world-picker-menu" id="world-picker-menu"></div>
+      </div>
+
+      <div class="sidebar-top-bar">
         <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" title="Perkecil/Perbesar Sidebar">
           <iconify-icon icon="lucide:panel-left-close" width="18"></iconify-icon>
         </button>
       </div>
+
       <nav class="sidebar-nav-list">
-        <a class="side-nav-item active" href="dashboard.page.html" data-label="Dashboard"><span class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span><span class="side-item-text">Dashboard</span></a>
+        <a class="side-nav-item active" href="dashboard.page.html" data-label="Dashboard"><span class="side-indicator"></span><span class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span><span class="side-item-text">Dashboard</span></a>
         <a class="side-nav-item" href="dokumen.page.html" data-label="Dokumen"><span class="side-nav-icon"><iconify-icon icon="lucide:book-open"></iconify-icon></span><span class="side-item-text">Dokumen</span></a>
         <a class="side-nav-item" href="karakter.page.html" data-label="Karakter"><span class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span><span class="side-item-text">Karakter</span></a>
         <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia"><span class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span class="side-item-text">Element Dunia</span></a>
         <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span class="side-item-text">Linimasa</span></a>
-        <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan"><span class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span class="side-item-text">Hubungan</span></a>
-        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span><span class="side-item-text">Jaringan</span></a>
-        <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah"><span class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span class="side-item-text">Peta &amp; Denah</span></a>
+        <a class="side-nav-item" href="jaringan.page.html" data-label="Graph"><span class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span><span class="side-item-text">Graph</span></a>
+        <a class="side-nav-item" href="peta-denah.page.html" data-label="Visual Peta"><span class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span class="side-item-text">Visual Peta</span></a>
       </nav>
+
       <div class="sidebar-bottom-list">
         <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
         <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
-        <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
+        <a class="side-nav-item" href="#" data-label="Setting"><span class="side-nav-icon"><iconify-icon icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Setting</span></a>
       </div>
     </aside>
 
     <div class="workspace-content">
-      <div class="page-header">
-        <div>
-          <h1>Dashboard</h1>
-          <p>Ringkasan dunia</p>
-        </div>
-      </div>
-
       <div class="page-body">
-        <div class="dash-grid">
 
-          <div class="world-info-card dash-world">
-            <div>
-              <div class="world-name">Aether Nova</div>
-              <p class="world-desc">Semesta pecahan kepulauan terapung yang saling terhubung oleh resonansi kristal aetherial. Di sinilah kisah dimulai.</p>
+        <div class="dash-shell">
+
+          <!-- ===== Kolom kiri ===== -->
+          <div class="dash-main">
+
+            <div class="world-head">
+              <div class="world-head-left">
+                <div class="world-name-row">
+                  <h1 class="world-name" id="world-title">Aether Nova</h1>
+                  <button class="btn-edit-name" id="btn-open-edit" title="Edit Dunia"><iconify-icon icon="lucide:pen-line" width="16"></iconify-icon></button>
+                </div>
+                <p class="world-desc" id="world-desc">Semesta pecahan kepulauan terapung yang saling terhubung oleh resonansi kristal aetherial. Di sinilah kisah dimulai.</p>
+              </div>
+              <div class="page-actions">
+                <button class="btn-action primary" id="btn-open-create"><iconify-icon icon="lucide:circle-plus"></iconify-icon> Buat Dunia</button>
+                <button class="btn-action" id="btn-open-edit2"><iconify-icon icon="lucide:pen-line"></iconify-icon> Edit Dunia</button>
+              </div>
             </div>
-            <div class="page-actions">
-              <button class="btn-action primary" onclick="location.href='karakter.page.html'"><iconify-icon icon="lucide:user-plus"></iconify-icon> + Buat karakter</button>
-              <button class="btn-action"><iconify-icon icon="lucide:pen-line"></iconify-icon> Edit Dunia</button>
+
+            <div class="stat-row">
+              <a class="stat-tile" href="karakter.page.html" title="Karakter">
+                <div class="stat-lbl"><iconify-icon icon="lucide:users"></iconify-icon> Karakter</div>
+                <div class="stat-val">3</div>
+              </a>
+              <a class="stat-tile" href="element-dunia.page.html" title="Lokasi">
+                <div class="stat-lbl"><iconify-icon icon="lucide:map-pin"></iconify-icon> Lokasi</div>
+                <div class="stat-val">3</div>
+              </a>
+              <a class="stat-tile" href="element-dunia.page.html" title="Makhluk">
+                <div class="stat-lbl"><iconify-icon icon="lucide:bug"></iconify-icon> Makhluk</div>
+                <div class="stat-val">1</div>
+              </a>
+              <a class="stat-tile" href="element-dunia.page.html" title="Total Element">
+                <div class="stat-lbl"><iconify-icon icon="lucide:layers"></iconify-icon> Total Element</div>
+                <div class="stat-val">3</div>
+              </a>
+              <a class="stat-tile" href="dokumen.page.html" title="Total Bab">
+                <div class="stat-lbl"><iconify-icon icon="lucide:book-open-text"></iconify-icon> Total Bab</div>
+                <div class="stat-val">32</div>
+              </a>
             </div>
+
+            <div class="panel-card">
+              <div class="panel-card-title"><iconify-icon icon="lucide:map"></iconify-icon> Peta Mini Dunia</div>
+              <div class="mini-map">
+                <div class="mini-map-zoom">
+                  <button type="button" aria-label="Perbesar">+</button>
+                  <button type="button" aria-label="Perkecil">−</button>
+                </div>
+                <div class="map-region" style="top:22%;left:58%;"><span class="dot"></span> Wilayah 1</div>
+                <div class="map-region" style="top:68%;left:62%;"><span class="dot"></span> Wilayah 2</div>
+                <div class="map-region" style="top:48%;left:28%;"><span class="dot"></span> Wilayah 3</div>
+              </div>
+            </div>
+
+            <div class="panel-card dash-wiki">
+              <div class="panel-card-title"><iconify-icon icon="lucide:book-open"></iconify-icon> Wiki</div>
+              <div class="wiki-tabs" role="tablist">
+                <button class="wiki-tab active" type="button">Semua</button>
+                <button class="wiki-tab" type="button">Karakter</button>
+                <button class="wiki-tab" type="button">Lokasi</button>
+                <button class="wiki-tab" type="button">Makhluk</button>
+                <button class="wiki-tab" type="button">Item</button>
+                <button class="wiki-tab" type="button">Magic</button>
+                <button class="wiki-tab" type="button">Spesies</button>
+                <button class="wiki-tab" type="button">Gelar</button>
+                <button class="wiki-tab" type="button">Pekerjaan</button>
+                <button class="wiki-tab" type="button">Agama</button>
+                <button class="wiki-tab" type="button">Custom</button>
+              </div>
+              <div class="wiki-item" onclick="location.href='karakter.page.html'">
+                <div class="wiki-thumb"><iconify-icon icon="lucide:user"></iconify-icon></div>
+                <div class="wiki-item-body">
+                  <div class="wiki-item-top">
+                    <div class="wiki-item-name">Kael Dawnward</div>
+                    <span class="type-badge">Karakter</span>
+                  </div>
+                  <div class="wiki-item-desc">Protagonis dengan resonansi kristal langka.</div>
+                </div>
+              </div>
+              <div class="wiki-item" onclick="location.href='element-dunia.page.html'">
+                <div class="wiki-thumb"><iconify-icon icon="lucide:gem"></iconify-icon></div>
+                <div class="wiki-item-body">
+                  <div class="wiki-item-top">
+                    <div class="wiki-item-name">Kristal Aetherial</div>
+                    <span class="type-badge blue">Element</span>
+                  </div>
+                  <div class="wiki-item-desc">Sumber energi yang menopang kepulauan terapung.</div>
+                </div>
+              </div>
+              <div class="wiki-item" onclick="location.href='element-dunia.page.html'">
+                <div class="wiki-thumb"><iconify-icon icon="lucide:map-pin"></iconify-icon></div>
+                <div class="wiki-item-body">
+                  <div class="wiki-item-top">
+                    <div class="wiki-item-name">Pulau Nadir</div>
+                    <span class="type-badge green">Lokasi</span>
+                  </div>
+                  <div class="wiki-item-desc">Pulau tambang kristal di tepi rantai kepulauan.</div>
+                </div>
+              </div>
+              <div class="wiki-item" onclick="location.href='element-dunia.page.html'">
+                <div class="wiki-thumb"><iconify-icon icon="lucide:landmark"></iconify-icon></div>
+                <div class="wiki-item-body">
+                  <div class="wiki-item-top">
+                    <div class="wiki-item-name">Akademi Kristal</div>
+                    <span class="type-badge yellow">Faksi</span>
+                  </div>
+                  <div class="wiki-item-desc">Faksi cendekiawan pengawal ilmu resonansi.</div>
+                </div>
+              </div>
+              <div class="wiki-item" onclick="location.href='element-dunia.page.html'">
+                <div class="wiki-thumb"><iconify-icon icon="lucide:sparkles"></iconify-icon></div>
+                <div class="wiki-item-body">
+                  <div class="wiki-item-top">
+                    <div class="wiki-item-name">Sistem Resonansi</div>
+                    <span class="type-badge red">Custom</span>
+                  </div>
+                  <div class="wiki-item-desc">Mekanisme kristal aetherial dalam menyalurkan energi.</div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <div class="panel-card dash-map">
-            <div class="panel-card-title"><iconify-icon icon="lucide:map"></iconify-icon> Peta Mini Dunia</div>
-            <div class="mini-map">
-              <div class="mini-map-zoom">
-                <button type="button" aria-label="Perbesar">+</button>
-                <button type="button" aria-label="Perkecil">−</button>
-              </div>
-              <div class="map-region" style="top:22%;left:58%;"><span class="dot"></span> wilayah 1</div>
-              <div class="map-region" style="top:68%;left:62%;"><span class="dot"></span> wilayah 2</div>
-              <div class="map-region" style="top:48%;left:28%;"><span class="dot"></span> wilayah 3</div>
-            </div>
-          </div>
+          <!-- ===== Kolom kanan (rail) ===== -->
+          <div class="dash-rail">
 
-          <div class="panel-card dash-activity">
-            <div class="panel-card-title"><iconify-icon icon="lucide:activity"></iconify-icon> Perubahan Terakhir</div>
-            <div class="change-row">
-              <div class="change-name">Kael Dawnward</div>
-              <div class="change-type">Karakter</div>
-              <div class="change-desc">Pemuda dari kepulauan terapung ditambahkan ke database.</div>
-            </div>
-            <div class="change-row">
-              <div class="change-name">Perpecahan Besar</div>
-              <div class="change-type">Timeline</div>
-              <div class="change-desc">Peristiwa kosmik yang memecah daratan menjadi kepulauan.</div>
-            </div>
-            <div class="change-row">
-              <div class="change-name">Akademi Kristal</div>
-              <div class="change-type">Faksi</div>
-              <div class="change-desc">Pusat penelitian resonansi aetherial diperbarui.</div>
-            </div>
-            <div class="change-row">
-              <div class="change-name">Pulau Nadir</div>
-              <div class="change-type">Lokasi</div>
-              <div class="change-desc">Pulau asal Kael, terkenal dengan tambang kristal.</div>
-            </div>
-            <div class="change-row">
-              <div class="change-name">Sistem Resonansi</div>
-              <div class="change-type">Element Custom</div>
-              <div class="change-desc">Mekanisme kristal aetherial dalam menyalurkan energi.</div>
-            </div>
-          </div>
+            <div class="rail-panel">
+              <div class="rail-panel-title">
+                <span class="title-txt"><iconify-icon icon="lucide:database"></iconify-icon> Penyimpanan</span>
+              </div>
+              <div class="store-body">
+                <div class="store-status-row">
+                  <span class="st-label"><iconify-icon icon="lucide:database"></iconify-icon> IndexedDB</span>
+                  <span class="store-pill on"><iconify-icon icon="lucide:check" width="12"></iconify-icon> Active</span>
+                </div>
+                <div class="store-status-row">
+                  <span class="st-label"><iconify-icon icon="lucide:save"></iconify-icon> Auto Save</span>
+                  <span class="store-pill off no-icon" data-toggle data-on="Aktif" data-off="Tidak Aktif">Tidak Aktif</span>
+                </div>
+                <div class="store-status-row">
+                  <span class="st-label"><iconify-icon icon="lucide:cloud"></iconify-icon> Cloud Backup</span>
+                  <span class="store-pill on" data-toggle data-on="Aktif" data-off="Tidak Aktif"><iconify-icon icon="lucide:check" width="12"></iconify-icon>&nbsp;Aktif</span>
+                </div>
 
-          <div class="dash-stats stats-row">
-            <div class="stat-tile"><div class="stat-lbl">Karakter</div><div class="stat-val">3</div></div>
-            <div class="stat-tile"><div class="stat-lbl">Lokasi</div><div class="stat-val">3</div></div>
-            <div class="stat-tile"><div class="stat-lbl">Magic &amp; Spell</div><div class="stat-val">3</div></div>
-            <div class="stat-tile"><div class="stat-lbl">Item &amp; Artefak</div><div class="stat-val">3</div></div>
-            <div class="stat-tile"><div class="stat-lbl">Dokumen</div><div class="stat-val">3</div></div>
-            <div class="stat-tile"><div class="stat-lbl">Hubungan</div><div class="stat-val">3</div></div>
-          </div>
+                <div class="store-divider"></div>
 
-          <div class="panel-card dash-wiki">
-            <div class="panel-card-title"><iconify-icon icon="lucide:book-open"></iconify-icon> Wiki</div>
-            <div class="wiki-tabs" role="tablist">
-              <button class="wiki-tab active" type="button">Semua</button>
-              <button class="wiki-tab" type="button">Karakter</button>
-              <button class="wiki-tab" type="button">Item &amp; Artefak</button>
-              <button class="wiki-tab" type="button">Lokasi</button>
-              <button class="wiki-tab" type="button">Faksi</button>
-              <button class="wiki-tab" type="button">Magic &amp; Spell</button>
-              <button class="wiki-tab" type="button">Races</button>
-              <button class="wiki-tab" type="button">Title</button>
-            </div>
-            <div class="search-wrap" style="margin-bottom:0.65rem;">
-              <iconify-icon icon="lucide:search"></iconify-icon>
-              <input type="text" class="search-field" placeholder="Search">
-            </div>
-            <div class="wiki-item" onclick="location.href='karakter.page.html'">
-              <div class="wiki-thumb"><iconify-icon icon="lucide:image"></iconify-icon></div>
-              <div>
-                <div class="wiki-item-name">Kael Dawnward</div>
-                <div class="wiki-item-desc">Protagonis dengan resonansi kristal langka.</div>
-              </div>
-            </div>
-            <div class="wiki-item" onclick="location.href='element-dunia.page.html'">
-              <div class="wiki-thumb"><iconify-icon icon="lucide:image"></iconify-icon></div>
-              <div>
-                <div class="wiki-item-name">Kristal Aetherial</div>
-                <div class="wiki-item-desc">Sumber energi yang menopang kepulauan terapung.</div>
-              </div>
-            </div>
-            <div class="wiki-item" onclick="location.href='element-dunia.page.html'">
-              <div class="wiki-thumb"><iconify-icon icon="lucide:image"></iconify-icon></div>
-              <div>
-                <div class="wiki-item-name">Pulau Nadir</div>
-                <div class="wiki-item-desc">Pulau tambang kristal di tepi rantai kepulauan.</div>
-              </div>
-            </div>
-            <div class="wiki-item" onclick="location.href='element-dunia.page.html'">
-              <div class="wiki-thumb"><iconify-icon icon="lucide:image"></iconify-icon></div>
-              <div>
-                <div class="wiki-item-name">Akademi Kristal</div>
-                <div class="wiki-item-desc">Faksi cendekiawan pengawal ilmu resonansi.</div>
-              </div>
-            </div>
-          </div>
+                <div class="store-actions">
+                  <button class="store-btn" type="button" title="Tarik Data dari Cloud">
+                    <iconify-icon icon="lucide:cloud-download"></iconify-icon> Tarik Data dari Cloud
+                  </button>
+                  <button class="store-btn" type="button" title="Backup to Cloud">
+                    <iconify-icon icon="lucide:cloud-upload"></iconify-icon> Backup to Cloud
+                  </button>
+                  <button class="store-btn" type="button" title="Pilih Folder Penyimpanan">
+                    <iconify-icon icon="lucide:folder-open"></iconify-icon> /Download [...]
+                  </button>
+                  <button class="store-btn" type="button" title="Export to Local">
+                    <iconify-icon icon="lucide:file-down"></iconify-icon> Export to Local
+                  </button>
+                </div>
 
-          <div class="panel-card dash-naskah">
-            <div class="panel-card-title"><iconify-icon icon="lucide:scroll-text"></iconify-icon> Naskah</div>
-            <div class="naskah-total">32 Total Bab</div>
-            <div class="naskah-item" onclick="location.href='dokumen.page.html'">
-              <div class="naskah-mark"></div>
-              <div>
-                <div class="naskah-title">Bab 1: Awal Mula di Pulau Nadir</div>
-                <div class="naskah-meta">900 kata</div>
+                <div class="store-divider"></div>
+
+                <div class="store-meta">
+                  <span>Storage Used</span>
+                  <span><b>23.4</b> MB</span>
+                </div>
+                <div class="store-meta">
+                  <span>Last Backup</span>
+                  <span class="backup-tags">
+                    <span class="backup-tag">2026-09-10 22:15</span>
+                    <span class="backup-tag cloud">v Cloud</span>
+                    <span class="backup-tag">x Local</span>
+                  </span>
+                </div>
               </div>
             </div>
-            <div class="naskah-item" onclick="location.href='dokumen.page.html'">
-              <div class="naskah-mark"></div>
-              <div>
-                <div class="naskah-title">Bab 2: Pertemuan dengan Akademi</div>
-                <div class="naskah-meta">1.240 kata</div>
+
+            <div class="rail-panel">
+              <div class="rail-panel-title">
+                <span class="title-txt"><iconify-icon icon="lucide:activity"></iconify-icon> Perubahan Terakhir</span>
+              </div>
+              <div class="change-row">
+                <div class="change-ico"><iconify-icon icon="lucide:user"></iconify-icon></div>
+                <div class="change-body">
+                  <div class="change-top">
+                    <div class="change-name">Kael Dawnward</div>
+                    <span class="type-badge">Karakter</span>
+                  </div>
+                  <div class="change-desc">Pemuda dari kepulauan terapung ditambahkan ke database.</div>
+                </div>
+              </div>
+              <div class="change-row">
+                <div class="change-ico"><iconify-icon icon="lucide:calendar-range"></iconify-icon></div>
+                <div class="change-body">
+                  <div class="change-top">
+                    <div class="change-name">Perpecahan Besar</div>
+                    <span class="type-badge blue">Timeline</span>
+                  </div>
+                  <div class="change-desc">Peristiwa kosmik yang memecah daratan menjadi kepulauan.</div>
+                </div>
+              </div>
+              <div class="change-row">
+                <div class="change-ico"><iconify-icon icon="lucide:landmark"></iconify-icon></div>
+                <div class="change-body">
+                  <div class="change-top">
+                    <div class="change-name">Akademi Kristal</div>
+                    <span class="type-badge yellow">Faksi</span>
+                  </div>
+                  <div class="change-desc">Pusat penelitian resonansi aetherial diperbarui.</div>
+                </div>
+              </div>
+              <div class="change-row">
+                <div class="change-ico"><iconify-icon icon="lucide:map-pin"></iconify-icon></div>
+                <div class="change-body">
+                  <div class="change-top">
+                    <div class="change-name">Pulau Nadir</div>
+                    <span class="type-badge green">Lokasi</span>
+                  </div>
+                  <div class="change-desc">Pulau asal Kael, terkenal dengan tambang kristal.</div>
+                </div>
               </div>
             </div>
-            <div class="naskah-item" onclick="location.href='dokumen.page.html'">
-              <div class="naskah-mark"></div>
-              <div>
-                <div class="naskah-title">Bab 3: Gelombang Aetherial</div>
-                <div class="naskah-meta">780 kata</div>
+
+            <div class="rail-panel">
+              <div class="rail-panel-title">
+                <span class="title-txt"><iconify-icon icon="lucide:book-open"></iconify-icon> Dokument</span>
               </div>
+              <div class="doc-tabs">
+                <button class="doc-tab active" type="button">Semua</button>
+                <button class="doc-tab" type="button">Dokumen</button>
+                <button class="doc-tab" type="button">Bab</button>
+              </div>
+              <div class="doc-item" onclick="location.href='dokumen.page.html'">
+                <div class="doc-mark"><iconify-icon icon="lucide:scroll-text" width="16"></iconify-icon></div>
+                <div class="doc-item-name">Bab 1: Awal Mula di Pulau Nadir</div>
+                <div class="doc-item-meta">900 kata</div>
+              </div>
+              <div class="doc-item" onclick="location.href='dokumen.page.html'">
+                <div class="doc-mark"><iconify-icon icon="lucide:scroll-text" width="16"></iconify-icon></div>
+                <div class="doc-item-name">Bab 2: Pertemuan dengan Akademi</div>
+                <div class="doc-item-meta">1.240 kata</div>
+              </div>
+              <div class="doc-item" onclick="location.href='dokumen.page.html'">
+                <div class="doc-mark"><iconify-icon icon="lucide:scroll-text" width="16"></iconify-icon></div>
+                <div class="doc-item-name">Bab 3: Gelombang Aetherial</div>
+                <div class="doc-item-meta">780 kata</div>
+              </div>
+              <div onclick="location.href='dokumen.page.html'" style="padding:0.7rem;text-align:center;font-size:0.8rem;font-weight:700;color:var(--accent);cursor:pointer;">Lihat Semua list</div>
             </div>
-            <div class="naskah-more" onclick="location.href='dokumen.page.html'">Lihat Semua list</div>
+
           </div>
 
         </div>
@@ -225,25 +575,198 @@
     </div>
   </div>
 
+  <!-- Modal Buat Dunia -->
+  <div class="modal-overlay" id="modal-buat-dunia">
+    <div class="modal-frame">
+      <div class="modal-header">
+        <h3><iconify-icon icon="lucide:circle-plus"></iconify-icon> Buat Dunia</h3>
+        <button class="win-btn" data-close-modal><iconify-icon icon="lucide:x"></iconify-icon></button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <label class="form-label">Judul Dunia/Novel</label>
+          <input type="text" class="form-input" id="input-judul" placeholder="Contoh: Aether Nova, Realm of Echoes..." maxlength="80">
+        </div>
+        <div>
+          <label class="form-label">Deskripsi</label>
+          <textarea class="form-input" id="input-deskripsi" rows="3" style="resize:vertical;" placeholder="Deskripsi singkat dunia Anda..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" data-close-modal>Batal</button>
+        <button class="btn-confirm" id="btn-submit-buat"><iconify-icon icon="lucide:circle-plus"></iconify-icon> Buat Dunia</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Edit Dunia -->
+  <div class="modal-overlay" id="modal-edit-dunia">
+    <div class="modal-frame">
+      <div class="modal-header">
+        <h3><iconify-icon icon="lucide:pen-line"></iconify-icon> Edit Dunia</h3>
+        <button class="win-btn" data-close-modal><iconify-icon icon="lucide:x"></iconify-icon></button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <label class="form-label">Judul Dunia/Novel</label>
+          <input type="text" class="form-input" id="input-judul-edit" maxlength="80">
+        </div>
+        <div>
+          <label class="form-label">Deskripsi</label>
+          <textarea class="form-input" id="input-deskripsi-edit" rows="3" style="resize:vertical;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" data-close-modal>Batal</button>
+        <button class="btn-confirm" id="btn-submit-edit"><iconify-icon icon="lucide:check"></iconify-icon> Simpan</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // ===== Sidebar collapse =====
     const sidebar = document.getElementById('main-sidebar');
     const btnToggle = document.getElementById('btn-toggle-sidebar');
     btnToggle.addEventListener('click', () => {
       const collapsed = sidebar.classList.toggle('collapsed');
       btnToggle.querySelector('iconify-icon').setAttribute('icon', collapsed ? 'lucide:panel-left-open' : 'lucide:panel-left-close');
     });
-    document.querySelectorAll('.wiki-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.wiki-tab').forEach(t => t.classList.remove('active'));
+
+    // ===== Tab klik (wiki + dokument) =====
+    document.querySelectorAll('.wiki-tabs').forEach(bar => {
+      bar.addEventListener('click', e => {
+        const tab = e.target.closest('.wiki-tab');
+        if (!tab) return;
+        bar.querySelectorAll('.wiki-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
       });
     });
+    document.querySelectorAll('.doc-tabs').forEach(bar => {
+      bar.addEventListener('click', e => {
+        const tab = e.target.closest('.doc-tab');
+        if (!tab) return;
+        bar.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+
+    // ===== Toggle penyimpanan (Auto Save / Cloud Backup) =====
+    document.querySelectorAll('.store-pill[data-toggle]').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const nowOn = !pill.classList.contains('on');
+        pill.classList.toggle('on', nowOn);
+        pill.classList.toggle('off', !nowOn);
+        if (pill.classList.contains('no-icon')) {
+          pill.textContent = nowOn ? pill.dataset.on : pill.dataset.off;
+        } else {
+          pill.querySelectorAll('iconify-icon').forEach(i => i.remove());
+          const icon = nowOn ? 'lucide:check' : 'lucide:cloud-off';
+          pill.innerHTML = '<iconify-icon icon="' + icon + '" width="12"></iconify-icon>&nbsp;' + (nowOn ? pill.dataset.on : pill.dataset.off);
+        }
+      });
+    });
+
+    // ===== Parameter dunia (?world=...) =====
     const params = new URLSearchParams(window.location.search);
-    if (params.get('world')) {
-      const name = params.get('world');
+    const paramWorld = params.get('world');
+    if (paramWorld) {
+      const name = paramWorld;
       document.getElementById('world-name-display').textContent = name;
-      document.querySelector('.world-name').textContent = name;
-      document.querySelector('.world-dropdown-box span').textContent = name;
+      document.getElementById('world-title').textContent = name;
+      document.getElementById('picker-world-name').textContent = name;
+    }
+    const currentWorldName = paramWorld || document.getElementById('world-title').textContent;
+
+    // ===== Modal helpers =====
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(el) { el.closest('.modal-overlay').classList.remove('open'); }
+    document.querySelectorAll('[data-close-modal]').forEach(btn => {
+      btn.addEventListener('click', () => closeModal(btn));
+    });
+    document.querySelectorAll('.modal-overlay').forEach(ov => {
+      ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
+    });
+
+    document.getElementById('btn-open-create').addEventListener('click', () => openModal('modal-buat-dunia'));
+    for (const id of ['btn-open-edit', 'btn-open-edit2']) {
+      document.getElementById(id).addEventListener('click', () => {
+        document.getElementById('input-judul-edit').value = currentWorldName;
+        document.getElementById('input-deskripsi-edit').value = document.getElementById('world-desc').textContent;
+        openModal('modal-edit-dunia');
+      });
+    }
+
+    // Simpan edit → perbarui tampilan
+    document.getElementById('btn-submit-edit').addEventListener('click', () => {
+      const judul = document.getElementById('input-judul-edit').value.trim();
+      const desk = document.getElementById('input-deskripsi-edit').value.trim();
+      if (judul) {
+        document.getElementById('world-title').textContent = judul;
+        document.getElementById('world-name-display').textContent = judul;
+        document.getElementById('picker-world-name').textContent = judul;
+      }
+      document.getElementById('world-desc').textContent = desk || '—';
+      closeModal(document.getElementById('btn-submit-edit'));
+    });
+
+    // Buat dunia baru → tambah projeck lalu navigasi
+    document.getElementById('btn-submit-buat').addEventListener('click', () => {
+      const judul = document.getElementById('input-judul').value.trim() || 'Dunia Baru';
+      const desk = document.getElementById('input-deskripsi').value.trim();
+      const go = () => location.href = 'dashboard.page.html?world=' + encodeURIComponent(judul);
+      whenAether(() => {
+        AetherState.addProject({ name: judul, desc: desk, createdAt: new Date().toISOString() }).then(go).catch(go);
+      });
+    });
+
+    // ===== World picker (Pilih Dunia) =====
+    const pickerBtn = document.getElementById('btn-world-picker');
+    const pickerMenu = document.getElementById('world-picker-menu');
+
+    function renderWorldMenu() {
+      whenAether(() => {
+        AetherState.getProjects().then(projects => {
+          pickerMenu.innerHTML = '';
+          if (!projects.length) {
+            const empty = document.createElement('div');
+            empty.className = 'world-picker-empty';
+            empty.textContent = 'Belum ada dunia.';
+            pickerMenu.appendChild(empty);
+          }
+          projects.forEach(p => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'world-picker-item' + ((p.name === currentWorldName || p.name === document.getElementById('world-title').textContent) ? ' active' : '');
+            btn.innerHTML = '<iconify-icon icon="lucide:globe"></iconify-icon><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + p.name + '</span>';
+            btn.addEventListener('click', () => {
+              location.href = 'dashboard.page.html?world=' + encodeURIComponent(p.name);
+            });
+            pickerMenu.appendChild(btn);
+          });
+          const add = document.createElement('button');
+          add.type = 'button';
+          add.className = 'world-picker-item add';
+          add.innerHTML = '<iconify-icon icon="lucide:plus"></iconify-icon> Tambah Dunia';
+          add.addEventListener('click', () => { pickerMenu.classList.remove('open'); openModal('modal-buat-dunia'); });
+          pickerMenu.appendChild(add);
+        });
+      });
+    }
+
+    pickerBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const willOpen = !pickerMenu.classList.contains('open');
+      pickerMenu.classList.toggle('open');
+      if (willOpen) renderWorldMenu();
+    });
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.world-picker')) pickerMenu.classList.remove('open');
+    });
+
+    // ===== Tunggu AetherState (disuntik setelah skrip halaman) =====
+    function whenAether(fn) {
+      if (window.AetherState && AetherState.available) { fn(); return; }
+      setTimeout(() => whenAether(fn), 50);
     }
   </script>
 </body>
