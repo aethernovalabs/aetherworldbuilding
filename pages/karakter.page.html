@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,114 +8,400 @@
   <meta name="description" content="Manajemen karakter world building.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
   <style>
     /* Panel filter ala referensi: Search + dropdown + Tag + grid/list */
-    .char-filter-panel { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card); padding: 0.7rem 0.85rem; display: flex; flex-direction: column; gap: 0.55rem; }
-    .char-filter-row { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
-    .char-filter-row .search-wrap { flex: 1; min-width: 200px; }
-    .char-select { padding: 0.45rem 0.7rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-main); font-size: 0.78rem; }
-    .char-tag-row { font-size: 0.78rem; color: var(--text-muted); }
+    .char-filter-panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      padding: 0.7rem 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .char-filter-row {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .char-filter-row .search-wrap {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .char-select {
+      padding: 0.45rem 0.7rem;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-size: 0.78rem;
+    }
+
+    .char-tag-row {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
 
     /* Character Grid */
-    .char-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 1rem; margin-top: 1rem; }
-    .char-card {
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md);
-      overflow: hidden; cursor: pointer; transition: all 0.2s; min-width: 0;
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
     }
-    .char-card:hover { border-color: rgba(139,92,246,0.5); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-    .char-card-top { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.75rem 0.85rem 0; }
-    .char-thumb { width: 52px; height: 44px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-surface); display: inline-flex; align-items: center; justify-content: center; color: var(--text-faint); flex-shrink: 0; }
-    .char-status { margin-left: auto; font-size: 0.7rem; color: var(--text-faint); white-space: nowrap; }
-    .char-info { padding: 0.6rem 0.85rem 0.85rem; }
-    .char-name { font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; }
-    .char-name iconify-icon { color: var(--text-faint); }
-    .char-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; display: flex; justify-content: space-between; gap: 0.5rem; }
-    .char-tags { font-size: 0.72rem; color: var(--text-faint); margin-top: 0.2rem; }
-    .char-actions { display: flex; gap: 0.35rem; opacity: 0; transition: opacity 0.2s; margin-left: auto; }
-    .char-card:hover .char-actions { opacity: 1; }
+
+    .char-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 0;
+    }
+
+    .char-card:hover {
+      border-color: rgba(139, 92, 246, 0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .char-card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.75rem 0.85rem 0;
+    }
+
+    .char-thumb {
+      width: 52px;
+      height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg-surface);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-faint);
+      flex-shrink: 0;
+    }
+
+    .char-status {
+      margin-left: auto;
+      font-size: 0.7rem;
+      color: var(--text-faint);
+      white-space: nowrap;
+    }
+
+    .char-info {
+      padding: 0.6rem 0.85rem 0.85rem;
+    }
+
+    .char-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .char-name iconify-icon {
+      color: var(--text-faint);
+    }
+
+    .char-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .char-tags {
+      font-size: 0.72rem;
+      color: var(--text-faint);
+      margin-top: 0.2rem;
+    }
+
+    .char-actions {
+      display: flex;
+      gap: 0.35rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+      margin-left: auto;
+    }
+
+    .char-card:hover .char-actions {
+      opacity: 1;
+    }
 
     /* Add Card */
     .char-card-add {
-      background: transparent; border: 2px dashed var(--border); border-radius: var(--radius-lg);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 0.65rem; cursor: pointer; transition: all 0.2s; padding: 2rem; min-height: 240px;
+      background: transparent;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      padding: 2rem;
+      min-height: 240px;
       color: var(--text-faint);
     }
-    .char-card-add:hover { border-color: var(--primary); color: var(--primary); background: rgba(139,92,246,0.05); }
-    .char-card-add span { font-size: 0.85rem; font-weight: 600; }
+
+    .char-card-add:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(139, 92, 246, 0.05);
+    }
+
+    .char-card-add span {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
 
     /* Modal Karakter */
-    .char-modal-frame { max-width: min(880px, calc(100vw - 3rem)); max-height: 88vh; max-height: 88dvh; display: flex; flex-direction: column; min-height: 0; }
-    .char-modal-tabs { display: flex; background: #0d121f; border-bottom: 1px solid var(--border); overflow-x: auto; }
-    .char-modal-tab {
-      padding: 0.65rem 1rem; font-size: 0.82rem; font-weight: 600; cursor: pointer;
-      color: var(--text-muted); border-bottom: 2px solid transparent; transition: all 0.15s;
-      white-space: nowrap; flex-shrink: 0;
+    .char-modal-frame {
+      max-width: min(880px, calc(100vw - 3rem));
+      max-height: 88vh;
+      max-height: 88dvh;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
-    .char-modal-tab:hover { color: var(--text-main); }
-    .char-modal-tab.active { color: #c4b5fd; border-bottom-color: var(--primary); background: rgba(139,92,246,0.08); }
-    .char-modal-body { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 1.5rem; }
-    .char-pane { display: none; flex-direction: column; gap: 1rem; min-width: 0; }
-    .char-pane.active { display: flex; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .form-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
-    .check-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.4rem 1rem; font-size: 0.8rem; color: var(--text-muted); }
-    .ref-section { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.7rem 0.8rem; background: var(--bg-dark); display: flex; flex-direction: column; gap: 0.4rem; }
-    .chip-row { display: flex; gap: 0.35rem; flex-wrap: wrap; font-size: 0.72rem; color: var(--text-muted); }
-    .chip { border: 1px solid var(--border); border-radius: 4px; padding: 0.1rem 0.4rem; background: var(--bg-surface); }
-    .ref-hint { font-size: 0.75rem; color: var(--text-faint); line-height: 1.6; }
-    .char-imgbox { width: 90px; height: 76px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-surface); display: flex; align-items: center; justify-content: center; color: var(--text-faint); }
-    .rel-edit-card { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.7rem 0.8rem; background: var(--bg-dark); display: flex; flex-direction: column; gap: 0.6rem; }
-    .rel-edit-head { display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; font-weight: 600; }
-    .doclink-row { display: flex; align-items: center; gap: 0.5rem; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.45rem 0.6rem; font-size: 0.8rem; background: var(--bg-dark); }
-    .custom-row { display: flex; gap: 0.5rem; align-items: center; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.5rem 0.6rem; background: var(--bg-dark); }
-    .custom-name { font-size: 0.75rem; color: var(--text-muted); min-width: 90px; }
-    .varian-row { display: flex; gap: 0.6rem; align-items: center; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.5rem 0.6rem; background: var(--bg-dark); }
-    @media (max-width: 640px) { .form-row, .form-row3 { grid-template-columns: 1fr; } }
+
+    .char-modal-tabs {
+      display: flex;
+      background: #0d121f;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .char-modal-tab {
+      padding: 0.65rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .char-modal-tab:hover {
+      color: var(--text-main);
+    }
+
+    .char-modal-tab.active {
+      color: #c4b5fd;
+      border-bottom-color: var(--primary);
+      background: rgba(139, 92, 246, 0.08);
+    }
+
+    .char-modal-body {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 1.5rem;
+    }
+
+    .char-pane {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+      min-width: 0;
+    }
+
+    .char-pane.active {
+      display: flex;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-row3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.4rem 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .ref-section {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.7rem 0.8rem;
+      background: var(--bg-dark);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .chip-row {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .chip {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.1rem 0.4rem;
+      background: var(--bg-surface);
+    }
+
+    .ref-hint {
+      font-size: 0.75rem;
+      color: var(--text-faint);
+      line-height: 1.6;
+    }
+
+    .char-imgbox {
+      width: 90px;
+      height: 76px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-faint);
+    }
+
+    .rel-edit-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.7rem 0.8rem;
+      background: var(--bg-dark);
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .rel-edit-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .doclink-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.45rem 0.6rem;
+      font-size: 0.8rem;
+      background: var(--bg-dark);
+    }
+
+    .custom-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.6rem;
+      background: var(--bg-dark);
+    }
+
+    .custom-name {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      min-width: 90px;
+    }
+
+    .varian-row {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.6rem;
+      background: var(--bg-dark);
+    }
+
+    @media (max-width: 640px) {
+
+      .form-row,
+      .form-row3 {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
+
 <body>
 
-  <header class="app-titlebar">
-    <div style="display:flex;align-items:center;gap:0.75rem;">
-      <a href="buat-projeck.page.html" class="btn-back"><iconify-icon icon="lucide:arrow-left"></iconify-icon> Projeck</a>
-      <span class="brand-title">✦ AETHER NOVA</span>
-    </div>
-    <div class="titlebar-center">
-      <iconify-icon icon="lucide:globe"></iconify-icon>
-      <span>Aether Nova World</span>
-      <iconify-icon icon="lucide:chevron-down" style="opacity:0.5;"></iconify-icon>
-    </div>
-    <div class="titlebar-actions">
-      <button class="win-btn" title="Minimize"><iconify-icon icon="lucide:minus"></iconify-icon></button>
-      <button class="win-btn" title="Maximize"><iconify-icon icon="lucide:square"></iconify-icon></button>
-      <button class="win-btn close" title="Tutup"><iconify-icon icon="lucide:x"></iconify-icon></button>
-    </div>
-  </header>
 
   <div class="workspace-layout">
     <aside class="main-sidebar" id="main-sidebar">
       <div class="sidebar-top-bar">
-        <div class="world-dropdown-box"><span>Aether Nova World</span><iconify-icon icon="lucide:chevron-down"></iconify-icon></div>
-        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" title="Perkecil/Perbesar Sidebar"><iconify-icon icon="lucide:panel-left-close" width="18"></iconify-icon></button>
+        <div class="world-dropdown-box"><span>Aether Nova World</span><iconify-icon
+            icon="lucide:chevron-down"></iconify-icon></div>
+        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" title="Perkecil/Perbesar Sidebar"><iconify-icon
+            icon="lucide:panel-left-close" width="18"></iconify-icon></button>
       </div>
       <nav class="sidebar-nav-list">
-        <a class="side-nav-item" href="dashboard.page.html" data-label="Dashboard"><span class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span><span class="side-item-text">Dashboard</span></a>
-        <a class="side-nav-item" href="dokumen.page.html" data-label="Dokumen"><span class="side-nav-icon"><iconify-icon icon="lucide:book-open"></iconify-icon></span><span class="side-item-text">Dokumen</span></a>
-        <a class="side-nav-item active" href="karakter.page.html" data-label="Karakter"><span class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span><span class="side-item-text">Karakter</span></a>
-        <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia"><span class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span class="side-item-text">Element Dunia</span></a>
-        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span class="side-item-text">Linimasa</span></a>
-        <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan"><span class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span class="side-item-text">Hubungan</span></a>
-        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span><span class="side-item-text">Jaringan</span></a>
-        <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah"><span class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span class="side-item-text">Peta &amp; Denah</span></a>
+        <a class="side-nav-item" href="dashboard.page.html" data-label="Dashboard"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span><span
+            class="side-item-text">Dashboard</span></a>
+        <a class="side-nav-item" href="dokumen.page.html" data-label="Dokumen"><span class="side-nav-icon"><iconify-icon
+              icon="lucide:book-open"></iconify-icon></span><span class="side-item-text">Dokumen</span></a>
+        <a class="side-nav-item active" href="karakter.page.html" data-label="Karakter"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span><span
+            class="side-item-text">Karakter</span></a>
+        <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span
+            class="side-item-text">Element Dunia</span></a>
+        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span
+            class="side-item-text">Linimasa</span></a>
+        <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span
+            class="side-item-text">Hubungan</span></a>
+        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span><span
+            class="side-item-text">Jaringan</span></a>
+        <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span
+            class="side-item-text">Peta &amp; Denah</span></a>
       </nav>
       <div class="sidebar-bottom-list">
-        <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
-        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
-        <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
+        <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon
+              icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
+        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon
+              icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
+        <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon
+              icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
       </div>
     </aside>
 
@@ -125,7 +412,8 @@
           <p>karakter data</p>
         </div>
         <div class="page-header-actions">
-          <button class="btn-action primary" onclick="document.getElementById('modal-char').classList.add('open')">+ Tambah Karakter</button>
+          <button class="btn-action primary" onclick="document.getElementById('modal-char').classList.add('open')">+
+            Tambah Karakter</button>
         </div>
       </div>
 
@@ -136,41 +424,61 @@
               <iconify-icon icon="lucide:search"></iconify-icon>
               <input type="text" class="search-field" placeholder="Search">
             </div>
-            <select class="char-select"><option>Semua Status</option><option>Hidup</option><option>Mati</option></select>
-            <select class="char-select"><option>Semua Races</option></select>
-            <select class="char-select"><option>Semua Gelar</option></select>
-            <select class="char-select"><option>Semua Faksi</option></select>
+            <select class="char-select">
+              <option>Semua Status</option>
+              <option>Hidup</option>
+              <option>Mati</option>
+            </select>
+            <select class="char-select">
+              <option>Semua Races</option>
+            </select>
+            <select class="char-select">
+              <option>Semua Gelar</option>
+            </select>
+            <select class="char-select">
+              <option>Semua Faksi</option>
+            </select>
             <span style="display:flex;gap:0.3rem;margin-left:auto;">
               <button class="win-btn" title="Grid"><iconify-icon icon="lucide:layout-grid"></iconify-icon></button>
               <button class="win-btn" title="List"><iconify-icon icon="lucide:list"></iconify-icon></button>
             </span>
           </div>
-          <div class="char-tag-row">Tag: <span class="badge">tag1</span> <span class="badge">tag1</span> <span class="badge">tag1</span></div>
+          <div class="char-tag-row">Tag: <span class="badge">tag1</span> <span class="badge">tag1</span> <span
+              class="badge">tag1</span></div>
         </div>
         <div class="char-grid">
 
           <div class="char-card" onclick="openCharModal('Name')">
-            <div class="char-card-top"><span class="char-thumb"><iconify-icon icon="lucide:image" width="20"></iconify-icon></span><span class="char-status">Hidup</span></div>
+            <div class="char-card-top"><span class="char-thumb"><iconify-icon icon="lucide:image"
+                  width="20"></iconify-icon></span><span class="char-status">Hidup</span></div>
             <div class="char-info">
-              <div class="char-name">Name <span class="char-actions"><iconify-icon icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></span></div>
+              <div class="char-name">Name <span class="char-actions"><iconify-icon icon="lucide:eye"
+                    width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></span>
+              </div>
               <div class="char-sub"><span>Races</span><span>Faksi</span></div>
               <div class="char-tags">tag1 tag1</div>
             </div>
           </div>
 
           <div class="char-card" onclick="openCharModal('Name')">
-            <div class="char-card-top"><span class="char-thumb"><iconify-icon icon="lucide:image" width="20"></iconify-icon></span><span class="char-status">Hidup</span></div>
+            <div class="char-card-top"><span class="char-thumb"><iconify-icon icon="lucide:image"
+                  width="20"></iconify-icon></span><span class="char-status">Hidup</span></div>
             <div class="char-info">
-              <div class="char-name">Name <span class="char-actions"><iconify-icon icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></span></div>
+              <div class="char-name">Name <span class="char-actions"><iconify-icon icon="lucide:eye"
+                    width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></span>
+              </div>
               <div class="char-sub"><span>Races</span><span>Faksi</span></div>
               <div class="char-tags">tag1 tag1</div>
             </div>
           </div>
 
           <div class="char-card" onclick="openCharModal('Name')">
-            <div class="char-card-top"><span class="char-thumb"><iconify-icon icon="lucide:image" width="20"></iconify-icon></span><span class="char-status">Mati</span></div>
+            <div class="char-card-top"><span class="char-thumb"><iconify-icon icon="lucide:image"
+                  width="20"></iconify-icon></span><span class="char-status">Mati</span></div>
             <div class="char-info">
-              <div class="char-name">Name <span class="char-actions"><iconify-icon icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></span></div>
+              <div class="char-name">Name <span class="char-actions"><iconify-icon icon="lucide:eye"
+                    width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></span>
+              </div>
               <div class="char-sub"><span>Races</span><span>Faksi</span></div>
               <div class="char-tags">tag1</div>
             </div>
@@ -188,9 +496,13 @@
         <h3 id="char-modal-title"><iconify-icon icon="lucide:user"></iconify-icon> Edit Karakter</h3>
         <div style="display:flex;align-items:center;gap:0.4rem;">
           <button class="win-btn" title="Pratinjau"><iconify-icon icon="lucide:eye"></iconify-icon></button>
-          <span class="badge">Varian <select style="background:transparent;border:none;color:inherit;font-size:0.72rem;"><option>Varian</option></select></span>
+          <span class="badge">Varian <select
+              style="background:transparent;border:none;color:inherit;font-size:0.72rem;">
+              <option>Varian</option>
+            </select></span>
           <button class="win-btn" title="Tambah Varian"><iconify-icon icon="lucide:plus"></iconify-icon></button>
-          <button class="win-btn" onclick="document.getElementById('modal-char').classList.remove('open')"><iconify-icon icon="lucide:x"></iconify-icon></button>
+          <button class="win-btn" onclick="document.getElementById('modal-char').classList.remove('open')"><iconify-icon
+              icon="lucide:x"></iconify-icon></button>
         </div>
       </div>
       <div style="padding:0.4rem 1.5rem 0;font-size:0.82rem;color:var(--text-muted);">Name</div>
@@ -214,34 +526,48 @@
             <div><label class="form-label">Nama Belakang</label><input type="text" class="form-input"></div>
           </div>
           <div class="form-row">
-            <div><label class="form-label">Image</label><div class="char-imgbox"><iconify-icon icon="lucide:image" width="22"></iconify-icon></div></div>
+            <div><label class="form-label">Image</label>
+              <div class="char-imgbox"><iconify-icon icon="lucide:image" width="22"></iconify-icon></div>
+            </div>
             <div style="display:flex;flex-direction:column;gap:1rem;">
               <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
-              <div><label class="form-label">Tanggal Lahir</label><input type="text" class="form-input" placeholder="kalender"></div>
+              <div><label class="form-label">Tanggal Lahir</label><input type="text" class="form-input"
+                  placeholder="kalender"></div>
             </div>
           </div>
           <div class="form-row">
             <div><label class="form-label">Usia</label><input type="text" class="form-input"></div>
-            <div><label class="form-label">Status</label><select class="form-input"><option>Hidup</option><option>Mati</option></select></div>
+            <div><label class="form-label">Status</label><select class="form-input">
+                <option>Hidup</option>
+                <option>Mati</option>
+              </select></div>
           </div>
           <div class="form-row">
             <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="2"></textarea></div>
-            <div><label class="form-label">Jenis Kelamin</label><select class="form-input"><option>Laki-laki</option><option>Perempuan</option><option>Lainnya</option></select></div>
+            <div><label class="form-label">Jenis Kelamin</label><select class="form-input">
+                <option>Laki-laki</option>
+                <option>Perempuan</option>
+                <option>Lainnya</option>
+              </select></div>
           </div>
           <div class="ref-section">
             <label class="form-label">Races 🔗</label><input type="text" class="form-input">
-            <div class="chip-row"><span class="chip">Races1 X</span><span class="chip">Races1 X</span><span class="chip">Races1 X</span></div>
+            <div class="chip-row"><span class="chip">Races1 X</span><span class="chip">Races1 X</span><span
+                class="chip">Races1 X</span></div>
           </div>
           <div class="ref-section">
             <label class="form-label">Tempat Penting 🔗</label><input type="text" class="form-input">
-            <div class="chip-row"><span class="chip">Lokasi1 X</span><span class="chip">Lokasi1 X</span><span class="chip">Lokasi1 X</span></div>
-            <label class="form-label" style="margin-top:0.6rem;">Tempat Lahir</label><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Lokasi1 X</span><span class="chip">Lokasi1 X</span><span
+                class="chip">Lokasi1 X</span></div>
+            <label class="form-label" style="margin-top:0.6rem;">Tempat Lahir</label><input type="text"
+              class="form-input">
           </div>
         </div>
         <!-- Tab: Penampilan (ref p07 kiri) -->
         <div class="char-pane" id="pane-penampilan">
           <div class="form-row3">
-            <div><label class="form-label">Tinggi ⓘ</label><input type="text" class="form-input" placeholder="Mis. 170 CM / 1,7 M"></div>
+            <div><label class="form-label">Tinggi ⓘ</label><input type="text" class="form-input"
+                placeholder="Mis. 170 CM / 1,7 M"></div>
             <div><label class="form-label">Kulit ⓘ</label><input type="text" class="form-input"></div>
             <div><label class="form-label">Wajah ⓘ</label><input type="text" class="form-input"></div>
           </div>
@@ -251,19 +577,26 @@
             <div></div>
           </div>
           <div class="check-grid">
-            <label><input type="checkbox"> Pinggang ⓘ</label><label><input type="checkbox"> Mata ⓘ</label><label><input type="checkbox"> Taring ⓘ</label>
-            <label><input type="checkbox"> Sayap ⓘ</label><label><input type="checkbox"> Cakar ⓘ</label><label><input type="checkbox"> Bulu ⓘ</label>
-            <label><input type="checkbox"> Sisik ⓘ</label><label><input type="checkbox"> Tanduk ⓘ</label><label><input type="checkbox"> Ekor ⓘ</label>
+            <label><input type="checkbox"> Pinggang ⓘ</label><label><input type="checkbox"> Mata ⓘ</label><label><input
+                type="checkbox"> Taring ⓘ</label>
+            <label><input type="checkbox"> Sayap ⓘ</label><label><input type="checkbox"> Cakar ⓘ</label><label><input
+                type="checkbox"> Bulu ⓘ</label>
+            <label><input type="checkbox"> Sisik ⓘ</label><label><input type="checkbox"> Tanduk ⓘ</label><label><input
+                type="checkbox"> Ekor ⓘ</label>
           </div>
           <div><label class="form-label">Deskripsi Fisik</label><textarea class="form-input" rows="3"></textarea></div>
-          <div><label class="form-label">Deskripsi Fisik Unik</label><textarea class="form-input" rows="3"></textarea></div>
-          <div><label class="form-label">Deskripsi Pakaian</label><textarea class="form-input" rows="3"></textarea></div>
+          <div><label class="form-label">Deskripsi Fisik Unik</label><textarea class="form-input" rows="3"></textarea>
+          </div>
+          <div><label class="form-label">Deskripsi Pakaian</label><textarea class="form-input" rows="3"></textarea>
+          </div>
           <div><label class="form-label">Aksesoris</label><textarea class="form-input" rows="3"></textarea></div>
         </div>
         <!-- Tab: Kepribadian (ref p07 kanan) -->
         <div class="char-pane" id="pane-kepribadian">
-          <div><label class="form-label">Deskripsi Psikologis</label><textarea class="form-input" rows="4"></textarea></div>
-          <div class="ref-hint">Tips<br>- Bagaimana cara dia berhubungan dengan orang lain? - Keyakinan? - Nilai? - Temperamen?<br>- Bagaimana cara dia berbicara? - Apa saja Sifat yang dia miliki? Gaya Bicara?</div>
+          <div><label class="form-label">Deskripsi Psikologis</label><textarea class="form-input" rows="4"></textarea>
+          </div>
+          <div class="ref-hint">Tips<br>- Bagaimana cara dia berhubungan dengan orang lain? - Keyakinan? - Nilai? -
+            Temperamen?<br>- Bagaimana cara dia berbicara? - Apa saja Sifat yang dia miliki? Gaya Bicara?</div>
           <div><label class="form-label">Motivasi</label><input type="text" class="form-input"></div>
           <div><label class="form-label">Kekurangan dan Ketakutan</label><input type="text" class="form-input"></div>
           <div><label class="form-label">Rahasia</label><input type="text" class="form-input"></div>
@@ -272,100 +605,268 @@
         </div>
         <!-- Tab: Latar Belakang (ref p08) -->
         <div class="char-pane" id="pane-latar">
-          <div class="ref-section"><label class="form-label">Gelar 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Gelar1 X</span><span class="chip">Gelar1 X</span><span class="chip">Gelar1 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Pekerjaan 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Pekerjaan1 X</span><span class="chip">Pekerjaan1 X</span><span class="chip">Pekerjaan1 X</span></div></div>
-          <div><label class="form-label">Latar Belakang Pribadi</label><textarea class="form-input" rows="4"></textarea></div>
-          <div class="ref-section"><label class="form-label">Faksi 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Faksi1 X</span><span class="chip">Faksi1 X</span><span class="chip">Faksi1 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Agama 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Agama1 X</span><span class="chip">Agama2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Anggota Kelompok 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Kelompok1 X</span><span class="chip">Kelompok2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Pemimpin Kelompok 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Kelompok1 X</span><span class="chip">Kelompok2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Pendiri Kelompok 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Kelompok1 X</span><span class="chip">Kelompok2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Mantan Anggota Kelompok 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Kelompok1 X</span><span class="chip">Kelompok2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Mantan Pemimpin Kelompok 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Kelompok1 X</span><span class="chip">Kelompok2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Makhluk yang di jinakkan 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Makhluk1 X</span><span class="chip">Makhluk2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Makhluk Sahabat 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Makhluk1 X</span><span class="chip">Makhluk2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Makhluk yang di buru 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Makhluk1 X</span><span class="chip">Makhluk2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Makhluk yang di lindungi 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Makhluk1 X</span><span class="chip">Makhluk2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Makhluk yang di temui 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Makhluk1 X</span><span class="chip">Makhluk2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Objek yang dimiliki 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Objek1 X</span><span class="chip">Objek2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Objek yang pernah dimiliki 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Objek1 X</span><span class="chip">Objek2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Pencipta Objek 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Objek1 X</span><span class="chip">Objek2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Penemu Objek 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Objek1 X</span><span class="chip">Objek2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Pencari Objek 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Objek1 X</span><span class="chip">Objek2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Makhluk yang di jinakkan 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Objek1 X</span><span class="chip">Objek2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Peserta Peristiwa 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Peristiwa1 X</span><span class="chip">Peristiwa2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Tokoh kunci Peristiwa 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Peristiwa1 X</span><span class="chip">Peristiwa2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Pahlawan Peristiwa 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Peristiwa1 X</span><span class="chip">Peristiwa2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Penyebab Peristiwa 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Peristiwa1 X</span><span class="chip">Peristiwa2 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Saksi Peristiwa 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Peristiwa1 X</span><span class="chip">Peristiwa2 X</span></div></div>
+          <div class="ref-section"><label class="form-label">Gelar 🔗</label><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Gelar1 X</span><span class="chip">Gelar1 X</span><span
+                class="chip">Gelar1 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Pekerjaan 🔗</label><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Pekerjaan1 X</span><span class="chip">Pekerjaan1 X</span><span
+                class="chip">Pekerjaan1 X</span></div>
+          </div>
+          <div><label class="form-label">Latar Belakang Pribadi</label><textarea class="form-input" rows="4"></textarea>
+          </div>
+          <div class="ref-section"><label class="form-label">Faksi 🔗</label><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Faksi1 X</span><span class="chip">Faksi1 X</span><span
+                class="chip">Faksi1 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Agama 🔗</label><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Agama1 X</span><span class="chip">Agama2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Anggota Kelompok 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Kelompok1 X</span><span class="chip">Kelompok2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Pemimpin Kelompok 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Kelompok1 X</span><span class="chip">Kelompok2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Pendiri Kelompok 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Kelompok1 X</span><span class="chip">Kelompok2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Mantan Anggota Kelompok 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Kelompok1 X</span><span class="chip">Kelompok2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Mantan Pemimpin Kelompok 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Kelompok1 X</span><span class="chip">Kelompok2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Makhluk yang di jinakkan 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Makhluk1 X</span><span class="chip">Makhluk2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Makhluk Sahabat 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Makhluk1 X</span><span class="chip">Makhluk2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Makhluk yang di buru 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Makhluk1 X</span><span class="chip">Makhluk2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Makhluk yang di lindungi 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Makhluk1 X</span><span class="chip">Makhluk2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Makhluk yang di temui 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Makhluk1 X</span><span class="chip">Makhluk2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Objek yang dimiliki 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Objek1 X</span><span class="chip">Objek2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Objek yang pernah dimiliki 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Objek1 X</span><span class="chip">Objek2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Pencipta Objek 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Objek1 X</span><span class="chip">Objek2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Penemu Objek 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Objek1 X</span><span class="chip">Objek2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Pencari Objek 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Objek1 X</span><span class="chip">Objek2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Makhluk yang di jinakkan 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Objek1 X</span><span class="chip">Objek2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Peserta Peristiwa 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Peristiwa1 X</span><span class="chip">Peristiwa2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Tokoh kunci Peristiwa 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Peristiwa1 X</span><span class="chip">Peristiwa2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Pahlawan Peristiwa 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Peristiwa1 X</span><span class="chip">Peristiwa2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Penyebab Peristiwa 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Peristiwa1 X</span><span class="chip">Peristiwa2 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Saksi Peristiwa 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Peristiwa1 X</span><span class="chip">Peristiwa2 X</span></div>
+          </div>
         </div>
         <!-- Tab: Kemampuan (ref p09 kiri + kanan) -->
         <div class="char-pane" id="pane-kemampuan">
-          <div><label class="form-label">Sifat dan Keterampilan</label><textarea class="form-input" rows="3"></textarea></div>
+          <div><label class="form-label">Sifat dan Keterampilan</label><textarea class="form-input" rows="3"></textarea>
+          </div>
           <div><label class="form-label">Keterampilan Fisik</label><input type="text" class="form-input"></div>
           <div><label class="form-label">Keterampilan Mental</label><input type="text" class="form-input"></div>
           <div><label class="form-label">Keterampilan Magic</label><input type="text" class="form-input"></div>
-          <div class="ref-section"><label class="form-label">Sistem Sihir</label><label class="form-label">Magic &amp; Spell yang di gunakan 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Magic1 X</span><span class="chip">Spell2 X</span><span class="chip">Magic3 X</span></div>
-          <label class="form-label" style="margin-top:0.5rem;">Magic &amp; Spell yang di ketahui 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Magic1 X</span><span class="chip">Spell2 X</span><span class="chip">Magic3 X</span></div>
-          <label class="form-label" style="margin-top:0.5rem;">Magic &amp; Spell yang pernah di pelajari 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Magic1 X</span><span class="chip">Spell2 X</span><span class="chip">Magic3 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Teknologi</label><label class="form-label">Teknologi yang di gunakan 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Tekno1 X</span><span class="chip">Tekno2 X</span><span class="chip">Tekno3 X</span></div>
-          <label class="form-label" style="margin-top:0.5rem;">Teknologi yang di ketahui 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Tekno1 X</span><span class="chip">Tekno2 X</span><span class="chip">Tekno3 X</span></div>
-          <label class="form-label" style="margin-top:0.5rem;">Teknologi yang pernah di buat 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Tekno1 X</span><span class="chip">Tekno2 X</span><span class="chip">Tekno3 X</span></div>
-          <label class="form-label" style="margin-top:0.5rem;">Memiliki akses ke Teknologi 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Tekno1 X</span><span class="chip">Tekno2 X</span><span class="chip">Tekno3 X</span></div></div>
-          <div class="ref-section"><label class="form-label">Bahasa 🔗</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Bahasa1 X</span><span class="chip">Bahasa2 X</span><span class="chip">Bahasa3 X</span></div></div>
+          <div class="ref-section"><label class="form-label">Sistem Sihir</label><label class="form-label">Magic &amp;
+              Spell yang di gunakan 🔗</label><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Magic1 X</span><span class="chip">Spell2 X</span><span
+                class="chip">Magic3 X</span></div>
+            <label class="form-label" style="margin-top:0.5rem;">Magic &amp; Spell yang di ketahui 🔗</label><input
+              type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Magic1 X</span><span class="chip">Spell2 X</span><span
+                class="chip">Magic3 X</span></div>
+            <label class="form-label" style="margin-top:0.5rem;">Magic &amp; Spell yang pernah di pelajari
+              🔗</label><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Magic1 X</span><span class="chip">Spell2 X</span><span
+                class="chip">Magic3 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Teknologi</label><label class="form-label">Teknologi yang
+              di gunakan 🔗</label><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Tekno1 X</span><span class="chip">Tekno2 X</span><span
+                class="chip">Tekno3 X</span></div>
+            <label class="form-label" style="margin-top:0.5rem;">Teknologi yang di ketahui 🔗</label><input type="text"
+              class="form-input">
+            <div class="chip-row"><span class="chip">Tekno1 X</span><span class="chip">Tekno2 X</span><span
+                class="chip">Tekno3 X</span></div>
+            <label class="form-label" style="margin-top:0.5rem;">Teknologi yang pernah di buat 🔗</label><input
+              type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Tekno1 X</span><span class="chip">Tekno2 X</span><span
+                class="chip">Tekno3 X</span></div>
+            <label class="form-label" style="margin-top:0.5rem;">Memiliki akses ke Teknologi 🔗</label><input
+              type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Tekno1 X</span><span class="chip">Tekno2 X</span><span
+                class="chip">Tekno3 X</span></div>
+          </div>
+          <div class="ref-section"><label class="form-label">Bahasa 🔗</label><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Bahasa1 X</span><span class="chip">Bahasa2 X</span><span
+                class="chip">Bahasa3 X</span></div>
+          </div>
         </div>
         <!-- Tab: Hubungan (ref p10 kiri) -->
         <div class="char-pane" id="pane-hubungan">
-          <div style="display:flex;align-items:center;justify-content:space-between;"><strong>Hubungan Pribadi</strong><button class="btn-action" style="padding:0.3rem 0.65rem;font-size:0.78rem;">+ Tambah Hubungan</button></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;"><strong>Hubungan
+              Pribadi</strong><button class="btn-action" style="padding:0.3rem 0.65rem;font-size:0.78rem;">+ Tambah
+              Hubungan</button></div>
           <div class="rel-edit-card">
-            <div class="rel-edit-head"><span>Hubungan Dengan Name</span><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
+            <div class="rel-edit-head"><span>Hubungan Dengan Name</span><button class="win-btn"
+                style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
             <div class="form-row">
-              <div><label class="form-label">Pilih Karakter 🔗</label><select class="form-input"><option></option></select></div>
-              <div><label class="form-label">Tipe Hubungan</label><select class="form-input"><option></option></select></div>
+              <div><label class="form-label">Pilih Karakter 🔗</label><select class="form-input">
+                  <option></option>
+                </select></div>
+              <div><label class="form-label">Tipe Hubungan</label><select class="form-input">
+                  <option></option>
+                </select></div>
             </div>
-            <div><label class="form-label">Deskripsi Hubungan</label><textarea class="form-input" rows="3"></textarea></div>
-            <label style="font-size:0.8rem;display:flex;gap:0.4rem;align-items:center;"><input type="checkbox" checked> Hubungan Dua Arah</label>
-            <div><label class="form-label">Tipe hubungan invers</label><select class="form-input"><option></option></select></div>
+            <div><label class="form-label">Deskripsi Hubungan</label><textarea class="form-input" rows="3"></textarea>
+            </div>
+            <label style="font-size:0.8rem;display:flex;gap:0.4rem;align-items:center;"><input type="checkbox" checked>
+              Hubungan Dua Arah</label>
+            <div><label class="form-label">Tipe hubungan invers</label><select class="form-input">
+                <option></option>
+              </select></div>
           </div>
           <div class="rel-edit-card">
-            <div class="rel-edit-head"><span>Hubungan Dengan Name</span><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
+            <div class="rel-edit-head"><span>Hubungan Dengan Name</span><button class="win-btn"
+                style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
             <div class="form-row">
-              <div><label class="form-label">Pilih Karakter 🔗</label><select class="form-input"><option></option></select></div>
-              <div><label class="form-label">Tipe Hubungan</label><select class="form-input"><option></option></select></div>
+              <div><label class="form-label">Pilih Karakter 🔗</label><select class="form-input">
+                  <option></option>
+                </select></div>
+              <div><label class="form-label">Tipe Hubungan</label><select class="form-input">
+                  <option></option>
+                </select></div>
             </div>
-            <div><label class="form-label">Deskripsi Hubungan</label><textarea class="form-input" rows="3"></textarea></div>
+            <div><label class="form-label">Deskripsi Hubungan</label><textarea class="form-input" rows="3"></textarea>
+            </div>
           </div>
         </div>
         <!-- Tab: Catatan (ref p10 kanan) -->
         <div class="char-pane" id="pane-catatan">
           <div><label class="form-label">Tag dan klasifikasi</label><input type="text" class="form-input"></div>
           <div><label class="form-label">Catatan Tambahan</label><textarea class="form-input" rows="5"></textarea></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;"><label class="form-label" style="margin:0;">Dokumen terikat tentang karakter ini ��</label><button class="win-btn" title="Tambah Dokumen"><iconify-icon icon="lucide:plus"></iconify-icon></button></div>
-          <div class="doclink-row"><iconify-icon icon="lucide:file-text"></iconify-icon><span style="flex:1;">Dokumen1</span><button class="win-btn"><iconify-icon icon="lucide:eye"></iconify-icon></button><button class="win-btn"><iconify-icon icon="lucide:pen-line"></iconify-icon></button><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
-          <div class="doclink-row"><iconify-icon icon="lucide:file-text"></iconify-icon><span style="flex:1;">Dokumen1</span><button class="win-btn"><iconify-icon icon="lucide:eye"></iconify-icon></button><button class="win-btn"><iconify-icon icon="lucide:pen-line"></iconify-icon></button><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;"><label class="form-label"
+              style="margin:0;">Dokumen terikat tentang karakter ini ��</label><button class="win-btn"
+              title="Tambah Dokumen"><iconify-icon icon="lucide:plus"></iconify-icon></button></div>
+          <div class="doclink-row"><iconify-icon icon="lucide:file-text"></iconify-icon><span
+              style="flex:1;">Dokumen1</span><button class="win-btn"><iconify-icon
+                icon="lucide:eye"></iconify-icon></button><button class="win-btn"><iconify-icon
+                icon="lucide:pen-line"></iconify-icon></button><button class="win-btn"
+              style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
+          <div class="doclink-row"><iconify-icon icon="lucide:file-text"></iconify-icon><span
+              style="flex:1;">Dokumen1</span><button class="win-btn"><iconify-icon
+                icon="lucide:eye"></iconify-icon></button><button class="win-btn"><iconify-icon
+                icon="lucide:pen-line"></iconify-icon></button><button class="win-btn"
+              style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
         </div>
         <!-- Tab: Custom (ref p11 kiri) -->
         <div class="char-pane" id="pane-custom">
           <div><label class="form-label">Custom Field</label></div>
-          <div style="display:flex;gap:0.5rem;"><input type="text" class="form-input" style="flex:1;"><select class="form-input" style="max-width:130px;"><option></option><option>Text</option><option>Number</option><option>Boolean</option><option>Linked</option></select><button class="btn-action" style="padding:0.3rem 0.65rem;font-size:0.78rem;white-space:nowrap;">+ Tambah Field</button></div>
-          <div class="custom-row"><span class="custom-name">Nama<br>(Text)</span><input type="text" class="form-input" style="flex:1;"><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
-          <div class="custom-row"><span class="custom-name">Nama<br>(Number)</span><input type="number" class="form-input" style="flex:1;"><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
-          <div class="custom-row"><span class="custom-name">Nama<br>(Bolean)</span><select class="form-input" style="flex:1;"><option></option><option>True</option><option>False</option></select><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
-          <div class="custom-row" style="flex-direction:column;align-items:stretch;"><div style="display:flex;gap:0.5rem;align-items:center;"><span class="custom-name">Nama<br>(Linked)</span><select class="form-input"><option></option></select><input type="text" class="form-input" style="flex:1;"><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div><div class="chip-row"><span class="chip">Linked Element1 X</span><span class="chip">Linked Element2 X</span><span class="chip">Linked Element3 X</span></div></div>
+          <div style="display:flex;gap:0.5rem;"><input type="text" class="form-input" style="flex:1;"><select
+              class="form-input" style="max-width:130px;">
+              <option></option>
+              <option>Text</option>
+              <option>Number</option>
+              <option>Boolean</option>
+              <option>Linked</option>
+            </select><button class="btn-action" style="padding:0.3rem 0.65rem;font-size:0.78rem;white-space:nowrap;">+
+              Tambah Field</button></div>
+          <div class="custom-row"><span class="custom-name">Nama<br>(Text)</span><input type="text" class="form-input"
+              style="flex:1;"><button class="win-btn" style="color:var(--danger);"><iconify-icon
+                icon="lucide:trash-2"></iconify-icon></button></div>
+          <div class="custom-row"><span class="custom-name">Nama<br>(Number)</span><input type="number"
+              class="form-input" style="flex:1;"><button class="win-btn" style="color:var(--danger);"><iconify-icon
+                icon="lucide:trash-2"></iconify-icon></button></div>
+          <div class="custom-row"><span class="custom-name">Nama<br>(Bolean)</span><select class="form-input"
+              style="flex:1;">
+              <option></option>
+              <option>True</option>
+              <option>False</option>
+            </select><button class="win-btn" style="color:var(--danger);"><iconify-icon
+                icon="lucide:trash-2"></iconify-icon></button></div>
+          <div class="custom-row" style="flex-direction:column;align-items:stretch;">
+            <div style="display:flex;gap:0.5rem;align-items:center;"><span
+                class="custom-name">Nama<br>(Linked)</span><select class="form-input">
+                <option></option>
+              </select><input type="text" class="form-input" style="flex:1;"><button class="win-btn"
+                style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
+            <div class="chip-row"><span class="chip">Linked Element1 X</span><span class="chip">Linked Element2
+                X</span><span class="chip">Linked Element3 X</span></div>
+          </div>
         </div>
         <!-- Tab: Varian (ref p11 kanan) -->
         <div class="char-pane" id="pane-varian">
           <div><label class="form-label">Manajemen Varian Karakter</label></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;"><span></span><span style="display:flex;gap:0.5rem;align-items:center;"><button class="btn-action" style="padding:0.3rem 0.65rem;font-size:0.78rem;">+ Buat Varian</button><strong>1<br>Varian</strong></span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;"><span></span><span
+              style="display:flex;gap:0.5rem;align-items:center;"><button class="btn-action"
+                style="padding:0.3rem 0.65rem;font-size:0.78rem;">+ Buat
+                Varian</button><strong>1<br>Varian</strong></span></div>
           <div class="varian-row">
-            <div style="display:flex;flex-direction:column;gap:2px;align-items:center;"><button class="win-btn" style="width:22px;height:22px;">▲</button><strong>1</strong><button class="win-btn" style="width:22px;height:22px;">▼</button></div>
-            <div style="flex:1;min-width:0;"><div style="font-size:0.82rem;font-weight:600;">nameVarian1</div><div style="font-size:0.75rem;color:var(--text-muted);">Deskripsi</div><div style="font-size:0.7rem;color:var(--text-faint);margin-top:0.25rem;">📅 01/09/2026 00:12 &nbsp; 📝 01/09/2026 00:12</div></div>
-            <div style="display:flex;flex-direction:column;gap:0.3rem;"><button class="win-btn"><iconify-icon icon="lucide:pen-line"></iconify-icon></button><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
+            <div style="display:flex;flex-direction:column;gap:2px;align-items:center;"><button class="win-btn"
+                style="width:22px;height:22px;">▲</button><strong>1</strong><button class="win-btn"
+                style="width:22px;height:22px;">▼</button></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.82rem;font-weight:600;">nameVarian1</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);">Deskripsi</div>
+              <div style="font-size:0.7rem;color:var(--text-faint);margin-top:0.25rem;">📅 01/09/2026 00:12 &nbsp; 📝
+                01/09/2026 00:12</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.3rem;"><button class="win-btn"><iconify-icon
+                  icon="lucide:pen-line"></iconify-icon></button><button class="win-btn"
+                style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn-cancel" onclick="document.getElementById('modal-char').classList.remove('open')">Tutup</button>
+        <button class="btn-cancel"
+          onclick="document.getElementById('modal-char').classList.remove('open')">Tutup</button>
         <button class="btn-confirm"><iconify-icon icon="lucide:save"></iconify-icon> Simpan</button>
       </div>
     </div>
@@ -395,4 +896,5 @@
     }
   </script>
 </body>
+
 </html>

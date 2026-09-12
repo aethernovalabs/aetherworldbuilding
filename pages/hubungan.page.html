@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,89 +8,162 @@
   <meta name="description" content="Peta hubungan antar karakter dalam world building.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
   <style>
-    .rel-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 0.85rem; }
-    .rel-card { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card); padding: 0.7rem 0.8rem; display: flex; flex-direction: column; gap: 0.45rem; min-width: 0; }
-    .rel-card-type { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
-    .rel-link { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; }
-    .rel-name { border: 1px solid var(--border); border-radius: 4px; padding: 0.15rem 0.45rem; background: var(--bg-dark); white-space: nowrap; }
-    .rel-arrow { border: 1px solid var(--border); border-radius: 4px; padding: 0.15rem 0.45rem; background: var(--bg-surface); color: var(--text-muted); font-size: 0.7rem; white-space: nowrap; }
-    .rel-desc { font-size: 0.75rem; color: var(--text-muted); }
+    .rel-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .rel-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      padding: 0.7rem 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      min-width: 0;
+    }
+
+    .rel-card-type {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .rel-link {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+    }
+
+    .rel-name {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.15rem 0.45rem;
+      background: var(--bg-dark);
+      white-space: nowrap;
+    }
+
+    .rel-arrow {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.15rem 0.45rem;
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      white-space: nowrap;
+    }
+
+    .rel-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
   </style>
 </head>
+
 <body>
-  <header class="app-titlebar">
-    <div style="display:flex;align-items:center;gap:0.75rem;">
-      <a href="buat-projeck.page.html" class="btn-back"><iconify-icon icon="lucide:arrow-left"></iconify-icon> Projeck</a>
-      <span class="brand-title">✦ AETHER NOVA</span>
-    </div>
-    <div class="titlebar-center"><iconify-icon icon="lucide:globe"></iconify-icon><span>Aether Nova World</span></div>
-    <div class="titlebar-actions">
-      <button class="win-btn"><iconify-icon icon="lucide:minus"></iconify-icon></button>
-      <button class="win-btn"><iconify-icon icon="lucide:square"></iconify-icon></button>
-      <button class="win-btn close"><iconify-icon icon="lucide:x"></iconify-icon></button>
-    </div>
-  </header>
   <div class="workspace-layout">
     <aside class="main-sidebar" id="main-sidebar">
       <div class="sidebar-top-bar">
-        <div class="world-dropdown-box"><span>Aether Nova World</span><iconify-icon icon="lucide:chevron-down"></iconify-icon></div>
-        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar"><iconify-icon icon="lucide:panel-left-close" width="18"></iconify-icon></button>
+        <div class="world-dropdown-box"><span>Aether Nova World</span><iconify-icon
+            icon="lucide:chevron-down"></iconify-icon></div>
+        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar"><iconify-icon icon="lucide:panel-left-close"
+            width="18"></iconify-icon></button>
       </div>
       <nav class="sidebar-nav-list">
-        <a class="side-nav-item" href="dashboard.page.html" data-label="Dashboard"><span class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span><span class="side-item-text">Dashboard</span></a>
-        <a class="side-nav-item" href="dokumen.page.html" data-label="Dokumen"><span class="side-nav-icon"><iconify-icon icon="lucide:book-open"></iconify-icon></span><span class="side-item-text">Dokumen</span></a>
-        <a class="side-nav-item" href="karakter.page.html" data-label="Karakter"><span class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span><span class="side-item-text">Karakter</span></a>
-        <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia"><span class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span class="side-item-text">Element Dunia</span></a>
-        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span class="side-item-text">Linimasa</span></a>
-        <a class="side-nav-item active" href="hubungan.page.html" data-label="Hubungan"><span class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span class="side-item-text">Hubungan</span></a>
-        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span><span class="side-item-text">Jaringan</span></a>
-        <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah"><span class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span class="side-item-text">Peta &amp; Denah</span></a>
+        <a class="side-nav-item" href="dashboard.page.html" data-label="Dashboard"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span><span
+            class="side-item-text">Dashboard</span></a>
+        <a class="side-nav-item" href="dokumen.page.html" data-label="Dokumen"><span class="side-nav-icon"><iconify-icon
+              icon="lucide:book-open"></iconify-icon></span><span class="side-item-text">Dokumen</span></a>
+        <a class="side-nav-item" href="karakter.page.html" data-label="Karakter"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span><span
+            class="side-item-text">Karakter</span></a>
+        <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span
+            class="side-item-text">Element Dunia</span></a>
+        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span
+            class="side-item-text">Linimasa</span></a>
+        <a class="side-nav-item active" href="hubungan.page.html" data-label="Hubungan"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span
+            class="side-item-text">Hubungan</span></a>
+        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span><span
+            class="side-item-text">Jaringan</span></a>
+        <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span
+            class="side-item-text">Peta &amp; Denah</span></a>
       </nav>
       <div class="sidebar-bottom-list">
-        <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
-        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
-        <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
+        <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon
+              icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
+        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon
+              icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
+        <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon
+              icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
       </div>
     </aside>
     <div class="workspace-content">
       <div class="page-header">
-        <div><h1>Hubungan Karakter</h1><p>Hubungan Antara Karakter</p></div>
+        <div>
+          <h1>Hubungan Karakter</h1>
+          <p>Hubungan Antara Karakter</p>
+        </div>
       </div>
       <div class="page-body">
-        <div class="search-panel" style="border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-card);padding:0.7rem 0.85rem;display:flex;gap:0.75rem;align-items:center;">
+        <div class="search-panel"
+          style="border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-card);padding:0.7rem 0.85rem;display:flex;gap:0.75rem;align-items:center;">
           <div class="search-wrap" style="flex:1;">
             <iconify-icon icon="lucide:search"></iconify-icon>
             <input type="text" class="search-field" placeholder="Search">
           </div>
-          <select class="fmt-dropdown" style="padding:0.45rem 0.7rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-main);font-size:0.8rem;"><option>Kategori</option><option>Keluarga</option><option>Konflik</option></select>
+          <select class="fmt-dropdown"
+            style="padding:0.45rem 0.7rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-main);font-size:0.8rem;">
+            <option>Kategori</option>
+            <option>Keluarga</option>
+            <option>Konflik</option>
+          </select>
         </div>
         <div class="rel-cards" style="margin-top:1rem;">
           <div class="rel-card">
             <div class="rel-card-type">Konflik</div>
-            <div class="rel-link"><span class="rel-name">Name1</span><span class="rel-arrow">Musuh &gt;</span><span class="rel-name">Name2</span></div>
-            <div class="rel-link"><span class="rel-name">Name2</span><span class="rel-arrow">Musuh &gt;</span><span class="rel-name">Name1</span></div>
+            <div class="rel-link"><span class="rel-name">Name1</span><span class="rel-arrow">Musuh &gt;</span><span
+                class="rel-name">Name2</span></div>
+            <div class="rel-link"><span class="rel-name">Name2</span><span class="rel-arrow">Musuh &gt;</span><span
+                class="rel-name">Name1</span></div>
             <div class="rel-desc">Deskripsi</div>
           </div>
           <div class="rel-card">
             <div class="rel-card-type">Keluarga</div>
-            <div class="rel-link"><span class="rel-name">Name1</span><span class="rel-arrow">Anak &gt;</span><span class="rel-name">Name2</span></div>
-            <div class="rel-link"><span class="rel-name">Name2</span><span class="rel-arrow">Ibu &gt;</span><span class="rel-name">Name1</span></div>
+            <div class="rel-link"><span class="rel-name">Name1</span><span class="rel-arrow">Anak &gt;</span><span
+                class="rel-name">Name2</span></div>
+            <div class="rel-link"><span class="rel-name">Name2</span><span class="rel-arrow">Ibu &gt;</span><span
+                class="rel-name">Name1</span></div>
             <div class="rel-desc">Deskripsi</div>
           </div>
           <div class="rel-card">
             <div class="rel-card-type">Konflik</div>
-            <div class="rel-link"><span class="rel-name">Name1</span><span class="rel-arrow">Musuh &gt;</span><span class="rel-name">Name2</span></div>
-            <div class="rel-link"><span class="rel-name">Name2</span><span class="rel-arrow">Musuh &gt;</span><span class="rel-name">Name1</span></div>
+            <div class="rel-link"><span class="rel-name">Name1</span><span class="rel-arrow">Musuh &gt;</span><span
+                class="rel-name">Name2</span></div>
+            <div class="rel-link"><span class="rel-name">Name2</span><span class="rel-arrow">Musuh &gt;</span><span
+                class="rel-name">Name1</span></div>
             <div class="rel-desc">Deskripsi</div>
           </div>
           <div class="rel-card">
             <div class="rel-card-type">Konflik</div>
-            <div class="rel-link"><span class="rel-name">Name1</span><span class="rel-arrow">Musuh &gt;</span><span class="rel-name">Name2</span></div>
-            <div class="rel-link"><span class="rel-name">Name2</span><span class="rel-arrow">Musuh &gt;</span><span class="rel-name">Name1</span></div>
+            <div class="rel-link"><span class="rel-name">Name1</span><span class="rel-arrow">Musuh &gt;</span><span
+                class="rel-name">Name2</span></div>
+            <div class="rel-link"><span class="rel-name">Name2</span><span class="rel-arrow">Musuh &gt;</span><span
+                class="rel-name">Name1</span></div>
             <div class="rel-desc">Deskripsi</div>
           </div>
         </div>
@@ -105,4 +179,5 @@
 
   </script>
 </body>
+
 </html>

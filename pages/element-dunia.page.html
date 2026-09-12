@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,66 +8,213 @@
   <meta name="description" content="Manajemen elemen dunia seperti lokasi, benda, organisasi, dll.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
   <style>
-    .elem-cat { width: 200px; flex-shrink: 0; border: 1px solid var(--border); border-radius: var(--radius-md); background: #0d121f; padding: 0.5rem; display: flex; flex-direction: column; gap: 2px; position: sticky; top: 0; max-height: calc(100vh - 220px); overflow-y: auto; }
-    .elem-cat-item { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.4rem 0.6rem; border-radius: var(--radius-sm); background: transparent; border: none; color: var(--text-muted); font-size: 0.78rem; cursor: pointer; text-align: left; }
-    .elem-cat-item:hover { background: var(--bg-surface); color: var(--text-main); }
-    .elem-cat-item.active { background: rgba(139,92,246,0.14); color: #c4b5fd; font-weight: 700; }
-    .elem-count { font-size: 0.68rem; border: 1px solid var(--border); border-radius: 4px; padding: 0 0.3rem; color: var(--text-faint); }
-    .search-panel { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card); padding: 0.7rem 0.85rem; display: flex; flex-direction: column; gap: 0.5rem; }
-    .elem-group { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card); overflow: hidden; }
-    .elem-group-head { width: 100%; display: flex; align-items: center; padding: 0.6rem 0.85rem; background: var(--bg-surface); border: none; border-bottom: 1px solid var(--border); color: var(--text-main); font-size: 0.82rem; font-weight: 700; cursor: pointer; }
-    .elem-cards { padding: 0.85rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem; }
-    .elem-card { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-dark); padding: 0.7rem; display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
-    .elem-card-top { display: flex; align-items: center; gap: 0.5rem; }
-    .elem-thumb { width: 44px; height: 34px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-surface); display: inline-flex; align-items: center; justify-content: center; color: var(--text-faint); flex-shrink: 0; }
-    .elem-card-name { font-size: 0.85rem; font-weight: 700; }
-    .elem-card-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; }
-    .elem-card-foot { display: flex; align-items: center; justify-content: space-between; color: var(--text-faint); }
-    @media (max-width: 860px) { .page-body { flex-direction: column !important; } .elem-cat { width: 100%; max-height: 220px; position: static; } }
+    .elem-cat {
+      width: 200px;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: #0d121f;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      position: sticky;
+      top: 0;
+      max-height: calc(100vh - 220px);
+      overflow-y: auto;
+    }
+
+    .elem-cat-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.4rem 0.6rem;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .elem-cat-item:hover {
+      background: var(--bg-surface);
+      color: var(--text-main);
+    }
+
+    .elem-cat-item.active {
+      background: rgba(139, 92, 246, 0.14);
+      color: #c4b5fd;
+      font-weight: 700;
+    }
+
+    .elem-count {
+      font-size: 0.68rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0 0.3rem;
+      color: var(--text-faint);
+    }
+
+    .search-panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      padding: 0.7rem 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .elem-group {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      overflow: hidden;
+    }
+
+    .elem-group-head {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0.6rem 0.85rem;
+      background: var(--bg-surface);
+      border: none;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .elem-cards {
+      padding: 0.85rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .elem-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-dark);
+      padding: 0.7rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      min-width: 0;
+    }
+
+    .elem-card-top {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .elem-thumb {
+      width: 44px;
+      height: 34px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg-surface);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-faint);
+      flex-shrink: 0;
+    }
+
+    .elem-card-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .elem-card-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .elem-card-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-faint);
+    }
+
+    @media (max-width: 860px) {
+      .page-body {
+        flex-direction: column !important;
+      }
+
+      .elem-cat {
+        width: 100%;
+        max-height: 220px;
+        position: static;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <header class="app-titlebar">
-    <div style="display:flex;align-items:center;gap:0.75rem;">
-      <a href="buat-projeck.page.html" class="btn-back"><iconify-icon icon="lucide:arrow-left"></iconify-icon> Projeck</a>
-      <span class="brand-title">✦ AETHER NOVA</span>
-    </div>
-    <div class="titlebar-center"><iconify-icon icon="lucide:globe"></iconify-icon><span>Aether Nova World</span></div>
-    <div class="titlebar-actions">
-      <button class="win-btn"><iconify-icon icon="lucide:minus"></iconify-icon></button>
-      <button class="win-btn"><iconify-icon icon="lucide:square"></iconify-icon></button>
-      <button class="win-btn close"><iconify-icon icon="lucide:x"></iconify-icon></button>
-    </div>
-  </header>
+
   <div class="workspace-layout">
     <aside class="main-sidebar" id="main-sidebar">
       <div class="sidebar-top-bar">
-        <div class="world-dropdown-box"><span>Aether Nova World</span><iconify-icon icon="lucide:chevron-down"></iconify-icon></div>
-        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar"><iconify-icon icon="lucide:panel-left-close" width="18"></iconify-icon></button>
+        <div class="world-dropdown-box"><span>Aether Nova World</span><iconify-icon
+            icon="lucide:chevron-down"></iconify-icon></div>
+        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar"><iconify-icon icon="lucide:panel-left-close"
+            width="18"></iconify-icon></button>
       </div>
       <nav class="sidebar-nav-list">
-        <a class="side-nav-item" href="dashboard.page.html" data-label="Dashboard"><span class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span><span class="side-item-text">Dashboard</span></a>
-        <a class="side-nav-item" href="dokumen.page.html" data-label="Dokumen"><span class="side-nav-icon"><iconify-icon icon="lucide:book-open"></iconify-icon></span><span class="side-item-text">Dokumen</span></a>
-        <a class="side-nav-item" href="karakter.page.html" data-label="Karakter"><span class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span><span class="side-item-text">Karakter</span></a>
-        <a class="side-nav-item active" href="element-dunia.page.html" data-label="Element Dunia"><span class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span class="side-item-text">Element Dunia</span></a>
-        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span class="side-item-text">Linimasa</span></a>
-        <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan"><span class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span class="side-item-text">Hubungan</span></a>
-        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span><span class="side-item-text">Jaringan</span></a>
-        <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah"><span class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span class="side-item-text">Peta &amp; Denah</span></a>
+        <a class="side-nav-item" href="dashboard.page.html" data-label="Dashboard"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span><span
+            class="side-item-text">Dashboard</span></a>
+        <a class="side-nav-item" href="dokumen.page.html" data-label="Dokumen"><span class="side-nav-icon"><iconify-icon
+              icon="lucide:book-open"></iconify-icon></span><span class="side-item-text">Dokumen</span></a>
+        <a class="side-nav-item" href="karakter.page.html" data-label="Karakter"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span><span
+            class="side-item-text">Karakter</span></a>
+        <a class="side-nav-item active" href="element-dunia.page.html" data-label="Element Dunia"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span
+            class="side-item-text">Element Dunia</span></a>
+        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span
+            class="side-item-text">Linimasa</span></a>
+        <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span
+            class="side-item-text">Hubungan</span></a>
+        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span><span
+            class="side-item-text">Jaringan</span></a>
+        <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah"><span
+            class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span
+            class="side-item-text">Peta &amp; Denah</span></a>
       </nav>
       <div class="sidebar-bottom-list">
-        <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
-        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
-        <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
+        <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon
+              icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
+        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon
+              icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
+        <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon
+              icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
       </div>
     </aside>
-        <div class="workspace-content">
+    <div class="workspace-content">
       <div class="page-header">
-        <div><h1>Element Dunia</h1><p>Semua Element Dunia <span class="badge" style="margin-left:0.35rem;">3 Total</span></p><p style="font-size:0.78rem;color:var(--text-faint);">tampilkan semua element dunia</p></div>
+        <div>
+          <h1>Element Dunia</h1>
+          <p>Semua Element Dunia <span class="badge" style="margin-left:0.35rem;">3 Total</span></p>
+          <p style="font-size:0.78rem;color:var(--text-faint);">tampilkan semua element dunia</p>
+        </div>
         <div class="page-header-actions">
           <button class="btn-action">+ Tambah Element</button>
           <button class="btn-action primary">+ Entry</button>
@@ -98,9 +246,11 @@
               <iconify-icon icon="lucide:search"></iconify-icon>
               <input type="text" class="search-field" placeholder="Search">
             </div>
-            <div style="font-size:0.78rem;color:var(--text-muted);">Tag: <span class="badge">tag1</span> <span class="badge">tag1</span> <span class="badge">tag1</span></div>
+            <div style="font-size:0.78rem;color:var(--text-muted);">Tag: <span class="badge">tag1</span> <span
+                class="badge">tag1</span> <span class="badge">tag1</span></div>
             <div style="margin-left:auto;display:flex;gap:0.35rem;">
-              <button class="win-btn" title="Tampilan Grid"><iconify-icon icon="lucide:layout-grid"></iconify-icon></button>
+              <button class="win-btn" title="Tampilan Grid"><iconify-icon
+                  icon="lucide:layout-grid"></iconify-icon></button>
               <button class="win-btn" title="Tampilan List"><iconify-icon icon="lucide:list"></iconify-icon></button>
             </div>
           </div>
@@ -108,10 +258,14 @@
             <button class="elem-group-head">Races <span style="margin-left:auto;">v</span></button>
             <div class="elem-cards">
               <div class="elem-card">
-                <div class="elem-card-top"><span class="elem-thumb"><iconify-icon icon="lucide:image" width="18"></iconify-icon></span><span style="font-size:0.75rem;color:var(--text-faint);">Races</span></div>
+                <div class="elem-card-top"><span class="elem-thumb"><iconify-icon icon="lucide:image"
+                      width="18"></iconify-icon></span><span
+                    style="font-size:0.75rem;color:var(--text-faint);">Races</span></div>
                 <div class="elem-card-name">Name</div>
                 <div class="elem-card-desc">Deskripsi<br>tag1 tag1</div>
-                <div class="elem-card-foot"><span></span><span style="display:flex;gap:0.3rem;"><iconify-icon icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></span></div>
+                <div class="elem-card-foot"><span></span><span style="display:flex;gap:0.3rem;"><iconify-icon
+                      icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line"
+                      width="14"></iconify-icon></span></div>
               </div>
             </div>
           </div>
@@ -119,10 +273,14 @@
             <button class="elem-group-head">Lokasi <span style="margin-left:auto;">v</span></button>
             <div class="elem-cards">
               <div class="elem-card">
-                <div class="elem-card-top"><span class="elem-thumb"><iconify-icon icon="lucide:image" width="18"></iconify-icon></span><span style="font-size:0.75rem;color:var(--text-faint);">Lokasi</span></div>
+                <div class="elem-card-top"><span class="elem-thumb"><iconify-icon icon="lucide:image"
+                      width="18"></iconify-icon></span><span
+                    style="font-size:0.75rem;color:var(--text-faint);">Lokasi</span></div>
                 <div class="elem-card-name">Name</div>
                 <div class="elem-card-desc">Deskripsi<br>tag1 tag1</div>
-                <div class="elem-card-foot"><span></span><span style="display:flex;gap:0.3rem;"><iconify-icon icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></span></div>
+                <div class="elem-card-foot"><span></span><span style="display:flex;gap:0.3rem;"><iconify-icon
+                      icon="lucide:eye" width="14"></iconify-icon><iconify-icon icon="lucide:pen-line"
+                      width="14"></iconify-icon></span></div>
               </div>
             </div>
           </div>
@@ -139,4 +297,5 @@
     document.querySelectorAll('.elem-cat-item').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.elem-cat-item').forEach(x => x.classList.remove('active')); b.classList.add('active'); }));
   </script>
 </body>
+
 </html>
