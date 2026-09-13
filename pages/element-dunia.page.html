@@ -14,7 +14,284 @@
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
   <style>
-    .elem-cat {
+    /* AWB Main Sidebar (sama seperti dokumen.page.html) */
+    .awb-sidebar {
+      width: 52px;
+      background: #111724;
+      border-right: 1px solid #1c2638;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      z-index: 50;
+      transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      user-select: none;
+      height: 100vh;
+    }
+    .awb-sidebar.expanded {
+      width: 200px;
+      background: #1e2636;
+    }
+    .awb-sb-header {
+      padding: 0.75rem 0.5rem 0.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .awb-sidebar.expanded .awb-sb-header {
+      align-items: flex-start;
+      padding: 0.85rem 0.85rem 0.5rem;
+    }
+    .awb-logo-collapsed {
+      font-family: 'Cinzel', serif;
+      font-weight: 800;
+      font-size: 0.85rem;
+      line-height: 1.1;
+      text-align: center;
+      color: #e2e8f0;
+      margin-bottom: 0.45rem;
+      letter-spacing: 0.05em;
+      display: block;
+    }
+    .awb-sidebar.expanded .awb-logo-collapsed { display: none; }
+    .awb-logo-expanded {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #ffffff;
+      display: none;
+      white-space: nowrap;
+      letter-spacing: 0.05em;
+    }
+    .awb-sidebar.expanded .awb-logo-expanded { display: block; }
+    .awb-sb-expand-btn {
+      width: 24px;
+      height: 24px;
+      background: #182235;
+      border: 1px solid #283750;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      transition: all 0.12s;
+    }
+    .awb-sb-expand-btn:hover {
+      background: #223049;
+      color: #fff;
+    }
+    .awb-sb-collapse-btn {
+      width: 24px;
+      height: 24px;
+      background: #25334c;
+      border: 1px solid #3b4c6b;
+      border-radius: 2px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      font-weight: 700;
+      transition: all 0.12s;
+    }
+    .awb-sidebar.expanded .awb-sb-collapse-btn { display: flex; }
+    .awb-sb-collapse-btn:hover {
+      background: #334466;
+      color: #fff;
+    }
+    .awb-world-wrap {
+      display: none;
+      width: 100%;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .awb-sidebar.expanded .awb-world-wrap { display: block; }
+    .awb-world-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      background: #182235;
+      border: 1px solid #283750;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .awb-world-btn:hover {
+      background: #25334c;
+      color: #fff;
+    }
+    .awb-world-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: -400px;
+      z-index: 80;
+      background: #151c2a;
+      border: 1px solid #33435e;
+      border-radius: 6px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6);
+      padding: 0.35rem;
+      max-width: 200px;
+      max-height: 260px;
+      overflow-y: auto;
+      display: none;
+      flex-direction: column;
+    }
+    .awb-world-dropdown.open { display: flex; }
+    .awb-world-opt {
+      padding: 0.4rem 0.5rem;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      cursor: pointer;
+      border-radius: 3px;
+      background: #151c2a;
+      transition: background 0.12s;
+      display: block;
+      width: 100%;
+      text-align: left;
+    }
+    .awb-world-opt:hover, .awb-world-opt.active {
+      background: #25334c;
+      color: #fff;
+    }
+    .awb-world-opt.add-btn {
+      border-top: 1px solid #283750;
+      padding-top: 0.55rem;
+      color: #93c5fd;
+      font-weight: 600;
+    }
+    .awb-sb-nav {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 0.35rem;
+      min-height: 0;
+    }
+    .awb-sidebar.collapsed .awb-sb-nav { padding: 0.25rem 0.2rem; }
+    .awb-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.3rem 0.45rem;
+      border-radius: 4px;
+      color: #cbd5e1;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.12s;
+      white-space: nowrap;
+      font-size: 0.84rem;
+    }
+    .awb-sidebar.collapsed .awb-nav-link { padding: 0.35rem 0.45rem; justify-content: center; }
+    .awb-nav-link:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+    .awb-nav-link.active { background: rgba(139, 92, 246, 0.15); color: #fff; font-weight: 600; }
+    .awb-nav-box {
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      background: #182235;
+      border: 1px solid #283850;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      transition: all 0.12s;
+    }
+    .awb-nav-link:hover .awb-nav-box {
+      background: #25334c;
+      color: #fff;
+      border-color: #3b4f73;
+    }
+    .awb-nav-link.active .awb-nav-box {
+      background: #8b5cf6;
+      color: #fff;
+      border-color: #8b5cf6;
+    }
+    .awb-nav-icon {
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      opacity: 0.95;
+    }
+    .awb-nav-link .awb-nav-icon { color: inherit; }
+    .awb-nav-text {
+      font-size: 0.84rem;
+      color: #f1f5f9;
+      display: none;
+    }
+    .awb-sidebar.expanded .awb-nav-text { display: inline-block; }
+    .awb-sb-spacer {
+      flex: 1;
+      min-height: 1.5rem;
+    }
+    .awb-sb-footer {
+      padding: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .awb-sidebar.expanded .awb-sb-footer {
+      justify-content: flex-end;
+      padding: 0.6rem 0.85rem;
+    }
+    .awb-sb-collapse-btn {
+      width: 24px;
+      height: 24px;
+      background: #25334c;
+      border: 1px solid #3b4c6b;
+      border-radius: 2px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      font-weight: 700;
+      transition: all 0.12s;
+    }
+    .awb-sidebar.expanded .awb-sb-collapse-btn { display: flex; }
+    .awb-sb-collapse-btn:hover {
+      background: #334466;
+      color: #fff;
+    }
+    .awb-bottom-rail-expand {
+      width: 32px;
+      height: 32px;
+      background: #182235;
+      border: 1px solid #283750;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      transition: all 0.15s;
+    }
+    .awb-bottom-rail-expand:hover {
+      background: #223049;
+      color: #fff;
+    }
+    .awb-sidebar.expanded .awb-bottom-rail-expand { display: none; }
       width: 200px;
       flex-shrink: 0;
       border: 1px solid var(--border);
@@ -167,47 +444,72 @@
 <body>
 
   <div class="workspace-layout">
-    <aside class="main-sidebar" id="main-sidebar">
-      <div class="sidebar-top-bar">
-        <div class="world-dropdown-box"><span>Aether Nova World</span><iconify-icon
-            icon="lucide:chevron-down"></iconify-icon></div>
-        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar"><iconify-icon icon="lucide:panel-left-close"
-            width="18"></iconify-icon></button>
+    <!-- SIDEBAR UTAMA AN WB -->
+    <div class="awb-sidebar" id="awb-main-sidebar">
+      <div class="awb-sb-header">
+        <div class="awb-logo-collapsed">AN<br>WB</div>
+        <div class="awb-logo-expanded">Aether Nova WB</div>
+        <button class="awb-sb-expand-btn" id="btn-expand-main-sidebar" title="Perbesar Sidebar">&gt;</button>
+        <div class="awb-world-wrap">
+          <button class="awb-world-btn" id="btn-toggle-world-menu">
+            <span class="world-label" id="cur-world-name">Pilih Dunia</span>
+            <span class="world-arrow">V</span>
+          </button>
+          <div class="awb-world-dropdown" id="awb-world-dropdown">
+            <div class="awb-world-opt active" data-world="Dunia1">Dunia1</div>
+            <div class="awb-world-opt" data-world="Dunia2">Dunia2</div>
+            <div class="awb-world-opt add-btn" id="btn-tambah-dunia-opt">+ Tambah Dunia</div>
+          </div>
+        </div>
       </div>
-      <nav class="sidebar-nav-list">
-        <a class="side-nav-item" href="dashboard.page.html" data-label="Dashboard"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span><span
-            class="side-item-text">Dashboard</span></a>
-        <a class="side-nav-item" href="dokumen.page.html" data-label="Dokumen"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:book-open"></iconify-icon></span><span class="side-item-text">Dokumen</span></a>
-        <a class="side-nav-item" href="karakter.page.html" data-label="Karakter"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span><span
-            class="side-item-text">Karakter</span></a>
-        <a class="side-nav-item active" href="element-dunia.page.html" data-label="Element Dunia"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span
-            class="side-item-text">Element Dunia</span></a>
-        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span
-            class="side-item-text">Linimasa</span></a>
-        <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span
-            class="side-item-text">Hubungan</span></a>
-        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span><span
-            class="side-item-text">Jaringan</span></a>
-        <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span
-            class="side-item-text">Peta &amp; Denah</span></a>
+      <nav class="awb-sb-nav">
+        <a class="awb-nav-link" href="dashboard.page.html" title="Dashboard">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:layout-dashboard" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Dashboard</span>
+        </a>
+        <a class="awb-nav-link" href="dokumen.page.html" title="Dokumen">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:book-open" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Dokumen</span>
+        </a>
+        <a class="awb-nav-link" href="karakter.page.html" title="Karakter">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:users" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Karakter</span>
+        </a>
+        <a class="awb-nav-link active" href="element-dunia.page.html" title="Element Dunia">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:gem" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Element Dunia</span>
+        </a>
+        <a class="awb-nav-link" href="linimasa.page.html" title="Linimasa">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:calendar-range" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Linimasa</span>
+        </a>
+        <a class="awb-nav-link" href="jaringan.page.html" title="Graph">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:network" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Graph</span>
+        </a>
+        <a class="awb-nav-link" href="peta-denah.page.html" title="Visual Peta">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:map" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Visual Peta</span>
+        </a>
+        <div class="awb-sb-spacer"></div>
+        <a class="awb-nav-link" href="#" title="Pencarian">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:search" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Pencarian</span>
+        </a>
+        <a class="awb-nav-link" href="#" title="Akun">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:circle-user-round" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Akun</span>
+        </a>
+        <a class="awb-nav-link" href="#" title="Setting">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:settings-2" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Setting</span>
+        </a>
       </nav>
-      <div class="sidebar-bottom-list">
-        <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
-        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
-        <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
+      <div class="awb-sb-footer">
+        <button class="awb-bottom-rail-expand" id="btn-bottom-expand" title="Perbesar Sidebar">&gt;</button>
+        <button class="awb-sb-collapse-btn" id="btn-collapse-main-sidebar" title="Perkecil Sidebar">&lt;</button>
       </div>
-    </aside>
+    </div>
     <div class="workspace-content">
       <div class="page-header">
         <div>
@@ -288,12 +590,8 @@
       </div>
     </div>
   </div>
+  <script src="/js/awb-sidebar.js"></script>
   <script>
-    const sidebar = document.getElementById('main-sidebar');
-    document.getElementById('btn-toggle-sidebar').addEventListener('click', () => {
-      const c = sidebar.classList.toggle('collapsed');
-      document.querySelector('#btn-toggle-sidebar iconify-icon').setAttribute('icon', c ? 'lucide:panel-left-open' : 'lucide:panel-left-close');
-    });
     document.querySelectorAll('.elem-cat-item').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.elem-cat-item').forEach(x => x.classList.remove('active')); b.classList.add('active'); }));
   </script>
 </body>

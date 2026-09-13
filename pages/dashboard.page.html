@@ -15,58 +15,12 @@
   <link rel="stylesheet" href="/styles/shared-workspace.css">
   <style>
     /* ===== Sidebar header (brand + world picker) ===== */
-    .sidebar-brand-row {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 0.75rem 0.4rem;
-      flex-shrink: 0;
-    }
-
-    .sidebar-brand {
-      font-family: var(--font-heading);
-      font-weight: 800;
-      font-size: 0.95rem;
-      letter-spacing: 0.04em;
-      color: var(--text-main);
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      min-width: 0;
-    }
-
-    .sidebar-brand-mark {
-      width: 26px;
-      height: 26px;
-      border-radius: var(--radius-sm);
-      flex-shrink: 0;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-    }
-
-    .wb-chip {
-      font-family: var(--font-body);
-      font-size: 0.6rem;
-      font-weight: 800;
-      padding: 0.1rem 0.4rem;
-      border-radius: 4px;
-      letter-spacing: 0.06em;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-hover);
-      color: #c4b5fd;
-    }
-
-    .main-sidebar.collapsed .sidebar-brand-wrap {
+    .sidebar-brand-wrap {
       display: none;
     }
 
-    .main-sidebar.collapsed .sidebar-brand-row {
-      justify-content: center;
+    .main-sidebar.expanded .sidebar-brand-wrap {
+      display: block;
     }
 
     .world-picker {
@@ -168,8 +122,300 @@
       text-align: center;
     }
 
+    /* ====== AWB Sidebar (sama seperti dokumen.page.html) ====== */
+    .awb-sidebar {
+      width: 52px;
+      background: #111724;
+      border-right: 1px solid #1c2638;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      z-index: 50;
+      transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      user-select: none;
+      height: 100vh;
+    }
+
+    .awb-sidebar.expanded {
+      width: 200px;
+      background: #1e2636;
+    }
+
+    .awb-sb-header {
+      padding: 0.75rem 0.5rem 0.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .awb-sidebar.expanded .awb-sb-header {
+      align-items: flex-start;
+      padding: 0.85rem 0.85rem 0.5rem;
+    }
+
+    .awb-logo-collapsed {
+      font-family: 'Cinzel', serif;
+      font-weight: 800;
+      font-size: 0.85rem;
+      line-height: 1.1;
+      text-align: center;
+      color: #e2e8f0;
+      margin-bottom: 0.45rem;
+      letter-spacing: 0.05em;
+      display: block;
+    }
+
+    .awb-sidebar.expanded .awb-logo-collapsed {
+      display: none;
+    }
+
+    .awb-logo-expanded {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #ffffff;
+      display: none;
+      white-space: nowrap;
+      letter-spacing: 0.05em;
+    }
+
+    .awb-sidebar.expanded .awb-logo-expanded {
+      display: block;
+    }
+
+    .awb-sb-expand-btn {
+      width: 24px;
+      height: 24px;
+      background: #182235;
+      border: 1px solid #283750;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      transition: all 0.12s;
+    }
+
+    .awb-sb-expand-btn:hover {
+      background: #223049;
+      color: #fff;
+    }
+
+    .awb-sb-collapse-btn {
+      width: 24px;
+      height: 24px;
+      background: #182235;
+      border: 1px solid #283750;
+      border-radius: 2px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      font-weight: 700;
+      transition: all 0.12s;
+    }
+
+    .awb-sidebar.expanded .awb-sb-collapse-btn {
+      display: flex;
+    }
+
+    .awb-sb-collapse-btn:hover {
+      background: #223049;
+      color: #fff;
+    }
+
+    .awb-world-wrap {
+      display: none;
+      width: 100%;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .awb-sidebar.expanded .awb-world-wrap {
+      display: block;
+    }
+
+    .awb-world-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      background: #182235;
+      border: 1px solid #283750;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .awb-world-btn:hover {
+      background: #25334c;
+      color: #fff;
+    }
+
+    .awb-world-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: -400px;
+      z-index: 80;
+      background: #151c2a;
+      border: 1px solid #33435e;
+      border-radius: 6px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+      padding: 0.35rem;
+      max-width: 200px;
+      max-height: 260px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .awb-world-dropdown.open {
+      display: block;
+    }
+
+    .awb-world-opt {
+      padding: 0.4rem 0.5rem;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      cursor: pointer;
+      border-radius: 3px;
+      background: transparent;
+      display: block;
+      width: 100%;
+      text-align: left;
+      transition: background 0.12s;
+    }
+
+    .awb-world-opt:hover,
+    .awb-world-opt.active {
+      background: #25334c;
+      color: #fff;
+    }
+
+    .awb-world-opt.add-btn {
+      border-top: 1px solid #283750;
+      padding-top: 0.55rem;
+      color: #93c5fd;
+    }
+
+    .awb-sb-nav {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 0.35rem;
+      min-height: 0;
+    }
+
+    .main-sidebar.collapsed .awb-sb-nav {
+      padding: 0.25rem 0.2rem;
+    }
+
+    .awb-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.3rem 0.45rem;
+      border-radius: 4px;
+      color: #cbd5e1;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.12s;
+      white-space: nowrap;
+      font-size: 0.84rem;
+    }
+
+    .main-sidebar.collapsed .awb-nav-link {
+      padding: 0.35rem 0.45rem;
+      justify-content: center;
+    }
+
+    .main-sidebar.collapsed .awb-nav-text {
+      display: none;
+    }
+
+    .awb-nav-link:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .awb-nav-link.active {
+      background: rgba(139, 92, 246, 0.15);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .awb-nav-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      opacity: 0.85;
+    }
+
+    .awb-nav-box {
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      background: #182235;
+      border: 1px solid #283850;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      transition: all 0.12s;
+    }
+
+    .awb-nav-link:hover .awb-nav-box {
+      background: #25334c;
+      color: #fff;
+      border-color: #3b4f73;
+    }
+
+    .awb-nav-link.active .awb-nav-box {
+      background: #8b5cf6;
+      color: #fff;
+      border-color: #8b5cf6;
+    }
+
+    .awb-nav-icon {
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      opacity: 0.95;
+    }
+
+    .awb-nav-link .awb-nav-icon {
+      color: inherit;
+    }
+
     /* Nav indikator aktif */
-    .side-nav-item.active .side-indicator {
+    .main-sidebar.expanded .side-nav-item.active .side-indicator {
+      display: block;
+      left: 0.45rem;
+    }
+
+    .main-sidebar.expanded .side-indicator {
       position: absolute;
       left: 0;
       top: 50%;
@@ -790,60 +1036,83 @@
 <body>
 
   <div class="workspace-layout">
-    <aside class="main-sidebar" id="main-sidebar">
+    <!-- SIDEBAR UTAMA AN WB (Bisa Diperbesar / Diperkecil sesuai Sidebar.png & SideBarPilihDunia.png) -->
+    <div class="awb-sidebar" id="awb-main-sidebar">
+      <!-- Header Sidebar -->
+      <div class="awb-sb-header">
+        <div class="awb-logo-collapsed">AN<br>WB</div>
+        <div class="awb-logo-expanded">Aether Nova WB</div>
+        <button class="awb-sb-expand-btn" id="btn-expand-main-sidebar" title="Perbesar Sidebar">&gt;</button>
 
-      <div class="sidebar-brand-row">
-        <div class="sidebar-brand-wrap sidebar-brand">
-          <span class="sidebar-brand-mark"><iconify-icon icon="lucide:globe" width="14"></iconify-icon></span>
-          Aether Nova <span class="wb-chip">WB</span>
+        <!-- Dropdown Pilih Dunia (SideBarPilihDunia.png) -->
+        <div class="awb-world-wrap">
+          <button class="awb-world-btn" id="btn-toggle-world-menu">
+            <span class="world-label" id="cur-world-name">Aether Nova</span>
+            <span class="world-arrow">V</span>
+          </button>
+          <div class="awb-world-dropdown" id="awb-world-dropdown">
+            <div class="awb-world-opt active" data-world="Aether Nova">Aether Nova</div>
+            <div class="awb-world-opt" data-world="Dunia2">Dunia2</div>
+            <div class="awb-world-opt add-btn" id="btn-tambah-dunia-opt">+ Tambah Dunia</div>
+          </div>
         </div>
       </div>
 
-      <div class="world-picker" id="world-picker">
-        <button class="world-picker-btn" id="btn-world-picker">
-          <span class="picker-name" id="picker-world-name">Pilih Dunia</span>
-          <iconify-icon icon="lucide:chevron-down" style="flex-shrink:0;"></iconify-icon>
-        </button>
-        <div class="world-picker-menu" id="world-picker-menu"></div>
-      </div>
+      <!-- Navigation List (Sesuai Sidebar.png) -->
+      <nav class="awb-sb-nav">
+        <a class="awb-nav-link active" href="dashboard.page.html" title="Dashboard">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:layout-dashboard" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Dashboard</span>
+        </a>
+        <a class="awb-nav-link" href="dokumen.page.html" title="Dokumen">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:book-open" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Dokumen</span>
+        </a>
+        <a class="awb-nav-link" href="karakter.page.html" title="Karakter">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:users" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Karakter</span>
+        </a>
+        <a class="awb-nav-link" href="element-dunia.page.html" title="Element Dunia">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:gem" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Element Dunia</span>
+        </a>
+        <a class="awb-nav-link" href="linimasa.page.html" title="Linimasa">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:calendar-range" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Linimasa</span>
+        </a>
+        <a class="awb-nav-link" href="jaringan.page.html" title="Graph">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:network" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Graph</span>
+        </a>
+        <a class="awb-nav-link" href="peta-denah.page.html" title="Visual Peta">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:map" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Visual Peta</span>
+        </a>
 
-      <div class="sidebar-top-bar">
-        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" title="Perkecil/Perbesar Sidebar">
-          <iconify-icon icon="lucide:panel-left-close" width="18"></iconify-icon>
-        </button>
-      </div>
+        <!-- Spacer -->
+        <div class="awb-sb-spacer"></div>
 
-      <nav class="sidebar-nav-list">
-        <a class="side-nav-item active" href="dashboard.page.html" data-label="Dashboard"><span
-            class="side-indicator"></span><span class="side-nav-icon"><iconify-icon
-              icon="lucide:layout-dashboard"></iconify-icon></span><span class="side-item-text">Dashboard</span></a>
-        <a class="side-nav-item" href="dokumen.page.html" data-label="Dokumen"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:book-open"></iconify-icon></span><span class="side-item-text">Dokumen</span></a>
-        <a class="side-nav-item" href="karakter.page.html" data-label="Karakter"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span><span
-            class="side-item-text">Karakter</span></a>
-        <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span
-            class="side-item-text">Element Dunia</span></a>
-        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span
-            class="side-item-text">Linimasa</span></a>
-        <a class="side-nav-item" href="jaringan.page.html" data-label="Graph"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:network"></iconify-icon></span><span class="side-item-text">Graph</span></a>
-        <a class="side-nav-item" href="peta-denah.page.html" data-label="Visual Peta"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span
-            class="side-item-text">Visual Peta</span></a>
+        <!-- Menu Bawah -->
+        <a class="awb-nav-link" href="#" title="Pencarian">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:search" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Pencarian</span>
+        </a>
+        <a class="awb-nav-link" href="#" title="Akun">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:circle-user-round" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Akun</span>
+        </a>
+        <a class="awb-nav-link" href="#" title="Setting">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:settings-2" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Setting</span>
+        </a>
       </nav>
 
-      <div class="sidebar-bottom-list">
-        <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
-        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
-        <a class="side-nav-item" href="#" data-label="Setting"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Setting</span></a>
+      <!-- Footer: Tombol [ < ] di kanan bawah saat expanded / Tombol [ > ] saat collapsed -->
+      <div class="awb-sb-footer">
+        <button class="awb-bottom-rail-expand" id="btn-bottom-expand" title="Perbesar Sidebar">&gt;</button>
+        <button class="awb-sb-collapse-btn" id="btn-collapse-main-sidebar" title="Perkecil Sidebar">&lt;</button>
       </div>
-    </aside>
+    </div>
 
     <div class="workspace-content">
       <div class="page-body">
@@ -864,8 +1133,6 @@
                   resonansi kristal aetherial. Di sinilah kisah dimulai.</p>
               </div>
               <div class="page-actions">
-                <button class="btn-action primary" id="btn-open-create"><iconify-icon
-                    icon="lucide:circle-plus"></iconify-icon> Buat Dunia</button>
                 <button class="btn-action" id="btn-open-edit2"><iconify-icon icon="lucide:pen-line"></iconify-icon> Edit
                   Dunia</button>
               </div>
@@ -1168,13 +1435,62 @@
   </div>
 
   <script>
-    // ===== Sidebar collapse =====
-    const sidebar = document.getElementById('main-sidebar');
-    const btnToggle = document.getElementById('btn-toggle-sidebar');
-    btnToggle.addEventListener('click', () => {
-      const collapsed = sidebar.classList.toggle('collapsed');
-      btnToggle.querySelector('iconify-icon').setAttribute('icon', collapsed ? 'lucide:panel-left-open' : 'lucide:panel-left-close');
+    const awbSidebar = document.getElementById('awb-main-sidebar');
+    const btnExpandMain = document.getElementById('btn-expand-main-sidebar');
+    const btnBottomExpand = document.getElementById('btn-bottom-expand');
+    const btnCollapseMain = document.getElementById('btn-collapse-main-sidebar');
+
+    function expandMainSidebar() {
+      if (awbSidebar) awbSidebar.classList.add('expanded');
+    }
+    function collapseMainSidebar() {
+      if (awbSidebar) {
+        awbSidebar.classList.remove('expanded');
+        if (awbWorldDropdown) awbWorldDropdown.classList.remove('open');
+      }
+    }
+
+    if (btnExpandMain) btnExpandMain.addEventListener('click', expandMainSidebar);
+    if (btnBottomExpand) btnBottomExpand.addEventListener('click', expandMainSidebar);
+    if (btnCollapseMain) btnCollapseMain.addEventListener('click', collapseMainSidebar);
+
+    // Dropdown Pilih Dunia (SideBarPilihDunia.png)
+    const btnToggleWorldMenu = document.getElementById('btn-toggle-world-menu');
+    const awbWorldDropdown = document.getElementById('awb-world-dropdown');
+    const curWorldName = document.getElementById('cur-world-name');
+    const btnTambahDuniaOpt = document.getElementById('btn-tambah-dunia-opt');
+
+    if (btnToggleWorldMenu) {
+      btnToggleWorldMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (awbWorldDropdown) awbWorldDropdown.classList.toggle('open');
+      });
+    }
+
+    document.querySelectorAll('.awb-world-opt:not(.add-btn)').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.awb-world-opt').forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+        if (curWorldName) curWorldName.textContent = opt.textContent;
+        if (awbWorldDropdown) awbWorldDropdown.classList.remove('open');
+      });
     });
+
+    if (btnTambahDuniaOpt) {
+      btnTambahDuniaOpt.addEventListener('click', () => {
+        const nama = prompt('Masukkan nama dunia baru:', 'Dunia Baru');
+        if (nama && nama.trim()) {
+          const opt = document.createElement('div');
+          opt.className = 'awb-world-opt';
+          opt.dataset.world = nama.trim();
+          opt.textContent = nama.trim();
+          if (awbWorldDropdown) awbWorldDropdown.insertBefore(opt, btnTambahDuniaOpt);
+          opt.click();
+        }
+      });
+    }
+
+    // Sidebar collapse lama (legacy btn-toggle-sidebar) dihapus — pakai awb-sidebar
 
     // ===== Tab klik (wiki + dokument) =====
     document.querySelectorAll('.wiki-tabs').forEach(bar => {
@@ -1215,11 +1531,14 @@
     const paramWorld = params.get('world');
     if (paramWorld) {
       const name = paramWorld;
-      document.getElementById('world-name-display').textContent = name;
-      document.getElementById('world-title').textContent = name;
-      document.getElementById('picker-world-name').textContent = name;
+      const elWorldName = document.getElementById('world-name-display');
+      if (elWorldName) elWorldName.textContent = name;
+      const elWorldTitle = document.getElementById('world-title');
+      if (elWorldTitle) elWorldTitle.textContent = name;
+      const elCurWorld = document.getElementById('cur-world-name');
+      if (elCurWorld) elCurWorld.textContent = name;
     }
-    const currentWorldName = paramWorld || document.getElementById('world-title').textContent;
+    const currentWorldName = paramWorld || (document.getElementById('world-title') ? document.getElementById('world-title').textContent : 'Aether Nova');
 
     // ===== Modal helpers =====
     function openModal(id) { document.getElementById(id).classList.add('open'); }
@@ -1233,11 +1552,14 @@
 
     document.getElementById('btn-open-create').addEventListener('click', () => openModal('modal-buat-dunia'));
     for (const id of ['btn-open-edit', 'btn-open-edit2']) {
-      document.getElementById(id).addEventListener('click', () => {
-        document.getElementById('input-judul-edit').value = currentWorldName;
-        document.getElementById('input-deskripsi-edit').value = document.getElementById('world-desc').textContent;
-        openModal('modal-edit-dunia');
-      });
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('click', () => {
+          document.getElementById('input-judul-edit').value = currentWorldName;
+          document.getElementById('input-deskripsi-edit').value = document.getElementById('world-desc').textContent;
+          openModal('modal-edit-dunia');
+        });
+      }
     }
 
     // Simpan edit → perbarui tampilan
@@ -1245,15 +1567,15 @@
       const judul = document.getElementById('input-judul-edit').value.trim();
       const desk = document.getElementById('input-deskripsi-edit').value.trim();
       if (judul) {
-        document.getElementById('world-title').textContent = judul;
-        document.getElementById('world-name-display').textContent = judul;
-        document.getElementById('picker-world-name').textContent = judul;
+        if (document.getElementById('world-title')) document.getElementById('world-title').textContent = judul;
+        if (document.getElementById('world-name-display')) document.getElementById('world-name-display').textContent = judul;
+        if (document.getElementById('cur-world-name')) document.getElementById('cur-world-name').textContent = judul;
       }
-      document.getElementById('world-desc').textContent = desk || '—';
+      if (document.getElementById('world-desc')) document.getElementById('world-desc').textContent = desk || '—';
       closeModal(document.getElementById('btn-submit-edit'));
     });
 
-    // Buat dunia baru → tambah projeck lalu navigasi
+    // Buat dunia baru → tambah project lalu navigasi
     document.getElementById('btn-submit-buat').addEventListener('click', () => {
       const judul = document.getElementById('input-judul').value.trim() || 'Dunia Baru';
       const desk = document.getElementById('input-deskripsi').value.trim();
@@ -1263,48 +1585,33 @@
       });
     });
 
-    // ===== World picker (Pilih Dunia) =====
-    const pickerBtn = document.getElementById('btn-world-picker');
-    const pickerMenu = document.getElementById('world-picker-menu');
-
-    function renderWorldMenu() {
+    // ===== Sinkronisasi daftar dunia dengan AetherState jika ada =====
+    function syncWorldDropdown() {
       whenAether(() => {
         AetherState.getProjects().then(projects => {
-          pickerMenu.innerHTML = '';
-          if (!projects.length) {
-            const empty = document.createElement('div');
-            empty.className = 'world-picker-empty';
-            empty.textContent = 'Belum ada dunia.';
-            pickerMenu.appendChild(empty);
-          }
-          projects.forEach(p => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'world-picker-item' + ((p.name === currentWorldName || p.name === document.getElementById('world-title').textContent) ? ' active' : '');
-            btn.innerHTML = '<iconify-icon icon="lucide:globe"></iconify-icon><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + p.name + '</span>';
-            btn.addEventListener('click', () => {
-              location.href = 'dashboard.page.html?world=' + encodeURIComponent(p.name);
+          if (projects && projects.length && awbWorldDropdown) {
+            awbWorldDropdown.querySelectorAll('.awb-world-opt:not(.add-btn)').forEach(o => o.remove());
+            projects.forEach(p => {
+              const opt = document.createElement('div');
+              opt.className = 'awb-world-opt' + (p.name === currentWorldName ? ' active' : '');
+              opt.dataset.world = p.name;
+              opt.textContent = p.name;
+              opt.addEventListener('click', () => {
+                location.href = 'dashboard.page.html?world=' + encodeURIComponent(p.name);
+              });
+              awbWorldDropdown.insertBefore(opt, btnTambahDuniaOpt);
             });
-            pickerMenu.appendChild(btn);
-          });
-          const add = document.createElement('button');
-          add.type = 'button';
-          add.className = 'world-picker-item add';
-          add.innerHTML = '<iconify-icon icon="lucide:plus"></iconify-icon> Tambah Dunia';
-          add.addEventListener('click', () => { pickerMenu.classList.remove('open'); openModal('modal-buat-dunia'); });
-          pickerMenu.appendChild(add);
+          }
         });
       });
     }
+    syncWorldDropdown();
 
-    pickerBtn.addEventListener('click', e => {
-      e.stopPropagation();
-      const willOpen = !pickerMenu.classList.contains('open');
-      pickerMenu.classList.toggle('open');
-      if (willOpen) renderWorldMenu();
-    });
-    document.addEventListener('click', e => {
-      if (!e.target.closest('.world-picker')) pickerMenu.classList.remove('open');
+    // Close dropdown on click outside
+    document.addEventListener('click', (e) => {
+      if (awbWorldDropdown && !awbWorldDropdown.contains(e.target) && (!btnToggleWorldMenu || !btnToggleWorldMenu.contains(e.target))) {
+        awbWorldDropdown.classList.remove('open');
+      }
     });
 
     // ===== Tunggu AetherState (disuntik setelah skrip halaman) =====

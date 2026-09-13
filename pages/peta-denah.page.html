@@ -222,47 +222,71 @@
 <body>
 
   <div class="workspace-layout">
-    <aside class="main-sidebar" id="main-sidebar">
-      <div class="sidebar-top-bar">
-        <div class="world-dropdown-box"><span>Aether Nova World</span><iconify-icon
-            icon="lucide:chevron-down"></iconify-icon></div>
-        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar"><iconify-icon icon="lucide:panel-left-close"
-            width="18"></iconify-icon></button>
+    <div class="awb-sidebar" id="awb-main-sidebar">
+      <div class="awb-sb-header">
+        <div class="awb-logo-collapsed">AN<br>WB</div>
+        <div class="awb-logo-expanded">Aether Nova WB</div>
+        <button class="awb-sb-expand-btn" id="btn-expand-main-sidebar" title="Perbesar Sidebar">&gt;</button>
+        <div class="awb-world-wrap">
+          <button class="awb-world-btn" id="btn-toggle-world-menu">
+            <span class="world-label" id="cur-world-name">Pilih Dunia</span>
+            <span class="world-arrow">V</span>
+          </button>
+          <div class="awb-world-dropdown" id="awb-world-dropdown">
+            <div class="awb-world-opt active" data-world="Dunia1">Dunia1</div>
+            <div class="awb-world-opt" data-world="Dunia2">Dunia2</div>
+            <div class="awb-world-opt add-btn" id="btn-tambah-dunia-opt">+ Tambah Dunia</div>
+          </div>
+        </div>
       </div>
-      <nav class="sidebar-nav-list">
-        <a class="side-nav-item" href="dashboard.page.html" data-label="Dashboard"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span><span
-            class="side-item-text">Dashboard</span></a>
-        <a class="side-nav-item" href="dokumen.page.html" data-label="Dokumen"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:book-open"></iconify-icon></span><span class="side-item-text">Dokumen</span></a>
-        <a class="side-nav-item" href="karakter.page.html" data-label="Karakter"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span><span
-            class="side-item-text">Karakter</span></a>
-        <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span><span
-            class="side-item-text">Element Dunia</span></a>
-        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span><span
-            class="side-item-text">Linimasa</span></a>
-        <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span><span
-            class="side-item-text">Hubungan</span></a>
-        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span><span
-            class="side-item-text">Jaringan</span></a>
-        <a class="side-nav-item active" href="peta-denah.page.html" data-label="Peta & Denah"><span
-            class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span><span
-            class="side-item-text">Peta & Denah</span></a>
+      <nav class="awb-sb-nav">
+        <a class="awb-nav-link" href="dashboard.page.html" title="Dashboard">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:layout-dashboard" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Dashboard</span>
+        </a>
+        <a class="awb-nav-link" href="dokumen.page.html" title="Dokumen">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:book-open" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Dokumen</span>
+        </a>
+        <a class="awb-nav-link" href="karakter.page.html" title="Karakter">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:users" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Karakter</span>
+        </a>
+        <a class="awb-nav-link" href="element-dunia.page.html" title="Element Dunia">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:gem" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Element Dunia</span>
+        </a>
+        <a class="awb-nav-link" href="linimasa.page.html" title="Linimasa">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:calendar-range" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Linimasa</span>
+        </a>
+        <a class="awb-nav-link" href="jaringan.page.html" title="Graph">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:network" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Graph</span>
+        </a>
+        <a class="awb-nav-link active" href="peta-denah.page.html" title="Visual Peta">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:map" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Visual Peta</span>
+        </a>
+        <div class="awb-sb-spacer"></div>
+        <a class="awb-nav-link" href="#" title="Pencarian">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:search" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Pencarian</span>
+        </a>
+        <a class="awb-nav-link" href="#" title="Akun">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:circle-user-round" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Akun</span>
+        </a>
+        <a class="awb-nav-link" href="#" title="Setting">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:settings-2" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Setting</span>
+        </a>
       </nav>
-      <div class="sidebar-bottom-list">
-        <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
-        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
-        <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
+      <div class="awb-sb-footer">
+        <button class="awb-bottom-rail-expand" id="btn-bottom-expand" title="Perbesar Sidebar">&gt;</button>
+        <button class="awb-sb-collapse-btn" id="btn-collapse-main-sidebar" title="Perkecil Sidebar">&lt;</button>
       </div>
-    </aside>
+    </div>
 
     <div class="workspace-content" style="padding:0;">
       <div class="page-header" style="padding:1.25rem 1.75rem;">
@@ -382,15 +406,10 @@
     </div>
   </div>
 
-  <script>
-    const sidebar = document.getElementById('main-sidebar');
-    document.getElementById('btn-toggle-sidebar').addEventListener('click', () => {
-      const c = sidebar.classList.toggle('collapsed');
-      document.querySelector('#btn-toggle-sidebar iconify-icon').setAttribute('icon', c ? 'lucide:panel-left-open' : 'lucide:panel-left-close');
-    });
+  <script src="/js/awb-sidebar.js"></script>
 
-    // Marker click to show info
-    document.querySelectorAll('.map-marker').forEach(marker => {
+  <!-- Marker click to show info -->
+  document.querySelectorAll('.map-marker').forEach(marker => {
       marker.addEventListener('click', (e) => {
         e.stopPropagation();
         const info = document.getElementById('map-info');

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dokumen – Aether Nova</title>
-  <meta name="description" content="Manajemen dokumen dan lore world building.">
+  <meta name="description" content="Manajemen dokumen, bab, dan plot world building.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -14,685 +14,3079 @@
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
   <style>
-    .doc-layout {
-      flex: 1;
-      min-height: 0;
+    /* Reset & Workspace Layout */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
       display: flex;
+      background: #080c14;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
+    .doc-app-wrap {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
     }
 
-    /* File Tree Panel — kolom kiri: Dokumen Lore + Naskah + Papan + Grid Plot */
-    .doc-tree-panel {
-      width: 230px;
-      max-width: 72vw;
-      border-right: 1px solid var(--border);
-      background: #0d121f;
-      padding: 0.6rem;
+    /* Sidebar Utama AWB (Mendukung Expanded & Collapsed sesuai Sidebar.png & Desktop.png) */
+    .awb-sidebar {
+      width: 52px;
+      background: #111724;
+      border-right: 1px solid #1c2638;
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
       flex-shrink: 0;
-      overflow-y: auto;
-      min-height: 0;
+      z-index: 50;
+      transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      user-select: none;
+      height: 100vh;
     }
 
-    .doc-tree-block {
+    .awb-sidebar.expanded {
+      width: 200px;
+      background: #1e2636;
+    }
+
+    /* Header Sidebar (Collapsed vs Expanded) */
+    .awb-sb-header {
+      padding: 0.75rem 0.5rem 0.5rem;
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.5rem;
+      align-items: center;
+      flex-shrink: 0;
     }
 
-    .doc-tree-block:last-child {
-      border-bottom: none;
+    .awb-sidebar.expanded .awb-sb-header {
+      align-items: flex-start;
+      padding: 0.85rem 0.85rem 0.5rem;
     }
 
-    .doc-caret {
-      color: var(--text-faint);
-      font-size: 0.85rem;
-      width: 10px;
+    .awb-logo-collapsed {
+      font-family: 'Cinzel', serif;
+      font-weight: 800;
+      font-size: 0.82rem;
+      line-height: 1.1;
+      text-align: center;
+      color: #f1f5f9;
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 0.45rem;
     }
 
-    .doc-tree-section-title {
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: var(--text-faint);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      padding: 0.5rem 0.5rem 0.35rem;
+    .awb-logo-expanded {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #ffffff;
+      display: none;
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+    }
+
+    .awb-sidebar.expanded .awb-logo-collapsed {
+      display: none;
+    }
+
+    .awb-sidebar.expanded .awb-logo-expanded {
+      display: block;
+    }
+
+    /* Toggle Expand / Collapse button */
+    .awb-sb-expand-btn {
+      width: 32px;
+      height: 32px;
+      background: #182235;
+      border: 1px solid #283750;
+      border-radius: 4px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-    }
-
-    .doc-tree-item {
-      padding: 0.45rem 0.65rem;
-      border-radius: var(--radius-sm);
-      font-size: 0.8rem;
-      color: var(--text-muted);
+      justify-content: center;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
       transition: all 0.15s;
     }
 
-    .doc-tree-item:hover {
-      background: var(--bg-surface);
-      color: var(--text-main);
+    .awb-sb-expand-btn:hover {
+      background: #223049;
+      color: #fff;
     }
 
-    .doc-tree-item.active {
-      background: rgba(139, 92, 246, 0.12);
-      color: #c4b5fd;
+    .awb-sidebar.expanded .awb-sb-expand-btn {
+      display: none;
+    }
+
+    /* Dropdown Pilih Dunia (SideBarPilihDunia.png) */
+    .awb-world-wrap {
+      display: none;
+      width: 100%;
+      position: relative;
+      margin-top: 0.65rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .awb-sidebar.expanded .awb-world-wrap {
+      display: block;
+    }
+
+    .awb-world-btn {
+      width: 100%;
+      display: flex;
+      align-items: stretch;
+      background: #151c2a;
+      border: 1px solid #33435e;
+      border-radius: 2px;
+      padding: 0;
+      cursor: pointer;
+      overflow: hidden;
+      color: #f1f5f9;
+      font-size: 0.8rem;
+    }
+
+    .awb-world-btn .world-label {
+      flex: 1;
+      padding: 0.35rem 0.55rem;
+      text-align: left;
+      font-size: 0.82rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .awb-world-btn .world-arrow {
+      width: 26px;
+      border-left: 1px solid #33435e;
+      background: #1c2638;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+
+    .awb-world-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #151c2a;
+      border: 1px solid #33435e;
+      border-top: none;
+      z-index: 80;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6);
+    }
+
+    .awb-world-dropdown.open {
+      display: flex;
+    }
+
+    .awb-world-opt {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      cursor: pointer;
+      border-top: 1px solid #243148;
+      background: #151c2a;
+      transition: background 0.12s;
+    }
+
+    .awb-world-opt:hover,
+    .awb-world-opt.active {
+      background: #25334c;
+      color: #fff;
+    }
+
+    .awb-world-opt.add-btn {
+      color: #93c5fd;
       font-weight: 600;
     }
 
-    .doc-tree-item.folder {
+    /* Navigasi List */
+    .awb-sb-nav {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 0.35rem 0.5rem;
+      min-height: 0;
+    }
+
+    .awb-sidebar.expanded .awb-sb-nav {
+      padding: 0.35rem 0.85rem;
+      gap: 0.4rem;
+    }
+
+    .awb-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.25rem 0.2rem;
+      border-radius: 4px;
+      color: #cbd5e1;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.12s;
+      white-space: nowrap;
+    }
+
+    .awb-nav-link:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .awb-nav-link.active {
+      color: #fff;
       font-weight: 600;
     }
 
-    .doc-thumb {
+    .awb-nav-box {
       width: 26px;
       height: 26px;
       border-radius: 4px;
-      border: 1px solid var(--border);
-      background: var(--bg-surface);
+      background: #182235;
+      border: 1px solid #283850;
+      flex-shrink: 0;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      color: #94a3b8;
+      transition: all 0.12s;
+    }
+
+    .awb-nav-link:hover .awb-nav-box {
+      background: #25334c;
+      color: #fff;
+      border-color: #3b4f73;
+    }
+
+    .awb-nav-link.active .awb-nav-box {
+      background: #8b5cf6;
+      color: #fff;
+      border-color: #8b5cf6;
+    }
+
+    .awb-nav-icon {
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      opacity: 0.95;
+    }
+
+    .awb-nav-link .awb-nav-icon {
+      color: inherit;
+    }
+
+    .awb-nav-text {
+      font-size: 0.84rem;
+      color: #f1f5f9;
+      display: none;
+    }
+
+    .awb-sidebar.expanded .awb-nav-text {
+      display: inline-block;
+    }
+
+    /* Spacer antara group menu utama & menu bawah */
+    .awb-sb-spacer {
+      flex: 1;
+      min-height: 1.5rem;
+    }
+
+    /* Bottom footer dengan tombol collapse [ < ] saat expanded */
+    .awb-sb-footer {
+      padding: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
     }
 
-    .doc-side-block {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      background: var(--bg-dark);
+    .awb-sidebar.expanded .awb-sb-footer {
+      justify-content: flex-end;
+      padding: 0.6rem 0.85rem;
     }
 
-    .doc-side-head {
-      padding: 0.45rem 0.6rem;
+    .awb-sb-collapse-btn {
+      width: 24px;
+      height: 24px;
+      background: #25334c;
+      border: 1px solid #3b4c6b;
+      border-radius: 2px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #cbd5e1;
       font-size: 0.75rem;
       font-weight: 700;
-      background: var(--bg-surface);
+      transition: all 0.12s;
+    }
+
+    .awb-sidebar.expanded .awb-sb-collapse-btn {
+      display: flex;
+    }
+
+    .awb-sb-collapse-btn:hover {
+      background: #334466;
+      color: #fff;
+    }
+
+    .awb-bottom-rail-expand {
+      width: 32px;
+      height: 32px;
+      background: #182235;
+      border: 1px solid #283750;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: all 0.15s;
+    }
+
+    .awb-bottom-rail-expand:hover {
+      background: #223049;
+      color: #fff;
+    }
+
+    .awb-sidebar.expanded .awb-bottom-rail-expand {
+      display: none;
+    }
+
+    /* Main Container */
+    .doc-main-container {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background: #0a0e17;
+    }
+
+    /* Top Page Header */
+    .doc-top-bar {
+      padding: 0.6rem 1rem 0.4rem;
+      border-bottom: 1px solid #1e293b;
+      background: #0d121f;
+      flex-shrink: 0;
+    }
+
+    .doc-top-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .doc-top-subtitle {
+      font-size: 0.72rem;
+      color: #64748b;
+      margin: 2px 0 0;
+    }
+
+    /* Toolbar Dokumen (Persis Desktop.png) */
+    .doc-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.75rem;
+      background: #0f1523;
+      border-bottom: 1px solid #1e293b;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    .search-box-wrap {
+      display: flex;
+      align-items: center;
+      background: #090d16;
+      border: 1px solid #243048;
+      border-radius: 4px;
+      padding: 0.2rem 0.45rem;
+      gap: 0.35rem;
+      width: 140px;
+    }
+
+    .search-box-wrap input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      width: 100%;
+    }
+
+    .tbar-btn {
+      min-width: 26px;
+      height: 26px;
+      padding: 0 0.4rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #131a29;
+      border: 1px solid #233049;
+      border-radius: 4px;
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.12s;
+    }
+
+    .tbar-btn:hover {
+      background: #1f293d;
+      border-color: #3b4c6b;
+      color: #fff;
+    }
+
+    .tbar-btn.active {
+      background: #283552;
+      border-color: #8b5cf6;
+      color: #c4b5fd;
+    }
+
+    .tbar-btn.bold {
+      font-weight: 800;
+      font-family: monospace;
+      font-size: 0.85rem;
+    }
+
+    .tbar-btn.italic {
+      font-style: italic;
+      font-family: serif;
+      font-size: 0.85rem;
+    }
+
+    .tbar-btn.underline {
+      text-decoration: underline;
+      font-size: 0.85rem;
+    }
+
+    .tbar-btn.strike {
+      text-decoration: line-through;
+      font-size: 0.85rem;
+    }
+
+    .tbar-btn.heading {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .tbar-sep {
+      width: 1px;
+      height: 18px;
+      background: #243048;
+      margin: 0 0.15rem;
+    }
+
+    /* Toolbar Papan & Plot Grid view */
+    .papan-top-ctrls {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 1;
+    }
+
+    .papan-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.5rem;
+      background: #162032;
+      border: 1px solid #283750;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    /* Content Area: Sub-sidebar + Viewport + Right Rail */
+    .doc-body-layout {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Sub-Sidebar Dokumen & Bab (Kiri) */
+    .doc-subsidebar {
+      width: 215px;
+      background: #0a0e18;
+      border-right: 1px solid #1c2638;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+      min-height: 0;
+      padding: 0.5rem 0.4rem;
+      gap: 0.75rem;
+      transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .doc-subsidebar.collapsed {
+      width: 0;
+      padding: 0;
+      border-right: none;
+      overflow: hidden;
+    }
+
+    .sb-block {
+      border: 1px solid #1a2333;
+      background: #0c121f;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .sb-block-header {
+      background: #121927;
+      border-bottom: 1px solid #1a2333;
+      padding: 0.35rem 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    .sb-block-header .sb-title-left {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .sb-plus-btn {
+      width: 18px;
+      height: 18px;
+      background: #182235;
+      border: 1px solid #2b3952;
+      border-radius: 3px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      transition: all 0.12s;
+    }
+
+    .sb-plus-btn:hover {
+      background: #25334c;
+      color: #fff;
+    }
+
+    .sb-item-list {
+      padding: 0.25rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .sb-row {
+      display: flex;
+      align-items: center;
+      padding: 0.25rem 0.45rem;
+      font-size: 0.73rem;
+      color: #94a3b8;
+      border-radius: 3px;
+      cursor: pointer;
+      gap: 0.35rem;
+      transition: background 0.12s;
+    }
+
+    .sb-row:hover {
+      background: #151e30;
+      color: #f1f5f9;
+    }
+
+    .sb-row.active {
+      background: rgba(139, 92, 246, 0.15);
+      color: #c4b5fd;
+      font-weight: 600;
+    }
+
+    .sb-row-title {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sb-row-acts {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      opacity: 0.8;
+    }
+
+    .sb-act-icon {
+      width: 14px;
+      height: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      padding: 0;
+      color: #64748b;
+      transition: color 0.12s;
+    }
+
+    .sb-act-icon:hover {
+      color: #cbd5e1;
+    }
+
+    .sb-act-icon.trash {
+      color: #ef4444;
+    }
+
+    .sb-act-icon.trash:hover {
+      color: #f87171;
+    }
+
+    .sb-num {
+      width: 12px;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .sb-num.red {
+      color: #ef4444;
+    }
+
+    .sb-badge-linked {
+      font-size: 0.65rem;
+      color: #facc15;
+      margin-left: 1rem;
+      display: block;
+      margin-top: -2px;
+      margin-bottom: 2px;
+    }
+
+    /* Workspace / View Center Area */
+    .doc-view-stage {
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      overflow: hidden;
+      background: #080c14;
+      position: relative;
+    }
+
+    /* View 1: Multi-pane Editor (Desktop.png) */
+    .view-desktop-panes {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    #editor-grid {
+      flex: 1;
+      min-height: 0;
+      min-width: 0;
+      display: grid;
+      gap: 1px;
+      background: #1e293b;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .editor-pane-cell {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      background: #0a0e17;
+      overflow: hidden;
+    }
+
+    .editor-pane-cell.dragover {
+      outline: 2px dashed #8b5cf6;
+      outline-offset: -2px;
+    }
+
+    .pane-col-left {
+      flex: 1.2;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #1e293b;
+      background: #0a0e17;
+    }
+
+    .pane-col-right {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      background: #090d16;
+    }
+
+    .pane-top-half {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .pane-bottom-half {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Tabs Bar */
+    .pane-tabs-bar {
+      display: flex;
+      align-items: center;
+      background: #0d1322;
+      border-bottom: 1px solid #1e293b;
+      overflow-x: auto;
+      flex-shrink: 0;
+      height: 32px;
+    }
+
+    .pane-tab {
       display: flex;
       align-items: center;
       gap: 0.4rem;
-      border-bottom: 1px solid var(--border);
+      padding: 0 0.65rem;
+      height: 100%;
+      border-right: 1px solid #1e293b;
+      font-size: 0.74rem;
+      color: #94a3b8;
+      cursor: pointer;
+      white-space: nowrap;
+      user-select: none;
     }
 
-    .doc-side-row {
+    .pane-tab:hover {
+      background: #131b2e;
+      color: #f1f5f9;
+    }
+
+    .pane-tab.active {
+      background: #090d16;
+      color: #f1f5f9;
+      font-weight: 600;
+      border-bottom: 2px solid #8b5cf6;
+    }
+
+    .pane-tab-x {
+      font-size: 0.7rem;
+      color: #64748b;
+      cursor: pointer;
+    }
+
+    .pane-tab-x:hover {
+      color: #ef4444;
+    }
+
+    .pane-tab-add {
+      width: 28px;
+      height: 100%;
+      border: none;
+      background: transparent;
+      border-right: 1px solid #1e293b;
+      color: #64748b;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 0.45rem;
-      padding: 0.45rem 0.55rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      min-width: 0;
+      justify-content: center;
+      font-size: 0.85rem;
     }
 
-    .doc-side-row:first-of-type {
-      border-top: none;
+    .pane-tab-add:hover {
+      background: #141d30;
+      color: #fff;
     }
 
-    .doc-side-row iconify-icon {
-      color: var(--text-faint);
-    }
-
-    /* Papan & Grid Plot views */
-    .doc-subview {
+    /* Editor Canvas Body */
+    .pane-body {
       flex: 1;
       min-height: 0;
       overflow-y: auto;
-      padding: 1.1rem 1.25rem;
-      display: none;
-      flex-direction: column;
-      gap: 0.85rem;
+      padding: 1.5rem;
+      outline: none;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #cbd5e1;
     }
 
-    .doc-subview.active {
+    .pane-empty-notice {
       display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #64748b;
+      font-size: 0.82rem;
+      user-select: none;
+      text-align: center;
+      padding: 1rem;
     }
 
-    .doc-subview-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.5rem;
+    /* View 2: Papan View (Papan.png) */
+    .view-papan-wrap {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      height: 100%;
+      overflow-y: auto;
+      padding: 1.25rem;
+      background: #090d16;
     }
 
-    .papan-grid {
+    .papan-grid-board {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.6rem;
+      gap: 0.85rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
     }
 
-    .papan-cell {
-      min-height: 110px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      background: var(--bg-card);
+    .papan-card-cell {
+      min-height: 140px;
+      background: #121826;
+      border: 1px solid #233047;
+      border-radius: 6px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 0.35rem;
-      color: var(--text-muted);
-      font-size: 0.8rem;
+      cursor: pointer;
+      color: #cbd5e1;
+      padding: 0.75rem;
+      text-align: center;
+      transition: all 0.15s;
+      position: relative;
+    }
+
+    .papan-card-cell:hover {
+      background: #192236;
+      border-color: #3b4f73;
+      transform: translateY(-2px);
+    }
+
+    .papan-card-cell .plus-icon {
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem;
+      color: #8b5cf6;
+    }
+
+    /* View 3: Plot Grid View (PlotGrid.png) */
+    .view-plotgrid-wrap {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      height: 100%;
+      overflow: auto;
+      padding: 1.25rem;
+      background: #090d16;
+    }
+
+    .plotgrid-table {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      min-width: 780px;
+    }
+
+    .plotgrid-head-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding-left: 28px;
+    }
+
+    .plotgrid-col-header {
+      flex: 1;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid #2a374e;
+      border-radius: 6px;
+      background: #141c2c;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      text-align: center;
+    }
+
+    .plotgrid-col-header.first {
+      border: 1px solid #22c55e;
+      color: #86efac;
+      background: rgba(34, 197, 94, 0.08);
+    }
+
+    .plotgrid-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .plotgrid-row-acts {
+      width: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      flex-shrink: 0;
+    }
+
+    .pg-act-btn {
+      background: transparent;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      padding: 0;
+      font-size: 0.75rem;
+    }
+
+    .pg-act-btn:hover {
+      color: #cbd5e1;
+    }
+
+    .pg-act-btn.red {
+      color: #ef4444;
+    }
+
+    .pg-card {
+      flex: 1;
+      min-height: 100px;
+      background: #121826;
+      border: 1px solid #233047;
+      border-radius: 6px;
+      padding: 0.6rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-size: 0.76rem;
+      color: #cbd5e1;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .pg-card.bab-col {
+      border: 1px solid #22c55e;
+      background: rgba(34, 197, 94, 0.04);
+      align-items: center;
+      text-align: center;
+    }
+
+    .pg-card.empty-col {
+      align-items: center;
+      text-align: center;
+      color: #64748b;
+    }
+
+    .pg-card.empty-col:hover {
+      background: #172033;
+      color: #cbd5e1;
+    }
+
+    .pg-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.35rem;
       font-weight: 600;
     }
 
-    .gridplot-row {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+    /* Right Rail Vertikal (Desktop.png) */
+    .doc-right-rail {
+      width: 40px;
+      background: #080c14;
+      border-left: 1px solid #1c2638;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.75rem 0;
       gap: 0.6rem;
+      flex-shrink: 0;
+      z-index: 40;
     }
 
-    .gridplot-col {
-      min-height: 110px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      background: var(--bg-card);
-      padding: 0.6rem;
+    .rail-icon-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      background: #121826;
+      border: 1px solid #222d42;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .rail-icon-btn:hover,
+    .rail-icon-btn.active {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: #8b5cf6;
+      color: #c4b5fd;
+    }
+
+    /* Panel Gabungan Drawer (SubSidebarDokumendanBab.png) */
+    .doc-side-drawer {
+      width: 240px;
+      background: #0b101c;
+      border-left: 1px solid #1c2638;
+      display: none;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+      min-height: 0;
+      padding: 0.5rem 0.4rem;
+      gap: 0.65rem;
+      z-index: 35;
+    }
+
+    .doc-side-drawer.open {
+      display: flex;
+    }
+
+    .drawer-top-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.3rem 0.45rem;
       font-size: 0.78rem;
-      color: var(--text-muted);
+      font-weight: 700;
+      color: #cbd5e1;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .drawer-sec-card {
+      border: 1px solid #1e2a3f;
+      border-radius: 4px;
+      background: #0e1424;
+      overflow: hidden;
+    }
+
+    .drawer-sec-header {
+      background: #141c2e;
+      padding: 0.35rem 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1e2a3f;
+      cursor: pointer;
+    }
+
+    .drawer-sec-body {
+      padding: 0.35rem;
       display: flex;
       flex-direction: column;
       gap: 0.35rem;
     }
 
-    /* Editor Area */
-    .doc-editor-area {
+    .drawer-item-card {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.45rem;
+      background: #101728;
+      border: 1px solid #202c44;
+      border-radius: 4px;
+      font-size: 0.73rem;
+      color: #cbd5e1;
+    }
+
+    .drawer-thumb {
+      width: 22px;
+      height: 22px;
+      background: #172033;
+      border: 1px solid #26344e;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      flex-shrink: 0;
+    }
+
+    .drawer-note-card {
+      border: 1px solid #202c44;
+      background: #101728;
+      border-radius: 4px;
+      padding: 0.4rem;
+      font-size: 0.72rem;
+    }
+
+    .drawer-note-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 0.2rem;
+    }
+
+    /* Popover Symbol Unik (SymbolUnik.png) */
+    .symbol-popover {
+      position: absolute;
+      top: 75px;
+      left: 280px;
+      width: 320px;
+      background: #141a29;
+      border: 1px solid #2c3a52;
+      border-radius: 6px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      padding: 0.6rem;
+      z-index: 100;
+      display: none;
+    }
+
+    .symbol-popover.open {
+      display: block;
+    }
+
+    .symbol-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 4px;
+    }
+
+    .sym-btn {
+      height: 26px;
+      background: #1b2336;
+      border: 1px solid #2d3b54;
+      border-radius: 3px;
+      color: #f1f5f9;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.12s;
+    }
+
+    .sym-btn:hover {
+      background: #8b5cf6;
+      color: #fff;
+    }
+
+    /* Popover Layout Split Selector (AturTabDokDanBab.png) */
+    .layout-popover {
+      position: absolute;
+      top: 75px;
+      left: 450px;
+      width: 290px;
+      background: #141a29;
+      border: 1px solid #2c3a52;
+      border-radius: 6px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      padding: 0.6rem;
+      z-index: 100;
+      display: none;
+    }
+
+    .layout-popover.open {
+      display: block;
+    }
+
+    .layout-presets-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+    }
+
+    .layout-preset-box {
+      width: 38px;
+      height: 38px;
+      border: 1px solid #33435e;
+      background: #1c2538;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      padding: 2px;
+      gap: 1px;
+      transition: all 0.12s;
+    }
+
+    .layout-preset-box:hover,
+    .layout-preset-box.active {
+      border-color: #8b5cf6;
+      background: rgba(139, 92, 246, 0.2);
+    }
+
+    .lp-part {
+      background: #2b3850;
+      border-radius: 2px;
       flex: 1;
-      min-width: 0;
-      min-height: 0;
+    }
+
+    /* Popover Tambah ke Dokumen Lore (+DokumenLore.png) */
+    .plus-lore-popover {
+      position: absolute;
+      background: #141a29;
+      border: 1px solid #2c3a52;
+      border-radius: 6px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      padding: 0.4rem;
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      gap: 0.25rem;
+      width: 140px;
+    }
+
+    .plus-lore-popover.open {
+      display: flex;
+    }
+
+    .lore-opt-btn {
+      padding: 0.35rem 0.5rem;
+      font-size: 0.75rem;
+      background: transparent;
+      border: none;
+      color: #cbd5e1;
+      text-align: left;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .lore-opt-btn:hover {
+      background: #232e44;
+      color: #fff;
+    }
+
+    /* Modals Generic Backdrop */
+    .doc-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .doc-modal-backdrop.open {
+      display: flex;
+    }
+
+    /* Modal Form Box */
+    .doc-modal-box {
+      width: 100%;
+      max-width: 440px;
+      background: #111726;
+      border: 1px solid #293850;
+      border-radius: 8px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
     }
 
-    /* Open Tabs Bar */
-    .doc-tabs-bar {
+    .doc-modal-header {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #243048;
       display: flex;
-      background: #0d121f;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-      overflow-x: auto;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #f1f5f9;
     }
 
-    .doc-tab {
-      padding: 0.55rem 1rem;
+    .doc-modal-body {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      max-height: 75vh;
+      overflow-y: auto;
+    }
+
+    .doc-modal-footer {
+      padding: 0.65rem 1rem;
+      border-top: 1px solid #243048;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      background: #0d121f;
+    }
+
+    .modal-inp-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 0.35rem;
+    }
+
+    .modal-inp-group input,
+    .modal-inp-group select {
+      width: 100%;
+      padding: 0.5rem 0.65rem;
+      background: #0a0e18;
+      border: 1px solid #25334a;
+      border-radius: 5px;
+      color: #f1f5f9;
       font-size: 0.8rem;
-      color: var(--text-muted);
-      border-right: 1px solid var(--border);
+      outline: none;
+    }
+
+    .modal-btn-batal {
+      padding: 0.4rem 0.9rem;
+      background: #162032;
+      border: 1px solid #283750;
+      border-radius: 5px;
+      color: #cbd5e1;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .modal-btn-tambah {
+      padding: 0.4rem 1.1rem;
+      background: #162032;
+      border: 1px solid #283750;
+      border-radius: 5px;
+      color: #22c55e;
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .modal-btn-tambah:hover {
+      background: #1c2a42;
+      border-color: #22c55e;
+    }
+
+    /* Modal Wizard Buat Papan Baru (BuatPapanStandar/Vertikal/Horizontal/Custom) */
+    .papan-wizard-box {
+      max-width: 500px;
+    }
+
+    .papan-type-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .papan-type-card {
+      border: 1px solid #24324a;
+      border-radius: 6px;
+      background: #121927;
+      padding: 0.6rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .papan-type-card:hover,
+    .papan-type-card.active {
+      border-color: #8b5cf6;
+      background: rgba(139, 92, 246, 0.15);
+    }
+
+    .papan-type-shape {
+      width: 28px;
+      height: 28px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      flex-shrink: 0;
+    }
+
+    .papan-type-shape.horiz {
+      height: 14px;
+    }
+
+    .papan-type-shape.vert {
+      width: 14px;
+    }
+
+    .papan-type-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 2px;
+    }
+
+    .papan-type-desc {
+      font-size: 0.66rem;
+      color: #94a3b8;
+      line-height: 1.2;
+    }
+
+    .papan-size-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .papan-size-opt {
+      border: 1px solid #24324a;
+      border-radius: 6px;
+      background: #121927;
+      padding: 0.5rem 0.6rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
       cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-      border-bottom: 2px solid transparent;
-      transition: all 0.15s;
+      font-size: 0.75rem;
+      color: #cbd5e1;
     }
 
-    .doc-tab:hover {
-      color: var(--text-main);
-      background: rgba(255, 255, 255, 0.03);
+    .papan-size-opt.active {
+      border-color: #8b5cf6;
+      background: rgba(139, 92, 246, 0.2);
     }
 
-    .doc-tab.active {
-      color: var(--text-main);
-      background: var(--bg-dark);
-      border-bottom-color: var(--primary);
-      font-weight: 600;
-    }
-
-    .doc-tab-close {
-      opacity: 0.4;
-      transition: opacity 0.15s;
-    }
-
-    .doc-tab:hover .doc-tab-close,
-    .doc-tab.active .doc-tab-close {
-      opacity: 1;
-    }
-
-    /* Format Toolbar */
-    .doc-format-bar {
-      padding: 0.5rem 1rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-card);
+    .papan-preview-canvas {
+      border: 1px solid #24324a;
+      background: #090e17;
+      border-radius: 6px;
+      padding: 0.75rem;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 0.25rem;
-      flex-wrap: wrap;
-      flex-shrink: 0;
+      gap: 0.5rem;
     }
 
-    .fmt-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: var(--radius-sm);
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
+    .preview-grid-box {
+      border: 1px solid #334155;
+      padding: 0.5rem;
+      background: #111827;
+      display: grid;
+      gap: 3px;
+      justify-content: center;
+    }
+
+    .preview-cell {
+      width: 22px;
+      height: 22px;
+      border: 1px solid #475569;
+      background: #1e293b;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.15s;
+      font-size: 0.65rem;
+      color: #94a3b8;
     }
 
-    .fmt-btn:hover {
-      background: var(--bg-surface);
-      color: var(--text-main);
-    }
-
-    .fmt-sep {
-      width: 1px;
-      height: 20px;
-      background: var(--border);
-      margin: 0 0.25rem;
-    }
-
-    .fmt-dropdown {
-      padding: 0.3rem 0.65rem;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text-muted);
-      font-size: 0.78rem;
-      cursor: pointer;
-    }
-
-    /* Editor Body */
-    .doc-editor-body {
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      overflow: hidden;
-    }
-
-    .doc-editor-pane {
-      flex: 1;
-      min-width: 0;
-      min-height: 0;
-      padding: 2rem 3rem;
-      outline: none;
-      overflow-y: auto;
-      overflow-x: hidden;
-      line-height: 1.7;
-      font-size: 0.95rem;
-      color: var(--text-main);
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-
-    .doc-editor-pane h1 {
-      font-family: var(--font-heading);
-      font-size: 1.75rem;
-      margin-bottom: 1rem;
-    }
-
-    .doc-editor-pane h2 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin: 1.25rem 0 0.5rem;
-    }
-
-    .doc-editor-pane p {
-      margin-bottom: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    /* Right Properties Panel — Panel kanan: Karakter / Element Dunia / Catatan Plot */
-    .doc-right-panel {
-      width: 250px;
-      max-width: 72vw;
-      border-left: 1px solid var(--border);
-      background: #0d121f;
-      padding: 0.75rem;
-      flex-shrink: 0;
-      overflow-y: auto;
+    /* Modal Tambah Ke Papan (TambahkankePapan.png) */
+    .addto-papan-list {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
-      min-height: 0;
+      gap: 0.5rem;
     }
 
-    .prop-title {
-      font-size: 0.7rem;
+    .addto-papan-item {
+      padding: 0.6rem 0.75rem;
+      border: 1px solid #283750;
+      border-radius: 6px;
+      background: #121826;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: all 0.12s;
+    }
+
+    .addto-papan-item:hover {
+      background: #1c273d;
+      border-color: #8b5cf6;
+    }
+
+    .addto-title {
+      font-size: 0.8rem;
       font-weight: 700;
-      color: var(--text-faint);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+      color: #f1f5f9;
     }
 
-    .prop-val {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-top: 0.35rem;
-    }
-
-    .prop-tag {
-      display: inline-flex;
-      padding: 0.2rem 0.5rem;
-      border-radius: 9999px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      background: rgba(139, 92, 246, 0.12);
-      color: #c4b5fd;
-      margin: 0.1rem;
+    .addto-sub {
+      font-size: 0.7rem;
+      color: #94a3b8;
     }
   </style>
 </head>
 
 <body>
+  <div class="doc-app-wrap">
 
-  <div class="workspace-layout">
+    <!-- SIDEBAR UTAMA AN WB (Bisa Diperbesar / Diperkecil sesuai Sidebar.png & SideBarPilihDunia.png) -->
+    <div class="awb-sidebar" id="awb-main-sidebar">
+      <!-- Header Sidebar -->
+      <div class="awb-sb-header">
+        <div class="awb-logo-collapsed">AN<br>WB</div>
+        <div class="awb-logo-expanded">Aether Nova WB</div>
+        <button class="awb-sb-expand-btn" id="btn-expand-main-sidebar" title="Perbesar Sidebar">&gt;</button>
 
-    <!-- Sidebar -->
-    <aside class="main-sidebar" id="main-sidebar">
-      <div class="sidebar-top-bar">
-        <div class="world-dropdown-box">
-          <span>Aether Nova World</span>
-          <iconify-icon icon="lucide:chevron-down"></iconify-icon>
+        <!-- Dropdown Pilih Dunia (SideBarPilihDunia.png) -->
+        <div class="awb-world-wrap">
+          <button class="awb-world-btn" id="btn-toggle-world-menu">
+            <span class="world-label" id="cur-world-name">Pilih Dunia</span>
+            <span class="world-arrow">V</span>
+          </button>
+          <div class="awb-world-dropdown" id="awb-world-dropdown">
+            <div class="awb-world-opt active" data-world="Dunia1">Dunia1</div>
+            <div class="awb-world-opt" data-world="Dunia2">Dunia2</div>
+            <div class="awb-world-opt add-btn" id="btn-tambah-dunia-opt">+ Tambah Dunia</div>
+          </div>
         </div>
-        <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" title="Perkecil/Perbesar Sidebar">
-          <iconify-icon icon="lucide:panel-left-close" width="18"></iconify-icon>
-        </button>
       </div>
-      <nav class="sidebar-nav-list">
-        <a class="side-nav-item" href="dashboard.page.html" data-label="Dashboard">
-          <span class="side-nav-icon"><iconify-icon icon="lucide:layout-dashboard"></iconify-icon></span>
-          <span class="side-item-text">Dashboard</span>
+
+      <!-- Navigation List (Sesuai Sidebar.png) -->
+      <nav class="awb-sb-nav">
+        <a class="awb-nav-link" href="dashboard.page.html" title="Dashboard">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:layout-dashboard" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Dashboard</span>
         </a>
-        <a class="side-nav-item active" href="dokumen.page.html" data-label="Dokumen">
-          <span class="side-nav-icon"><iconify-icon icon="lucide:book-open"></iconify-icon></span>
-          <span class="side-item-text">Dokumen</span>
+        <a class="awb-nav-link active" href="dokumen.page.html" title="Dokumen">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:book-open" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Dokumen</span>
         </a>
-        <a class="side-nav-item" href="karakter.page.html" data-label="Karakter">
-          <span class="side-nav-icon"><iconify-icon icon="lucide:users"></iconify-icon></span>
-          <span class="side-item-text">Karakter</span>
+        <a class="awb-nav-link" href="karakter.page.html" title="Karakter">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:users" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Karakter</span>
         </a>
-        <a class="side-nav-item" href="element-dunia.page.html" data-label="Element Dunia">
-          <span class="side-nav-icon"><iconify-icon icon="lucide:gem"></iconify-icon></span>
-          <span class="side-item-text">Element Dunia</span>
+        <a class="awb-nav-link" href="element-dunia.page.html" title="Element Dunia">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:gem" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Element Dunia</span>
         </a>
-        <a class="side-nav-item" href="linimasa.page.html" data-label="Linimasa">
-          <span class="side-nav-icon"><iconify-icon icon="lucide:calendar-range"></iconify-icon></span>
-          <span class="side-item-text">Linimasa</span>
+        <a class="awb-nav-link" href="linimasa.page.html" title="Linimasa">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:calendar-range" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Linimasa</span>
         </a>
-        <a class="side-nav-item" href="hubungan.page.html" data-label="Hubungan">
-          <span class="side-nav-icon"><iconify-icon icon="lucide:heart-handshake"></iconify-icon></span>
-          <span class="side-item-text">Hubungan</span>
+        <a class="awb-nav-link" href="jaringan.page.html" title="Graph">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:network" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Graph</span>
         </a>
-        <a class="side-nav-item" href="jaringan.page.html" data-label="Jaringan">
-          <span class="side-nav-icon"><iconify-icon icon="lucide:network"></iconify-icon></span>
-          <span class="side-item-text">Jaringan</span>
+        <a class="awb-nav-link" href="peta-denah.page.html" title="Visual Peta">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:map" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Visual Peta</span>
         </a>
-        <a class="side-nav-item" href="peta-denah.page.html" data-label="Peta & Denah">
-          <span class="side-nav-icon"><iconify-icon icon="lucide:map"></iconify-icon></span>
-          <span class="side-item-text">Peta &amp; Denah</span>
+
+        <!-- Spacer -->
+        <div class="awb-sb-spacer"></div>
+
+        <!-- Menu Bawah -->
+        <a class="awb-nav-link" href="#" title="Pencarian">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:search" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Pencarian</span>
+        </a>
+        <a class="awb-nav-link" href="#" title="Akun">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:circle-user-round" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Akun</span>
+        </a>
+        <a class="awb-nav-link" href="#" title="Setting">
+          <span class="awb-nav-box"><iconify-icon icon="lucide:settings-2" width="16"></iconify-icon></span>
+          <span class="awb-nav-text">Setting</span>
         </a>
       </nav>
-      <div class="sidebar-bottom-list">
-        <a class="side-nav-item" href="#" data-label="Pencarian"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:search"></iconify-icon></span><span class="side-item-text">Pencarian</span></a>
-        <a class="side-nav-item" href="#" data-label="Akun"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:circle-user-round"></iconify-icon></span><span class="side-item-text">Akun</span></a>
-        <a class="side-nav-item" href="#" data-label="Pengaturan"><span class="side-nav-icon"><iconify-icon
-              icon="lucide:settings-2"></iconify-icon></span><span class="side-item-text">Pengaturan</span></a>
-      </div>
-    </aside>
 
-    <!-- Document Content -->
-    <div class="workspace-content fill">
-      <div class="page-header" style="padding:0.85rem 1.25rem;flex-shrink:0;">
-        <div>
-          <h1 style="font-size:1.05rem;">Dokumen</h1>
-          <p>Dokumen dan data</p>
-        </div>
-        <div class="page-header-actions">
-          <button class="view-btn active" data-view="lore">Dokumen Lore</button>
-          <button class="view-btn" data-view="papan">Papan</button>
-          <button class="view-btn" data-view="grid">Grid Plot</button>
-        </div>
+      <!-- Footer: Tombol [ < ] di kanan bawah saat expanded / Tombol [ > ] saat collapsed -->
+      <div class="awb-sb-footer">
+        <button class="awb-bottom-rail-expand" id="btn-bottom-expand" title="Perbesar Sidebar">&gt;</button>
+        <button class="awb-sb-collapse-btn" id="btn-collapse-main-sidebar" title="Perkecil Sidebar">&lt;</button>
+      </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div class="doc-main-container">
+
+      <!-- Header Atas (Persis Desktop.png) -->
+      <div class="doc-top-bar">
+        <h1 class="doc-top-title">Dokumen</h1>
+        <p class="doc-top-subtitle">Buat Dokumen, Bab, dan Plot</p>
       </div>
 
-      <!-- ============ VIEW: DOKUMEN LORE ============ -->
-      <div class="doc-layout" id="view-lore">
-
-        <!-- File Tree -->
-        <div class="doc-tree-panel">
-          <div class="doc-tree-block">
-            <div class="doc-tree-section-title">
-              Dokumen Lore
-              <button class="win-btn" style="width:22px;height:22px;" title="Tambah Dokumen"><iconify-icon
-                  icon="lucide:plus"></iconify-icon></button>
-            </div>
-
-            <div class="doc-tree-item" style="font-weight:600;">
-              <iconify-icon icon="lucide:search" style="color:var(--text-faint);"></iconify-icon>
-              <span style="flex:1;">Cari</span>
-            </div>
-
-            <div class="doc-tree-item folder">
-              <span class="doc-caret">›</span>
-              <iconify-icon icon="lucide:folder-open" style="color:var(--warning);"></iconify-icon> Folder1
-            </div>
-            <div class="doc-tree-item active" style="padding-left:1.5rem;">
-              <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon> Dokumen1
-            </div>
-            <div class="doc-tree-item" style="padding-left:1.5rem;">
-              <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon> Dokumen2
-            </div>
-          </div>
-
-          <div class="doc-tree-block">
-            <div class="doc-tree-section-title">
-              Naskah
-              <button class="win-btn" style="width:22px;height:22px;" title="Tambah Bab"><iconify-icon
-                  icon="lucide:plus"></iconify-icon></button>
-            </div>
-            <div class="doc-tree-item">
-              <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon>
-              <span style="flex:1;">Bab 1</span>
-            </div>
-            <div class="doc-tree-item">
-              <iconify-icon icon="lucide:file-text" style="color:var(--text-faint);"></iconify-icon>
-              <span style="flex:1;">Bab 2</span>
-            </div>
-          </div>
-
-          <div class="doc-tree-block">
-            <div class="doc-tree-section-title">
-              Papan
-              <button class="win-btn" style="width:22px;height:22px;" title="Tambah Papan"><iconify-icon
-                  icon="lucide:plus"></iconify-icon></button>
-            </div>
-            <div class="doc-tree-item">
-              <iconify-icon icon="lucide:layout-grid" style="color:var(--text-faint);"></iconify-icon>
-              <span style="flex:1;">judul<br><span style="font-size:0.7rem;color:var(--text-faint);">2 x 4</span></span>
-              <button class="win-btn" style="width:22px;height:22px;" title="Edit"><iconify-icon icon="lucide:pen-line"
-                  width="13"></iconify-icon></button>
-              <button class="win-btn" style="width:22px;height:22px;color:var(--danger);" title="Hapus"><iconify-icon
-                  icon="lucide:trash-2" width="13"></iconify-icon></button>
-            </div>
-          </div>
-
-          <div class="doc-tree-block">
-            <div class="doc-tree-section-title">
-              Grid Plot
-              <button class="win-btn" style="width:22px;height:22px;" title="Tambah Grid"><iconify-icon
-                  icon="lucide:plus"></iconify-icon></button>
-            </div>
-            <div class="doc-tree-item">
-              <iconify-icon icon="lucide:grid-3x3" style="color:var(--text-faint);"></iconify-icon>
-              <span style="flex:1;">judul<br><span style="font-size:0.7rem;color:var(--text-faint);">3 x 3</span></span>
-              <button class="win-btn" style="width:22px;height:22px;" title="Edit"><iconify-icon icon="lucide:pen-line"
-                  width="13"></iconify-icon></button>
-              <button class="win-btn" style="width:22px;height:22px;color:var(--danger);" title="Hapus"><iconify-icon
-                  icon="lucide:trash-2" width="13"></iconify-icon></button>
-            </div>
-          </div>
+      <!-- Toolbar Utama Atas (Desktop.png) -->
+      <div class="doc-toolbar" id="main-doc-toolbar">
+        <div class="search-box-wrap">
+          <iconify-icon icon="lucide:search" width="13" style="color:#64748b;"></iconify-icon>
+          <input type="text" placeholder="Cari Judul" id="doc-search-input">
         </div>
 
-        <!-- Editor Area -->
-        <div class="doc-editor-area">
+        <button class="tbar-btn" id="btn-collapse-tree" title="Perkecil Panel">&lt;</button>
 
-          <!-- Open Tabs -->
-          <div class="doc-tabs-bar">
-            <div class="doc-tab active">
-              <iconify-icon icon="lucide:file-text"></iconify-icon>
-              Title
-              <iconify-icon icon="lucide:x" class="doc-tab-close" width="14"></iconify-icon>
-            </div>
-            <div class="doc-tab">
-              <iconify-icon icon="lucide:file-text"></iconify-icon>
-              Title
-              <iconify-icon icon="lucide:x" class="doc-tab-close" width="14"></iconify-icon>
-            </div>
-            <button class="win-btn" style="border-left:1px solid var(--border);border-radius:0;flex-shrink:0;"
-              title="Tab Baru">
-              <iconify-icon icon="lucide:plus"></iconify-icon>
-            </button>
-            <div class="doc-tab">
-              <iconify-icon icon="lucide:file-text"></iconify-icon>
-              Title
-              <iconify-icon icon="lucide:x" class="doc-tab-close" width="14"></iconify-icon>
-            </div>
-            <button class="win-btn" style="border-left:1px solid var(--border);border-radius:0;flex-shrink:0;"
-              title="Tab Baru">
-              <iconify-icon icon="lucide:plus"></iconify-icon>
-            </button>
-          </div>
+        <div class="tbar-sep"></div>
 
-          <!-- Format Toolbar -->
-          <div class="doc-format-bar">
-            <button class="fmt-btn" title="Bold" style="font-weight:800;">B</button>
-            <button class="fmt-btn" title="Italic" style="font-style:italic;">I</button>
-            <button class="fmt-btn" title="Underline" style="text-decoration:underline;">U</button>
-            <button class="fmt-btn" title="Strikethrough" style="text-decoration:line-through;">S</button>
-            <button class="fmt-btn" title="Heading"><iconify-icon icon="lucide:heading"></iconify-icon></button>
-            <button class="fmt-btn" title="Quote"><iconify-icon icon="lucide:quote"></iconify-icon></button>
-            <div class="fmt-sep"></div>
-            <button class="fmt-btn" title="Rata Kiri"><iconify-icon icon="lucide:align-left"></iconify-icon></button>
-            <button class="fmt-btn" title="Rata Tengah"><iconify-icon
-                icon="lucide:align-center"></iconify-icon></button>
-            <button class="fmt-btn" title="Undo"><iconify-icon icon="lucide:undo-2"></iconify-icon></button>
-            <button class="fmt-btn" title="Redo"><iconify-icon icon="lucide:redo-2"></iconify-icon></button>
-            <button class="fmt-btn" title="Tabel"><iconify-icon icon="lucide:table"></iconify-icon></button>
-            <button class="fmt-btn" title="Gambar"><iconify-icon icon="lucide:image"></iconify-icon></button>
-            <div class="fmt-sep"></div>
-            <button class="fmt-btn" title="Simpan" style="margin-left:auto;"><iconify-icon
-                icon="lucide:save"></iconify-icon></button>
-          </div>
+        <!-- Formatting tools -->
+        <button class="tbar-btn bold" id="btn-fmt-bold" title="Tebal">B</button>
+        <button class="tbar-btn italic" id="btn-fmt-italic" title="Miring">I</button>
+        <button class="tbar-btn underline" id="btn-fmt-underline" title="Garis Bawah">U</button>
+        <button class="tbar-btn strike" id="btn-fmt-strike" title="Coret">S</button>
+        <button class="tbar-btn heading" id="btn-fmt-head" title="Heading">H</button>
 
-          <!-- Editor Body -->
-          <div class="doc-editor-body">
-            <div class="doc-editor-pane" contenteditable="true">
-              <p>isi dokumen</p>
-            </div>
-            <div class="doc-editor-pane" contenteditable="true" style="border-left:1px solid var(--border);">
-              <p>isi dokumen</p>
-            </div>
+        <div class="tbar-sep"></div>
 
-            <!-- Right Panel -->
-            <div class="doc-right-panel">
-              <div class="doc-side-block">
-                <div class="doc-side-head"><iconify-icon icon="lucide:users"></iconify-icon> Karakter</div>
-                <div class="doc-side-row"><span class="doc-thumb"><iconify-icon icon="lucide:image"
-                      width="14"></iconify-icon></span> karakter1 <iconify-icon icon="lucide:eye"
-                    width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></div>
-                <div class="doc-side-row"><span class="doc-thumb"><iconify-icon icon="lucide:image"
-                      width="14"></iconify-icon></span> karakter1 <iconify-icon icon="lucide:eye"
-                    width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></div>
-                <div class="doc-side-row"><span class="doc-thumb"><iconify-icon icon="lucide:image"
-                      width="14"></iconify-icon></span> karakter1 <iconify-icon icon="lucide:eye"
-                    width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></div>
+        <button class="tbar-btn" id="btn-fmt-ul" title="Daftar Poin"><iconify-icon icon="lucide:list"
+            width="14"></iconify-icon></button>
+        <button class="tbar-btn" id="btn-fmt-ol" title="Daftar Nomor"><iconify-icon icon="lucide:list-ordered"
+            width="14"></iconify-icon></button>
+
+        <div class="tbar-sep"></div>
+
+        <!-- Dropdown Symbol Unik -->
+        <button class="tbar-btn" id="btn-symbol-dropdown" title="Simbol Unik">Symbol Unik <iconify-icon
+            icon="lucide:chevron-down" width="12"></iconify-icon></button>
+
+        <button class="tbar-btn" id="btn-tool-zoom" title="Cari Text Di Dokumen"><iconify-icon icon="lucide:search"
+            width="14"></iconify-icon></button>
+        <button class="tbar-btn" id="btn-tool-image" title="Sisipkan Gambar"><iconify-icon icon="lucide:image"
+            width="14"></iconify-icon></button>
+
+        <button class="tbar-btn" id="btn-tool-undo" title="Undo"><iconify-icon icon="lucide:undo-2"
+            width="14"></iconify-icon></button>
+        <button class="tbar-btn" id="btn-tool-redo" title="Redo"><iconify-icon icon="lucide:redo-2"
+            width="14"></iconify-icon></button>
+
+        <div class="tbar-sep" style="margin-left:auto;"></div>
+
+        <!-- Dropdown Split Layout -->
+        <button class="tbar-btn" id="btn-layout-dropdown" title="Atur Tata Letak Tab">
+          <iconify-icon icon="lucide:columns-2" width="14"></iconify-icon> <iconify-icon icon="lucide:chevron-down"
+            width="12"></iconify-icon>
+        </button>
+      </div>
+
+      <!-- Toolbar Papan & Plot Grid (Papan.png / PlotGrid.png) -->
+      <div class="doc-toolbar" id="papan-doc-toolbar" style="display:none;">
+        <div class="search-box-wrap">
+          <iconify-icon icon="lucide:search" width="13" style="color:#64748b;"></iconify-icon>
+          <input type="text" placeholder="Cari Judul">
+        </div>
+        <button class="tbar-btn" id="btn-back-to-doc" title="Kembali ke Dokumen Lore">&lt;</button>
+
+        <div style="font-size:0.85rem;font-weight:700;color:#f1f5f9;margin:0 0.5rem;" id="board-title-display">Nama
+          Papan</div>
+        <div class="papan-badge" id="board-dim-display">3 × 3</div>
+        <div class="papan-badge" id="board-cells-display">9 total sel</div>
+
+        <div style="margin-left:auto;display:flex;align-items:center;gap:0.35rem;">
+          <button class="tbar-btn" title="Zoom Out"><iconify-icon icon="lucide:zoom-out"
+              width="14"></iconify-icon></button>
+          <span style="font-size:0.75rem;color:#cbd5e1;padding:0 0.25rem;">100%</span>
+          <button class="tbar-btn" title="Zoom In"><iconify-icon icon="lucide:zoom-in"
+              width="14"></iconify-icon></button>
+          <button class="tbar-btn" title="Layar Penuh"><iconify-icon icon="lucide:maximize-2"
+              width="14"></iconify-icon></button>
+          <button class="tbar-btn" title="Reset Ukuran"><iconify-icon icon="lucide:minimize-2"
+              width="14"></iconify-icon></button>
+          <button class="tbar-btn" title="Unduh"><iconify-icon icon="lucide:download"
+              width="14"></iconify-icon></button>
+        </div>
+      </div>
+
+      <!-- Body Area: SubSidebar Kiri + View Center + Rail Kanan + Drawer -->
+      <div class="doc-body-layout">
+
+        <!-- SubSidebar Dokumen dan Bab (Kiri) -->
+        <div class="doc-subsidebar" id="doc-subsidebar">
+
+          <!-- SECTION 1: Dokumen Lore -->
+          <div class="sb-block">
+            <div class="sb-block-header">
+              <span class="sb-title-left"><iconify-icon icon="lucide:file-text" width="13"></iconify-icon> Dokumen
+                Lore</span>
+              <button class="sb-plus-btn" id="btn-plus-lore" title="Tambah Dokumen/Folder">+</button>
+            </div>
+            <div class="sb-item-list">
+              <!-- Folder 1 Collapsed -->
+              <div class="sb-row tree-folder" data-folder="1">
+                <span>&gt;</span>
+                <iconify-icon icon="lucide:folder" width="14"></iconify-icon>
+                <span class="sb-row-title">Folder</span>
+                <div class="sb-row-acts">
+                  <button class="sb-plus-btn btn-folder-add"
+                    style="width:15px;height:15px;font-size:0.65rem;">+</button>
+                </div>
               </div>
-              <div class="doc-side-block">
-                <div class="doc-side-head"><iconify-icon icon="lucide:gem"></iconify-icon> Element Dunia</div>
-                <div class="doc-side-row"><span class="doc-thumb"><iconify-icon icon="lucide:image"
-                      width="14"></iconify-icon></span> Element1 <iconify-icon icon="lucide:eye"
-                    width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></div>
-                <div class="doc-side-row"><span class="doc-thumb"><iconify-icon icon="lucide:image"
-                      width="14"></iconify-icon></span> Element1 <iconify-icon icon="lucide:eye"
-                    width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></div>
+
+              <!-- Folder 2 Expanded -->
+              <div class="sb-row tree-folder open" data-folder="2">
+                <span>v</span>
+                <iconify-icon icon="lucide:folder-open" width="14" style="color:#eab308;"></iconify-icon>
+                <span class="sb-row-title">Folder</span>
+                <div class="sb-row-acts">
+                  <button class="sb-plus-btn btn-folder-add"
+                    style="width:15px;height:15px;font-size:0.65rem;">+</button>
+                </div>
               </div>
-              <div class="doc-side-block">
-                <div class="doc-side-head"><iconify-icon icon="lucide:sticky-note"></iconify-icon> Catatan Plot</div>
-                <div class="doc-side-row" style="flex-direction:column;align-items:stretch;gap:0.35rem;">
-                  <div style="display:flex;align-items:center;gap:0.4rem;">catatan1 <span
-                      style="margin-left:auto;display:flex;gap:0.35rem;"><iconify-icon icon="lucide:eye"
-                        width="14"></iconify-icon><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></span>
+              <div class="sb-row" style="padding-left:1.4rem;">
+                <span style="color:#64748b;">-</span>
+                <iconify-icon icon="lucide:file-text" width="13"></iconify-icon>
+                <span class="sb-row-title">Dokumen</span>
+                <div class="sb-row-acts">
+                  <button class="sb-act-icon trash" title="Hapus"><iconify-icon icon="lucide:trash-2"
+                      width="12"></iconify-icon></button>
+                  <button class="sb-act-icon" title="Edit"><iconify-icon icon="lucide:pen-line"
+                      width="12"></iconify-icon></button>
+                </div>
+              </div>
+
+              <!-- Folder 3 Expanded -->
+              <div class="sb-row tree-folder open" data-folder="3">
+                <span>v</span>
+                <iconify-icon icon="lucide:folder-open" width="14" style="color:#eab308;"></iconify-icon>
+                <span class="sb-row-title">Folder</span>
+                <div class="sb-row-acts">
+                  <button class="sb-plus-btn btn-folder-add"
+                    style="width:15px;height:15px;font-size:0.65rem;">+</button>
+                </div>
+              </div>
+              <div class="sb-row" style="padding-left:1.4rem;">
+                <span style="color:#64748b;">-</span>
+                <iconify-icon icon="lucide:file-text" width="13"></iconify-icon>
+                <span class="sb-row-title">Dokumen</span>
+                <div class="sb-row-acts">
+                  <button class="sb-act-icon trash" title="Hapus"><iconify-icon icon="lucide:trash-2"
+                      width="12"></iconify-icon></button>
+                  <button class="sb-act-icon" title="Edit"><iconify-icon icon="lucide:pen-line"
+                      width="12"></iconify-icon></button>
+                </div>
+              </div>
+
+              <!-- Dokumen Root 1 -->
+              <div class="sb-row">
+                <iconify-icon icon="lucide:file-text" width="13"></iconify-icon>
+                <span class="sb-row-title">Dokumen</span>
+                <div class="sb-row-acts">
+                  <button class="sb-act-icon trash" title="Hapus"><iconify-icon icon="lucide:trash-2"
+                      width="12"></iconify-icon></button>
+                  <button class="sb-act-icon" title="Edit"><iconify-icon icon="lucide:pen-line"
+                      width="12"></iconify-icon></button>
+                </div>
+              </div>
+
+              <!-- Dokumen Root 2 with Linked Name -->
+              <div>
+                <div class="sb-row">
+                  <iconify-icon icon="lucide:file-text" width="13"></iconify-icon>
+                  <span class="sb-row-title">Dokumen</span>
+                  <div class="sb-row-acts">
+                    <button class="sb-act-icon trash" title="Hapus"><iconify-icon icon="lucide:trash-2"
+                        width="12"></iconify-icon></button>
+                    <button class="sb-act-icon" title="Edit"><iconify-icon icon="lucide:pen-line"
+                        width="12"></iconify-icon></button>
                   </div>
-                  <div style="font-size:0.75rem;color:var(--text-faint);">isi catatan</div>
+                </div>
+                <span class="sb-badge-linked">Linked Name</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: Bab -->
+          <div class="sb-block">
+            <div class="sb-block-header">
+              <span class="sb-title-left"><iconify-icon icon="lucide:book-marked" width="13"></iconify-icon> Bab</span>
+              <button class="sb-plus-btn" id="btn-plus-bab" title="Tambah Bab">+</button>
+            </div>
+            <div class="sb-item-list">
+              <div class="sb-row active">
+                <span class="sb-num">1</span>
+                <iconify-icon icon="lucide:file-text" width="13"></iconify-icon>
+                <span class="sb-row-title">Bab 1: ...</span>
+                <div class="sb-row-acts">
+                  <button class="sb-act-icon trash" title="Hapus"><iconify-icon icon="lucide:trash-2"
+                      width="12"></iconify-icon></button>
+                  <button class="sb-act-icon" title="Edit"><iconify-icon icon="lucide:pen-line"
+                      width="12"></iconify-icon></button>
+                </div>
+              </div>
+
+              <div class="sb-row">
+                <span class="sb-num red">2</span>
+                <iconify-icon icon="lucide:file-text" width="13"></iconify-icon>
+                <span class="sb-row-title">Bab 2: ...</span>
+                <div class="sb-row-acts">
+                  <button class="sb-act-icon trash" title="Hapus"><iconify-icon icon="lucide:trash-2"
+                      width="12"></iconify-icon></button>
+                  <button class="sb-act-icon" title="Edit"><iconify-icon icon="lucide:pen-line"
+                      width="12"></iconify-icon></button>
+                </div>
+              </div>
+
+              <div class="sb-row">
+                <span class="sb-num red">3</span>
+                <iconify-icon icon="lucide:file-text" width="13"></iconify-icon>
+                <span class="sb-row-title">Bab 3: ...</span>
+                <div class="sb-row-acts">
+                  <button class="sb-act-icon trash" title="Hapus"><iconify-icon icon="lucide:trash-2"
+                      width="12"></iconify-icon></button>
+                  <button class="sb-act-icon" title="Edit"><iconify-icon icon="lucide:pen-line"
+                      width="12"></iconify-icon></button>
                 </div>
               </div>
             </div>
           </div>
+
+          <!-- SECTION 3: Papan -->
+          <div class="sb-block">
+            <div class="sb-block-header">
+              <span class="sb-title-left"><iconify-icon icon="lucide:layout-grid" width="13"></iconify-icon>
+                Papan</span>
+              <button class="sb-plus-btn" id="btn-plus-papan" title="Buat Papan Baru">+</button>
+            </div>
+            <div class="sb-item-list">
+              <div class="sb-row nav-papan" data-title="Judul" data-size="2 × 4" data-cells="8 total sel">
+                <iconify-icon icon="lucide:grid-2x2" width="13"></iconify-icon>
+                <span class="sb-row-title">Judul<br><span style="font-size:0.65rem;color:#64748b;">2 × 4</span></span>
+                <div class="sb-row-acts">
+                  <button class="sb-act-icon trash" title="Hapus"><iconify-icon icon="lucide:trash-2"
+                      width="12"></iconify-icon></button>
+                  <button class="sb-act-icon" title="Edit"><iconify-icon icon="lucide:pen-line"
+                      width="12"></iconify-icon></button>
+                </div>
+              </div>
+
+              <div class="sb-row nav-papan" data-title="Judul" data-size="5 × 3" data-cells="15 total sel">
+                <iconify-icon icon="lucide:grid-2x2" width="13"></iconify-icon>
+                <span class="sb-row-title">Judul<br><span style="font-size:0.65rem;color:#64748b;">5 × 3</span></span>
+                <div class="sb-row-acts">
+                  <button class="sb-act-icon trash" title="Hapus"><iconify-icon icon="lucide:trash-2"
+                      width="12"></iconify-icon></button>
+                  <button class="sb-act-icon" title="Edit"><iconify-icon icon="lucide:pen-line"
+                      width="12"></iconify-icon></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 4: Plot Grid -->
+          <div class="sb-block">
+            <div class="sb-block-header">
+              <span class="sb-title-left"><iconify-icon icon="lucide:grid-3x3" width="13"></iconify-icon> Plot
+                Grid</span>
+              <button class="sb-plus-btn" id="btn-plus-plotgrid" title="Buat Plot Grid Baru">+</button>
+            </div>
+            <div class="sb-item-list">
+              <div class="sb-row nav-plotgrid" data-title="Judul" data-size="3 × 3" data-cells="9 total sel">
+                <iconify-icon icon="lucide:grid-3x3" width="13"></iconify-icon>
+                <span class="sb-row-title">Judul<br><span style="font-size:0.65rem;color:#64748b;">3 × 3</span></span>
+                <div class="sb-row-acts">
+                  <button class="sb-act-icon trash" title="Hapus"><iconify-icon icon="lucide:trash-2"
+                      width="12"></iconify-icon></button>
+                  <button class="sb-act-icon" title="Edit"><iconify-icon icon="lucide:pen-line"
+                      width="12"></iconify-icon></button>
+                </div>
+              </div>
+
+              <div class="sb-row nav-plotgrid" data-title="Judul" data-size="3 × 4" data-cells="12 total sel">
+                <iconify-icon icon="lucide:grid-3x3" width="13"></iconify-icon>
+                <span class="sb-row-title">Judul<br><span style="font-size:0.65rem;color:#64748b;">3 × 4</span></span>
+                <div class="sb-row-acts">
+                  <button class="sb-act-icon trash" title="Hapus"><iconify-icon icon="lucide:trash-2"
+                      width="12"></iconify-icon></button>
+                  <button class="sb-act-icon" title="Edit"><iconify-icon icon="lucide:pen-line"
+                      width="12"></iconify-icon></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <!-- ============ VIEW: PAPAN ============ -->
-        <div class="doc-subview" id="view-papan">
-          <div class="doc-subview-title">Judul</div>
-          <div class="papan-grid">
-            <div class="papan-cell">Bab 1</div>
-            <div class="papan-cell">+<br>Tambah</div>
-            <div class="papan-cell">+<br>Tambah</div>
-            <div class="papan-cell">+<br>Tambah</div>
-            <div class="papan-cell">+<br>Tambah</div>
-            <div class="papan-cell">+<br>Tambah</div>
+        <!-- Viewport Stage Tengah -->
+        <div class="doc-view-stage">
+
+          <!-- VIEW 1: Multi-pane Editor (Desktop.png) -->
+          <div class="view-desktop-panes" id="view-editor-panes">
+            <div id="editor-grid"></div>
+          </div>
+
+          <!-- VIEW 2: Kanvas Papan (Papan.png) -->
+          <div class="view-papan-wrap" id="view-papan-canvas">
+            <div class="papan-grid-board" id="papan-board-container">
+              <div class="papan-card-cell add-to-board-cell"><span class="plus-icon">+</span> Tambah</div>
+              <div class="papan-card-cell add-to-board-cell"><span class="plus-icon">+</span> Tambah</div>
+              <div class="papan-card-cell add-to-board-cell"><span class="plus-icon">+</span> Tambah</div>
+              <div class="papan-card-cell add-to-board-cell"><span class="plus-icon">+</span> Tambah</div>
+              <div class="papan-card-cell add-to-board-cell"><span class="plus-icon">+</span> Tambah</div>
+              <div class="papan-card-cell add-to-board-cell"><span class="plus-icon">+</span> Tambah</div>
+              <div class="papan-card-cell add-to-board-cell"><span class="plus-icon">+</span> Tambah</div>
+              <div class="papan-card-cell add-to-board-cell"><span class="plus-icon">+</span> Tambah</div>
+              <div class="papan-card-cell add-to-board-cell"><span class="plus-icon">+</span> Tambah</div>
+            </div>
+          </div>
+
+          <!-- VIEW 3: Kanvas Plot Grid (PlotGrid.png) -->
+          <div class="view-plotgrid-wrap" id="view-plotgrid-canvas">
+            <div class="plotgrid-table">
+              <!-- Header Kolom -->
+              <div class="plotgrid-head-row">
+                <div class="plotgrid-col-header first">Bab</div>
+                <div class="plotgrid-col-header">Tanpa nama</div>
+                <div class="plotgrid-col-header">Tanpa nama</div>
+                <button class="sb-plus-btn" style="width:24px;height:24px;" title="Tambah Kolom">+</button>
+              </div>
+
+              <!-- Baris 1 -->
+              <div class="plotgrid-row">
+                <div class="plotgrid-row-acts">
+                  <button class="pg-act-btn">v</button>
+                  <button class="pg-act-btn red"><iconify-icon icon="lucide:trash-2" width="13"></iconify-icon></button>
+                </div>
+                <div class="pg-card bab-col">
+                  <iconify-icon icon="lucide:check-square" width="14"></iconify-icon> Bab 1: ...
+                </div>
+                <div class="pg-card">
+                  <div class="pg-card-header">
+                    <span>judul catatan</span>
+                    <div style="display:flex;gap:0.3rem;">
+                      <iconify-icon icon="lucide:pen-line" width="12"></iconify-icon>
+                      <iconify-icon icon="lucide:trash-2" width="12" style="color:#ef4444;"></iconify-icon>
+                    </div>
+                  </div>
+                  <div style="color:#94a3b8;font-size:0.72rem;">isi catatan</div>
+                </div>
+                <div class="pg-card empty-col">
+                  +<br>Tambah catatan
+                </div>
+              </div>
+
+              <!-- Baris 2 -->
+              <div class="plotgrid-row">
+                <div class="plotgrid-row-acts">
+                  <button class="pg-act-btn">^</button>
+                  <button class="pg-act-btn">v</button>
+                  <button class="pg-act-btn red"><iconify-icon icon="lucide:trash-2" width="13"></iconify-icon></button>
+                </div>
+                <div class="pg-card bab-col">
+                  +<br>Hubungkan Bab
+                </div>
+                <div class="pg-card empty-col">
+                  +<br>Tambah catatan
+                </div>
+                <div class="pg-card empty-col">
+                  +<br>Tambah catatan
+                </div>
+              </div>
+
+              <!-- Baris 3 -->
+              <div class="plotgrid-row">
+                <div class="plotgrid-row-acts">
+                  <button class="pg-act-btn">^</button>
+                  <button class="pg-act-btn">v</button>
+                  <button class="pg-act-btn red"><iconify-icon icon="lucide:trash-2" width="13"></iconify-icon></button>
+                </div>
+                <div class="pg-card bab-col">
+                  +<br>Hubungkan bab
+                </div>
+                <div class="pg-card empty-col">
+                  +<br>Tambah catatan
+                </div>
+                <div class="pg-card empty-col">
+                  +<br>Tambah catatan
+                </div>
+              </div>
+
+              <!-- Tambah Baris -->
+              <div style="padding-left:28px;">
+                <button class="sb-plus-btn" style="width:26px;height:26px;" title="Tambah Baris Bab Baru">+</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Panel Gabungan Drawer Kanan (SubSidebarDokumendanBab.png) -->
+        <div class="doc-side-drawer" id="doc-side-drawer">
+          <div class="drawer-top-header">
+            <span>Panel Gabungan</span>
+            <iconify-icon icon="lucide:x" id="btn-close-drawer" style="cursor:pointer;" width="14"></iconify-icon>
+          </div>
+
+          <!-- Section 1: Karakter -->
+          <div class="drawer-sec-card">
+            <div class="drawer-sec-header" data-target="dr-karakter">
+              <span style="display:flex;align-items:center;gap:0.35rem;"><iconify-icon icon="lucide:users"
+                  width="13"></iconify-icon> Karakter</span>
+              <span style="display:flex;gap:0.35rem;"><span>v</span> <span>x</span></span>
+            </div>
+            <div class="drawer-sec-body" id="dr-karakter">
+              <div class="drawer-item-card">
+                <div class="drawer-thumb"><iconify-icon icon="lucide:image" width="12"></iconify-icon></div>
+                <span style="flex:1;">Nama</span>
+                <iconify-icon icon="lucide:eye" width="13" style="cursor:pointer;color:#94a3b8;"></iconify-icon>
+                <iconify-icon icon="lucide:pen-line" width="13" style="cursor:pointer;color:#94a3b8;"></iconify-icon>
+              </div>
+              <div class="drawer-item-card">
+                <div class="drawer-thumb"><iconify-icon icon="lucide:image" width="12"></iconify-icon></div>
+                <span style="flex:1;">Nama</span>
+                <iconify-icon icon="lucide:eye" width="13" style="cursor:pointer;color:#94a3b8;"></iconify-icon>
+                <iconify-icon icon="lucide:pen-line" width="13" style="cursor:pointer;color:#94a3b8;"></iconify-icon>
+              </div>
+              <div class="drawer-item-card">
+                <div class="drawer-thumb"><iconify-icon icon="lucide:image" width="12"></iconify-icon></div>
+                <span style="flex:1;">Nama</span>
+                <iconify-icon icon="lucide:eye" width="13" style="cursor:pointer;color:#94a3b8;"></iconify-icon>
+                <iconify-icon icon="lucide:pen-line" width="13" style="cursor:pointer;color:#94a3b8;"></iconify-icon>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Element Dunia -->
+          <div class="drawer-sec-card">
+            <div class="drawer-sec-header" data-target="dr-element">
+              <span style="display:flex;align-items:center;gap:0.35rem;"><iconify-icon icon="lucide:globe"
+                  width="13"></iconify-icon> Element Dunia</span>
+              <span style="display:flex;gap:0.35rem;"><span>^</span> <span>v</span> <span>x</span></span>
+            </div>
+            <div class="drawer-sec-body" id="dr-element">
+              <div style="font-size:0.7rem;font-weight:700;color:#94a3b8;display:flex;justify-content:space-between;">
+                <span>Makhluk</span> <span>v</span>
+              </div>
+              <div class="drawer-item-card">
+                <div class="drawer-thumb"><iconify-icon icon="lucide:image" width="12"></iconify-icon></div>
+                <span style="flex:1;">Nama</span>
+                <iconify-icon icon="lucide:eye" width="13" style="cursor:pointer;color:#94a3b8;"></iconify-icon>
+                <iconify-icon icon="lucide:pen-line" width="13" style="cursor:pointer;color:#94a3b8;"></iconify-icon>
+              </div>
+              <div class="drawer-item-card">
+                <div class="drawer-thumb"><iconify-icon icon="lucide:image" width="12"></iconify-icon></div>
+                <span style="flex:1;">Nama</span>
+                <iconify-icon icon="lucide:eye" width="13" style="cursor:pointer;color:#94a3b8;"></iconify-icon>
+                <iconify-icon icon="lucide:pen-line" width="13" style="cursor:pointer;color:#94a3b8;"></iconify-icon>
+              </div>
+
+              <div
+                style="font-size:0.7rem;font-weight:700;color:#94a3b8;display:flex;justify-content:space-between;margin-top:0.25rem;">
+                <span>Spesies</span> <span>v</span>
+              </div>
+              <div class="drawer-item-card">
+                <div class="drawer-thumb"><iconify-icon icon="lucide:image" width="12"></iconify-icon></div>
+                <span style="flex:1;">Nama</span>
+                <iconify-icon icon="lucide:eye" width="13" style="cursor:pointer;color:#94a3b8;"></iconify-icon>
+                <iconify-icon icon="lucide:pen-line" width="13" style="cursor:pointer;color:#94a3b8;"></iconify-icon>
+              </div>
+
+              <div
+                style="font-size:0.7rem;font-weight:700;color:#94a3b8;display:flex;justify-content:space-between;margin-top:0.25rem;cursor:pointer;">
+                <span>Lokasi</span> <span>&gt;</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Catatan Plot -->
+          <div class="drawer-sec-card">
+            <div class="drawer-sec-header" data-target="dr-plot">
+              <span style="display:flex;align-items:center;gap:0.35rem;"><iconify-icon icon="lucide:layout-grid"
+                  width="13"></iconify-icon> Catatan Plot</span>
+              <span style="display:flex;gap:0.35rem;"><span>^</span> <span>v</span> <span>x</span></span>
+            </div>
+            <div class="drawer-sec-body" id="dr-plot">
+              <div style="font-size:0.7rem;font-weight:700;color:#94a3b8;display:flex;justify-content:space-between;">
+                <span>Papan</span> <span>v</span>
+              </div>
+              <div class="drawer-note-card">
+                <div class="drawer-note-title">
+                  <span>judul catatan</span>
+                  <iconify-icon icon="lucide:pen-line" width="12"></iconify-icon>
+                </div>
+                <div style="color:#94a3b8;">isi catatan</div>
+              </div>
+              <div class="drawer-note-card">
+                <div class="drawer-note-title">
+                  <span><iconify-icon icon="lucide:check-square" width="12"></iconify-icon> judul centang</span>
+                  <iconify-icon icon="lucide:pen-line" width="12"></iconify-icon>
+                </div>
+                <div style="color:#94a3b8;">isi kotak centang</div>
+              </div>
+
+              <div
+                style="font-size:0.7rem;font-weight:700;color:#94a3b8;display:flex;justify-content:space-between;margin-top:0.25rem;">
+                <span>Plot Grid</span> <span>v</span>
+              </div>
+              <div class="drawer-note-card">
+                <div class="drawer-note-title">
+                  <span>judul catatan</span>
+                  <iconify-icon icon="lucide:pen-line" width="12"></iconify-icon>
+                </div>
+                <div style="color:#94a3b8;">isi catatan</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- ============ VIEW: GRID PLOT ============ -->
-        <div class="doc-subview" id="view-grid">
-          <div class="doc-subview-title">Judul</div>
-          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
-            <span class="badge badge-purple">Chapter</span>
-            <span class="badge">tanpa nama</span>
-            <span class="badge">tanpa nama</span>
-            <button class="win-btn" title="Tambah Chapter"><iconify-icon icon="lucide:plus"></iconify-icon></button>
-          </div>
-          <div class="gridplot-row">
-            <div class="gridplot-col"><strong>Bab 1</strong></div>
-            <div class="gridplot-col">+<br>Tambah Catatan</div>
-            <div class="gridplot-col">+<br>Tambah Catatan</div>
-            <div class="gridplot-col">+<br>Tambah Catatan</div>
-            <div class="gridplot-col">+<br>Bab</div>
-            <div class="gridplot-col">+<br>Tambah Catatan</div>
-            <div class="gridplot-col">+<br>Tambah Catatan</div>
-            <div class="gridplot-col">+<br>Tambah Catatan</div>
-          </div>
+        <!-- Rail Kanan Icon (Desktop.png) -->
+        <div class="doc-right-rail">
+          <button class="rail-icon-btn" id="rail-btn-karakter" title="Karakter"><iconify-icon icon="lucide:users"
+              width="15"></iconify-icon></button>
+          <button class="rail-icon-btn" id="rail-btn-globe" title="Element Dunia"><iconify-icon icon="lucide:globe"
+              width="15"></iconify-icon></button>
+          <button class="rail-icon-btn" id="rail-btn-plot" title="Catatan Plot"><iconify-icon icon="lucide:layout-grid"
+              width="15"></iconify-icon></button>
         </div>
 
       </div>
     </div>
   </div>
 
+  <!-- POPOVER 1: Symbol Unik (SymbolUnik.png) -->
+  <div class="symbol-popover" id="popover-symbol-unik">
+    <div class="symbol-grid">
+      <!-- Row 1 -->
+      <button class="sym-btn">§</button>
+      <button class="sym-btn">√</button>
+      <button class="sym-btn">¥</button>
+      <button class="sym-btn">$</button>
+      <button class="sym-btn">¢</button>
+      <button class="sym-btn">€</button>
+      <button class="sym-btn">½</button>
+      <button class="sym-btn">¼</button>
+      <button class="sym-btn">¾</button>
+      <button class="sym-btn">^</button>
+      <button class="sym-btn">♫</button>
+      <button class="sym-btn">♥</button>
+      <!-- Row 2 -->
+      <button class="sym-btn">↑</button>
+      <button class="sym-btn">↓</button>
+      <button class="sym-btn">→</button>
+      <button class="sym-btn">←</button>
+      <button class="sym-btn">—</button>
+      <button class="sym-btn">―</button>
+      <button class="sym-btn">–</button>
+      <button class="sym-btn">≤</button>
+      <button class="sym-btn">≥</button>
+      <button class="sym-btn">±</button>
+      <button class="sym-btn">∞</button>
+      <button class="sym-btn">⌐</button>
+      <!-- Row 3 -->
+      <button class="sym-btn">¬</button>
+      <button class="sym-btn">┘</button>
+      <button class="sym-btn">┌</button>
+    </div>
+  </div>
+
+  <!-- POPOVER 2: Layout Preset Selector (AturTabDokDanBab.png) -->
+  <div class="layout-popover" id="popover-layout-preset">
+    <div class="layout-presets-grid">
+      <!-- 1: Full 1 pane -->
+      <div class="layout-preset-box" data-layout="1" title="1 Jendela">
+        <div class="lp-part"></div>
+      </div>
+      <!-- 2: 2 kolom vertikal -->
+      <div class="layout-preset-box" data-layout="2" title="2 Kolom">
+        <div class="lp-part"></div>
+        <div class="lp-part"></div>
+      </div>
+      <!-- 3: 2 baris horizontal -->
+      <div class="layout-preset-box" data-layout="3" title="2 Baris" style="flex-direction:column;">
+        <div class="lp-part"></div>
+        <div class="lp-part"></div>
+      </div>
+      <!-- 4: 3 kolom vertikal -->
+      <div class="layout-preset-box" data-layout="4" title="3 Kolom">
+        <div class="lp-part"></div>
+        <div class="lp-part"></div>
+        <div class="lp-part"></div>
+      </div>
+      <!-- 5: 3 baris horizontal -->
+      <div class="layout-preset-box" data-layout="5" title="3 Baris" style="flex-direction:column;">
+        <div class="lp-part"></div>
+        <div class="lp-part"></div>
+        <div class="lp-part"></div>
+      </div>
+      <!-- 6: Grid 2x2 -->
+      <div class="layout-preset-box" data-layout="6" title="Grid 2x2" style="flex-direction:column;">
+        <div style="display:flex;gap:1px;flex:1;">
+          <div class="lp-part"></div>
+          <div class="lp-part"></div>
+        </div>
+        <div style="display:flex;gap:1px;flex:1;">
+          <div class="lp-part"></div>
+          <div class="lp-part"></div>
+        </div>
+      </div>
+      <!-- 7: 1 atas, 2 bawah -->
+      <div class="layout-preset-box" data-layout="7" title="1 Atas, 2 Bawah" style="flex-direction:column;">
+        <div class="lp-part"></div>
+        <div style="display:flex;gap:1px;flex:1;">
+          <div class="lp-part"></div>
+          <div class="lp-part"></div>
+        </div>
+      </div>
+      <!-- 8: 1 kiri, 2 kanan (default Desktop.png!) -->
+      <div class="layout-preset-box active" data-layout="8" title="1 Kiri, 2 Kanan">
+        <div class="lp-part"></div>
+        <div style="display:flex;flex-direction:column;gap:1px;flex:1;">
+          <div class="lp-part"></div>
+          <div class="lp-part"></div>
+        </div>
+      </div>
+      <!-- 9: 2 atas, 1 bawah -->
+      <div class="layout-preset-box" data-layout="9" title="2 Atas, 1 Bawah" style="flex-direction:column;">
+        <div style="display:flex;gap:1px;flex:1;">
+          <div class="lp-part"></div>
+          <div class="lp-part"></div>
+        </div>
+        <div class="lp-part"></div>
+      </div>
+      <!-- 10: 2 kiri, 1 kanan -->
+      <div class="layout-preset-box" data-layout="10" title="2 Kiri, 1 Kanan">
+        <div style="display:flex;flex-direction:column;gap:1px;flex:1;">
+          <div class="lp-part"></div>
+          <div class="lp-part"></div>
+        </div>
+        <div class="lp-part"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POPOVER 3: Menu Tambah Dokumen Lore (+DokumenLore.png) -->
+  <div class="plus-lore-popover" id="popover-plus-lore">
+    <button class="lore-opt-btn" id="btn-opt-tambah-folder">Tambah Folder</button>
+    <button class="lore-opt-btn" id="btn-opt-tambah-dokumen">Tambah Dokumen</button>
+  </div>
+
+  <!-- MODAL 1: Tambah Dokumen (TambahDokumen.png) -->
+  <div class="doc-modal-backdrop" id="modal-tambah-dokumen">
+    <div class="doc-modal-box">
+      <div class="doc-modal-header">
+        <span>Tambah Dokumen</span>
+        <iconify-icon icon="lucide:x" class="modal-close-x" style="cursor:pointer;"></iconify-icon>
+      </div>
+      <div class="doc-modal-body">
+        <div class="modal-inp-group">
+          <label>Nama Dokumen</label>
+          <input type="text" id="inp-doc-name" placeholder="Nama dokumen baru...">
+        </div>
+        <div class="modal-inp-group">
+          <label>Link ke Element</label>
+          <select id="inp-doc-link">
+            <option value="None">None</option>
+            <option value="Karakter Utama">Karakter Utama</option>
+            <option value="Lokasi Kerajaan">Lokasi Kerajaan</option>
+            <option value="Spesies Magis">Spesies Magis</option>
+          </select>
+        </div>
+      </div>
+      <div class="doc-modal-footer">
+        <button class="modal-btn-batal">Batal</button>
+        <button class="modal-btn-tambah" id="btn-confirm-add-doc">Tambah</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Tambah Folder (TambahFolder.png) -->
+  <div class="doc-modal-backdrop" id="modal-tambah-folder">
+    <div class="doc-modal-box">
+      <div class="doc-modal-header">
+        <span>Tambah Folder</span>
+        <iconify-icon icon="lucide:x" class="modal-close-x" style="cursor:pointer;"></iconify-icon>
+      </div>
+      <div class="doc-modal-body">
+        <div class="modal-inp-group">
+          <label>Nama Folder</label>
+          <input type="text" id="inp-folder-name" placeholder="Nama folder baru...">
+        </div>
+      </div>
+      <div class="doc-modal-footer">
+        <button class="modal-btn-batal">Batal</button>
+        <button class="modal-btn-tambah" id="btn-confirm-add-folder">Tambah</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Tambah Bab (TambahBab.png) -->
+  <div class="doc-modal-backdrop" id="modal-tambah-bab">
+    <div class="doc-modal-box">
+      <div class="doc-modal-header">
+        <span>Tambah Bab</span>
+        <iconify-icon icon="lucide:x" class="modal-close-x" style="cursor:pointer;"></iconify-icon>
+      </div>
+      <div class="doc-modal-body">
+        <div class="modal-inp-group">
+          <label>Nama Bab</label>
+          <input type="text" id="inp-bab-name" placeholder="Nama bab baru...">
+        </div>
+      </div>
+      <div class="doc-modal-footer">
+        <button class="modal-btn-batal">Batal</button>
+        <button class="modal-btn-tambah" id="btn-confirm-add-bab">Tambah</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: Buat Papan Baru (BuatPapanStandar/Vertikal/Horizontal/Custom.png) -->
+  <div class="doc-modal-backdrop" id="modal-buat-papan">
+    <div class="doc-modal-box papan-wizard-box">
+      <div class="doc-modal-header">
+        <span style="display:flex;align-items:center;gap:0.4rem;">
+          <iconify-icon icon="lucide:layout-grid" width="16"></iconify-icon> Buat papan baru
+        </span>
+        <iconify-icon icon="lucide:x" class="modal-close-x" style="cursor:pointer;"></iconify-icon>
+      </div>
+      <div class="doc-modal-body">
+        <div class="modal-inp-group">
+          <label>Nama papan</label>
+          <input type="text" id="inp-papan-title" value="Papan Strategi Cerita">
+        </div>
+
+        <div>
+          <label style="font-size:0.75rem;font-weight:600;color:#94a3b8;margin-bottom:0.35rem;display:block;">Tipe
+            papan</label>
+          <div class="papan-type-grid">
+            <div class="papan-type-card active" data-type="standar">
+              <div class="papan-type-shape"></div>
+              <div>
+                <div class="papan-type-title">Standar</div>
+                <div class="papan-type-desc">papan persegi untuk organisasi umum</div>
+              </div>
+            </div>
+            <div class="papan-type-card" data-type="horizontal">
+              <div class="papan-type-shape horiz"></div>
+              <div>
+                <div class="papan-type-title">Horizontal</div>
+                <div class="papan-type-desc">papan lebar ideal untuk garis waktu dan proses</div>
+              </div>
+            </div>
+            <div class="papan-type-card" data-type="vertikal">
+              <div class="papan-type-shape vert"></div>
+              <div>
+                <div class="papan-type-title">Vertikal</div>
+                <div class="papan-type-desc">papan tinggi sempurna untuk hierarki dan daftar</div>
+              </div>
+            </div>
+            <div class="papan-type-card" data-type="custom">
+              <div class="papan-type-shape"></div>
+              <div>
+                <div class="papan-type-title">Custom</div>
+                <div class="papan-type-desc">Tentukan dimensi anda sendiri</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ukuran papan selector -->
+        <div id="papan-size-selector-wrap">
+          <label style="font-size:0.75rem;font-weight:600;color:#94a3b8;margin-bottom:0.35rem;display:block;">Ukuran
+            papan</label>
+          <div class="papan-size-grid" id="papan-size-options">
+            <!-- Populated via JS based on type -->
+          </div>
+        </div>
+
+        <!-- Input Dimensi Custom (Saat tipe custom aktif) -->
+        <div id="papan-custom-dims" style="display:none;">
+          <label style="font-size:0.75rem;font-weight:600;color:#94a3b8;margin-bottom:0.35rem;display:block;">Ukuran
+            Custom</label>
+          <div style="display:flex;gap:0.75rem;align-items:center;">
+            <div style="flex:1;">
+              <span style="font-size:0.7rem;color:#94a3b8;">Horizontal (Maks 10)</span>
+              <input type="number" id="inp-custom-w" min="1" max="10" value="3"
+                style="width:100%;padding:0.4rem;background:#0a0e18;border:1px solid #25334a;border-radius:4px;color:#fff;">
+            </div>
+            <span style="color:#64748b;font-weight:700;">×</span>
+            <div style="flex:1;">
+              <span style="font-size:0.7rem;color:#94a3b8;">Vertikal (Maks 10)</span>
+              <input type="number" id="inp-custom-h" min="1" max="10" value="3"
+                style="width:100%;padding:0.4rem;background:#0a0e18;border:1px solid #25334a;border-radius:4px;color:#fff;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Pratinjau Papan -->
+        <div>
+          <label
+            style="font-size:0.75rem;font-weight:600;color:#94a3b8;margin-bottom:0.35rem;display:block;">Pratinjau</label>
+          <div class="papan-preview-canvas">
+            <div class="preview-grid-box" id="papan-preview-grid">
+              <!-- Rendered via JS -->
+            </div>
+            <div style="font-size:0.75rem;font-weight:700;color:#cbd5e1;" id="preview-dim-label">3 × 3 (kecil)</div>
+            <div style="display:flex;gap:0.5rem;">
+              <div class="papan-badge" id="preview-total-cells">9 total Sel</div>
+              <div class="papan-badge" id="preview-dim-badge">3 × 3 Dimensi</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="doc-modal-footer">
+        <button class="modal-btn-batal">Batal</button>
+        <button class="modal-btn-tambah" id="btn-confirm-buat-papan">Buat Papan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 5: Buat Plot Grid Baru (BuatPlotGrid.png) -->
+  <div class="doc-modal-backdrop" id="modal-buat-plotgrid">
+    <div class="doc-modal-box">
+      <div class="doc-modal-header">
+        <span style="display:flex;align-items:center;gap:0.4rem;">
+          <iconify-icon icon="lucide:grid-3x3" width="16"></iconify-icon> Buat plot grid baru
+        </span>
+        <iconify-icon icon="lucide:x" class="modal-close-x" style="cursor:pointer;"></iconify-icon>
+      </div>
+      <div class="doc-modal-body">
+        <div class="modal-inp-group">
+          <label>Nama plot grid</label>
+          <input type="text" id="inp-plotgrid-title" placeholder="Nama alur cerita / plot...">
+        </div>
+      </div>
+      <div class="doc-modal-footer">
+        <button class="modal-btn-batal">Batal</button>
+        <button class="modal-btn-tambah" id="btn-confirm-buat-plotgrid">Buat Papan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 6: Tambah Ke Papan (TambahkankePapan.png) -->
+  <div class="doc-modal-backdrop" id="modal-tambah-ke-papan">
+    <div class="doc-modal-box" style="max-width:380px;">
+      <div class="doc-modal-header">
+        <span>Apa yang ingin di tambahkan ke papan?</span>
+        <iconify-icon icon="lucide:x" class="modal-close-x" style="cursor:pointer;"></iconify-icon>
+      </div>
+      <div class="doc-modal-body addto-papan-list">
+        <div class="addto-papan-item" data-choice="catatan">
+          <div class="addto-title">Catatan</div>
+          <div class="addto-sub">Buat catatan sederhana untuk ide cepat</div>
+        </div>
+        <div class="addto-papan-item" data-choice="centang">
+          <div class="addto-title">Kotak Centang</div>
+          <div class="addto-sub">Tugas dengan kotak centang</div>
+        </div>
+        <div class="addto-papan-item" data-choice="bab">
+          <div class="addto-title">Bab</div>
+          <div class="addto-sub">Tautkan Bab dari kisah dunia anda</div>
+        </div>
+        <div class="addto-papan-item" data-choice="karakter">
+          <div class="addto-title">Karakter</div>
+          <div class="addto-sub">Tautkan karakter dari dunia anda</div>
+        </div>
+        <div class="addto-papan-item" data-choice="gambar">
+          <div class="addto-title">Gambar</div>
+          <div class="addto-sub">Tambahkan gambar dari URL eksternal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    const sidebar = document.getElementById('main-sidebar');
-    const btnToggle = document.getElementById('btn-toggle-sidebar');
-    btnToggle.addEventListener('click', () => {
-      const collapsed = sidebar.classList.toggle('collapsed');
-      btnToggle.querySelector('iconify-icon').setAttribute('icon', collapsed ? 'lucide:panel-left-open' : 'lucide:panel-left-close');
-    });
-    const viewBtns = document.querySelectorAll('.view-btn[data-view]');
-    const views = { lore: document.getElementById('view-lore'), papan: document.getElementById('view-papan'), grid: document.getElementById('view-grid') };
-    function showView(name) {
-      viewBtns.forEach(b => b.classList.toggle('active', b.dataset.view === name));
-      Object.entries(views).forEach(([k, el]) => { if (!el) return; el.classList.toggle('active', k === name); el.style.display = (k === name) ? '' : 'none'; });
-      if (name === 'lore') { views.lore.style.display = 'flex'; }
+    // 1. Sidebar Utama AWB (Expand & Collapse sesuai Sidebar.png & Desktop.png)
+    const awbSidebar = document.getElementById('awb-main-sidebar');
+    const btnExpandMainSidebar = document.getElementById('btn-expand-main-sidebar');
+    const btnBottomExpand = document.getElementById('btn-bottom-expand');
+    const btnCollapseMainSidebar = document.getElementById('btn-collapse-main-sidebar');
+
+    function expandMainSidebar() {
+      awbSidebar.classList.add('expanded');
     }
-    viewBtns.forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));
-    showView('lore');
+    function collapseMainSidebar() {
+      awbSidebar.classList.remove('expanded');
+      awbWorldDropdown.classList.remove('open');
+    }
+
+    if (btnExpandMainSidebar) btnExpandMainSidebar.addEventListener('click', expandMainSidebar);
+    if (btnBottomExpand) btnBottomExpand.addEventListener('click', expandMainSidebar);
+    if (btnCollapseMainSidebar) btnCollapseMainSidebar.addEventListener('click', collapseMainSidebar);
+
+    // Dropdown Pilih Dunia (SideBarPilihDunia.png)
+    const btnToggleWorldMenu = document.getElementById('btn-toggle-world-menu');
+    const awbWorldDropdown = document.getElementById('awb-world-dropdown');
+    const curWorldName = document.getElementById('cur-world-name');
+    const btnTambahDuniaOpt = document.getElementById('btn-tambah-dunia-opt');
+
+    if (btnToggleWorldMenu) {
+      btnToggleWorldMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+        awbWorldDropdown.classList.toggle('open');
+      });
+    }
+
+    function setupWorldOptions() {
+      document.querySelectorAll('.awb-world-opt:not(.add-btn)').forEach(opt => {
+        opt.onclick = () => {
+          document.querySelectorAll('.awb-world-opt').forEach(o => o.classList.remove('active'));
+          opt.classList.add('active');
+          curWorldName.textContent = opt.textContent;
+          awbWorldDropdown.classList.remove('open');
+        };
+      });
+    }
+    setupWorldOptions();
+
+    if (btnTambahDuniaOpt) {
+      btnTambahDuniaOpt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const namaDunia = prompt('Masukkan nama dunia baru:', 'Dunia Baru');
+        if (namaDunia && namaDunia.trim()) {
+          const newOpt = document.createElement('div');
+          newOpt.className = 'awb-world-opt';
+          newOpt.dataset.world = namaDunia.trim();
+          newOpt.textContent = namaDunia.trim();
+          awbWorldDropdown.insertBefore(newOpt, btnTambahDuniaOpt);
+          setupWorldOptions();
+          newOpt.click();
+        }
+      });
+    }
+
+    // Toggle Sub-sidebar Dokumen & Bab
+    const subsidebar = document.getElementById('doc-subsidebar');
+    const btnCollapseTree = document.getElementById('btn-collapse-tree');
+
+    function toggleSubSidebar() {
+      subsidebar.classList.toggle('collapsed');
+      const isCol = subsidebar.classList.contains('collapsed');
+      btnCollapseTree.innerHTML = isCol ? '&gt;' : '&lt;';
+    }
+    if (btnCollapseTree) btnCollapseTree.addEventListener('click', toggleSubSidebar);
+
+    // 2. Right Drawer Panel Gabungan
+    const drawer = document.getElementById('doc-side-drawer');
+    const btnCloseDrawer = document.getElementById('btn-close-drawer');
+    const railBtnKarakter = document.getElementById('rail-btn-karakter');
+    const railBtnGlobe = document.getElementById('rail-btn-globe');
+    const railBtnPlot = document.getElementById('rail-btn-plot');
+
+    function toggleDrawer(targetBtn) {
+      const isOpen = drawer.classList.contains('open');
+      const isSameActive = targetBtn.classList.contains('active');
+
+      [railBtnKarakter, railBtnGlobe, railBtnPlot].forEach(b => b.classList.remove('active'));
+      if (isOpen && isSameActive) {
+        drawer.classList.remove('open');
+      } else {
+        drawer.classList.add('open');
+        targetBtn.classList.add('active');
+      }
+    }
+
+    railBtnKarakter.addEventListener('click', () => toggleDrawer(railBtnKarakter));
+    railBtnGlobe.addEventListener('click', () => toggleDrawer(railBtnGlobe));
+    railBtnPlot.addEventListener('click', () => toggleDrawer(railBtnPlot));
+    btnCloseDrawer.addEventListener('click', () => {
+      drawer.classList.remove('open');
+      [railBtnKarakter, railBtnGlobe, railBtnPlot].forEach(b => b.classList.remove('active'));
+    });
+
+    // 3. Multi-Pane Editor Grid Dinamis (AturTabDokDanBab.png)
+    const editorGrid = document.getElementById('editor-grid');
+    const openDocs = {
+      'Bab 1:': 'isi dari Dokumen Bab 1',
+      'Dokumen1': 'isi dari Dokumen1'
+    };
+    const layoutZones = {
+      1: ['a'],
+      2: ['a', 'b'],
+      3: ['a', 'b'],
+      4: ['a', 'b', 'c'],
+      5: ['a', 'b', 'c'],
+      6: ['a', 'b', 'c', 'd'],
+      7: ['a', 'b', 'c'],
+      8: ['a', 'b', 'c'],
+      9: ['a', 'b', 'c'],
+      10: ['a', 'b', 'c']
+    };
+    const paneTabs = { a: ['Bab 1:', 'Dokumen1'], b: [], c: [], d: [] };
+    const paneActive = { a: 'Bab 1:', b: null, c: null, d: null };
+    const paneBodies = {};
+    let activeLayout = '8';
+    let editorBody = null;
+
+    function renderEditorGrid() {
+      const zones = layoutZones[activeLayout] || ['a'];
+      const zoneSet = new Set(zones);
+
+      Object.keys(paneTabs).forEach(zone => {
+        if (!zoneSet.has(zone)) {
+          const moving = paneTabs[zone].filter(t => !(paneTabs.a.includes(t)));
+          moving.forEach(t => { if (!paneTabs.a.includes(t)) paneTabs.a.push(t); });
+          paneTabs[zone] = [];
+          paneActive[zone] = null;
+        }
+      });
+
+      Object.keys(paneTabs).forEach(zone => {
+        if (zoneSet.has(zone) && !paneActive[zone] && paneTabs[zone].length) {
+          paneActive[zone] = paneTabs[zone][0];
+        }
+      });
+
+      const cols = activeLayout === '1' ? '1fr'
+        : activeLayout === '2' ? '1fr 1fr'
+        : activeLayout === '3' ? '1fr'
+        : activeLayout === '4' ? '1fr 1fr 1fr'
+        : activeLayout === '5' ? '1fr'
+        : activeLayout === '6' ? '1fr 1fr'
+        : activeLayout === '7' ? '1fr 1fr'
+        : activeLayout === '8' ? '1.2fr 1fr'
+        : activeLayout === '9' ? '1fr 1fr'
+        : '1fr 1fr';
+      const rows = activeLayout === '1' ? '1fr'
+        : activeLayout === '2' ? '1fr'
+        : activeLayout === '3' ? '1fr 1fr'
+        : activeLayout === '4' ? '1fr'
+        : activeLayout === '5' ? '1fr 1fr 1fr'
+        : activeLayout === '6' ? '1fr 1fr'
+        : activeLayout === '7' ? '1fr 1fr'
+        : activeLayout === '8' ? '1fr 1fr'
+        : activeLayout === '9' ? '1fr 1fr'
+        : '1fr 1fr';
+      editorGrid.style.gridTemplateColumns = cols;
+      editorGrid.style.gridTemplateRows = rows;
+
+      const areaMap = {
+        1: ['a'],
+        2: ['a b'],
+        3: ['a', 'b'],
+        4: ['a b c'],
+        5: ['a', 'b', 'c'],
+        6: ['a b', 'c d'],
+        7: ['a a', 'b c'],
+        8: ['a b', 'a c'],
+        9: ['a b', 'c c'],
+        10: ['a c', 'b c']
+      };
+      editorGrid.style.gridTemplateAreas = (areaMap[activeLayout] || ['a']).map(r => `"${r}"`).join(' ');
+
+      editorGrid.innerHTML = '';
+      zones.forEach(zone => {
+        const cell = document.createElement('div');
+        cell.className = 'editor-pane-cell';
+        cell.dataset.zone = zone;
+        cell.style.gridArea = zone;
+
+        const tabsBar = document.createElement('div');
+        tabsBar.className = 'pane-tabs-bar';
+        paneTabs[zone].forEach(title => {
+          const tab = document.createElement('div');
+          tab.className = 'pane-tab' + (paneActive[zone] === title ? ' active' : '');
+          tab.draggable = true;
+          tab.dataset.title = title;
+          tab.dataset.zone = zone;
+          tab.innerHTML = `<iconify-icon icon="lucide:file-text" width="13"></iconify-icon> ${title} <span class="pane-tab-x">X</span>`;
+          tab.addEventListener('click', (e) => {
+            if (e.target.closest('.pane-tab-x')) {
+              closeTab(zone, title);
+              return;
+            }
+            paneActive[zone] = title;
+            renderEditorGrid();
+          });
+          tab.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/doc-tab', JSON.stringify({ fromZone: zone, title }));
+          });
+          tabsBar.appendChild(tab);
+        });
+
+        const addBtn = document.createElement('button');
+        addBtn.className = 'pane-tab-add';
+        addBtn.title = 'Tambah Tab';
+        addBtn.textContent = '+';
+        addBtn.addEventListener('click', () => {
+          const firstMissing = Object.keys(openDocs).find(t => !paneTabs[zone].includes(t));
+          const title = firstMissing || ('Dokumen' + (Object.keys(openDocs).length + 1));
+          openDocInPane(zone, title);
+        });
+        tabsBar.appendChild(addBtn);
+        cell.appendChild(tabsBar);
+
+        const body = document.createElement('div');
+        body.className = 'pane-body';
+        body.contentEditable = 'true';
+        if (zone === 'a') body.id = 'editor-body-main';
+        const activeTitle = paneActive[zone];
+        if (activeTitle && openDocs[activeTitle] !== undefined) {
+          body.textContent = openDocs[activeTitle];
+          body.addEventListener('input', () => { openDocs[activeTitle] = body.textContent; });
+        } else {
+          const notice = document.createElement('div');
+          notice.className = 'pane-empty-notice';
+          notice.textContent = 'Tidak ada Dokumen yang terbuka';
+          body.appendChild(notice);
+          body.contentEditable = 'false';
+          const dropHint = document.createElement('div');
+          dropHint.className = 'pane-tab';
+          dropHint.innerHTML = '<iconify-icon icon="lucide:file-text" width="13"></iconify-icon> Lepaskan Dokumen ke sini';
+          tabsBar.insertBefore(dropHint, addBtn);
+        }
+        cell.appendChild(body);
+        paneBodies[zone] = body;
+
+        cell.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          cell.classList.add('dragover');
+        });
+        cell.addEventListener('dragleave', () => cell.classList.remove('dragover'));
+        cell.addEventListener('drop', (e) => {
+          e.preventDefault();
+          cell.classList.remove('dragover');
+          try {
+            const data = JSON.parse(e.dataTransfer.getData('text/doc-tab'));
+            moveTab(data.fromZone, zone, data.title);
+          } catch (err) { /* abaikan drop invalid */ }
+        });
+
+        editorGrid.appendChild(cell);
+      });
+
+      const mainBody = paneBodies.a;
+      if (mainBody) editorBody = mainBody;
+    }
+
+    function openDocInPane(zone, title) {
+      if (openDocs[title] === undefined) openDocs[title] = 'isi dari ' + title;
+      if (!paneTabs[zone].includes(title)) paneTabs[zone].push(title);
+      paneActive[zone] = title;
+      renderEditorGrid();
+    }
+
+    function moveTab(fromZone, toZone, title) {
+      if (fromZone === toZone) return;
+      paneTabs[fromZone] = paneTabs[fromZone].filter(t => t !== title);
+      if (paneActive[fromZone] === title) paneActive[fromZone] = paneTabs[fromZone][0] || null;
+      if (!paneTabs[toZone].includes(title)) paneTabs[toZone].push(title);
+      paneActive[toZone] = title;
+      renderEditorGrid();
+    }
+
+    function closeTab(zone, title) {
+      paneTabs[zone] = paneTabs[zone].filter(t => t !== title);
+      if (paneActive[zone] === title) paneActive[zone] = paneTabs[zone][0] || null;
+      renderEditorGrid();
+    }
+
+    function openDocEverywhere(title) {
+      openDocInPane('a', title);
+    }
+
+    renderEditorGrid();
+
+    // 4. View Switcher (Dokumen Lore vs Papan vs Plot Grid)
+    const viewEditorPanes = document.getElementById('view-editor-panes');
+    const viewPapanCanvas = document.getElementById('view-papan-canvas');
+    const viewPlotGridCanvas = document.getElementById('view-plotgrid-canvas');
+    const mainDocToolbar = document.getElementById('main-doc-toolbar');
+    const papanDocToolbar = document.getElementById('papan-doc-toolbar');
+    const boardTitleDisplay = document.getElementById('board-title-display');
+    const boardDimDisplay = document.getElementById('board-dim-display');
+    const boardCellsDisplay = document.getElementById('board-cells-display');
+
+    function showView(type, title = 'Nama Papan', dim = '3 × 3', cells = '9 total sel') {
+      viewEditorPanes.style.display = 'none';
+      viewPapanCanvas.style.display = 'none';
+      viewPlotGridCanvas.style.display = 'none';
+      mainDocToolbar.style.display = 'none';
+      papanDocToolbar.style.display = 'none';
+
+      if (type === 'lore') {
+        viewEditorPanes.style.display = 'flex';
+        mainDocToolbar.style.display = 'flex';
+      } else if (type === 'papan') {
+        viewPapanCanvas.style.display = 'flex';
+        papanDocToolbar.style.display = 'flex';
+        boardTitleDisplay.textContent = title;
+        boardDimDisplay.textContent = dim;
+        boardCellsDisplay.textContent = cells;
+      } else if (type === 'plotgrid') {
+        viewPlotGridCanvas.style.display = 'flex';
+        papanDocToolbar.style.display = 'flex';
+        boardTitleDisplay.textContent = title;
+        boardDimDisplay.textContent = dim;
+        boardCellsDisplay.textContent = cells;
+      }
+    }
+
+    document.getElementById('btn-back-to-doc').addEventListener('click', () => showView('lore'));
+
+    document.querySelectorAll('.nav-papan').forEach(el => {
+      el.addEventListener('click', () => {
+        showView('papan', el.dataset.title || 'Judul', el.dataset.size || '3 × 3', el.dataset.cells || '9 total sel');
+      });
+    });
+
+    document.querySelectorAll('.nav-plotgrid').forEach(el => {
+      el.addEventListener('click', () => {
+        showView('plotgrid', el.dataset.title || 'Judul', el.dataset.size || '3 × 3', el.dataset.cells || '9 total sel');
+      });
+    });
+
+    // 5. Formatting Tools
+    document.getElementById('btn-fmt-bold').addEventListener('click', () => { if (editorBody) { editorBody.focus(); document.execCommand('bold'); } });
+    document.getElementById('btn-fmt-italic').addEventListener('click', () => { if (editorBody) { editorBody.focus(); document.execCommand('italic'); } });
+    document.getElementById('btn-fmt-underline').addEventListener('click', () => { if (editorBody) { editorBody.focus(); document.execCommand('underline'); } });
+    document.getElementById('btn-fmt-strike').addEventListener('click', () => { if (editorBody) { editorBody.focus(); document.execCommand('strikeThrough'); } });
+    document.getElementById('btn-fmt-head').addEventListener('click', () => { if (editorBody) { editorBody.focus(); document.execCommand('formatBlock', false, '<h2>'); } });
+    document.getElementById('btn-fmt-ul').addEventListener('click', () => { if (editorBody) { editorBody.focus(); document.execCommand('insertUnorderedList'); } });
+    document.getElementById('btn-fmt-ol').addEventListener('click', () => { if (editorBody) { editorBody.focus(); document.execCommand('insertOrderedList'); } });
+    document.getElementById('btn-tool-undo').addEventListener('click', () => { if (editorBody) { editorBody.focus(); document.execCommand('undo'); } });
+    document.getElementById('btn-tool-redo').addEventListener('click', () => { if (editorBody) { editorBody.focus(); document.execCommand('redo'); } });
+
+    // 6. Symbol Unik Popover
+    const symbolBtn = document.getElementById('btn-symbol-dropdown');
+    const symbolPopover = document.getElementById('popover-symbol-unik');
+    symbolBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      symbolPopover.classList.toggle('open');
+      layoutPopover.classList.remove('open');
+    });
+
+    symbolPopover.querySelectorAll('.sym-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (editorBody) {
+          editorBody.focus();
+          document.execCommand('insertText', false, btn.textContent);
+        }
+        symbolPopover.classList.remove('open');
+      });
+    });
+
+    // 7. Layout Preset Selector Popover (AturTabDokDanBab.png)
+    const layoutBtn = document.getElementById('btn-layout-dropdown');
+    const layoutPopover = document.getElementById('popover-layout-preset');
+    layoutBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      layoutPopover.classList.toggle('open');
+      symbolPopover.classList.remove('open');
+    });
+
+    layoutPopover.querySelectorAll('.layout-preset-box').forEach(box => {
+      box.addEventListener('click', () => {
+        layoutPopover.querySelectorAll('.layout-preset-box').forEach(b => b.classList.remove('active'));
+        box.classList.add('active');
+        activeLayout = box.dataset.layout;
+        renderEditorGrid();
+        layoutPopover.classList.remove('open');
+      });
+    });
+
+    // 8. Plus Lore Popover (+DokumenLore.png)
+    const btnPlusLore = document.getElementById('btn-plus-lore');
+    const plusLorePopover = document.getElementById('popover-plus-lore');
+    btnPlusLore.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const rect = btnPlusLore.getBoundingClientRect();
+      plusLorePopover.style.top = (rect.bottom + 4) + 'px';
+      plusLorePopover.style.left = rect.left + 'px';
+      plusLorePopover.classList.toggle('open');
+    });
+
+    // 8. Modals Manager
+    function openModal(id) {
+      document.querySelectorAll('.doc-modal-backdrop').forEach(m => m.classList.remove('open'));
+      plusLorePopover.classList.remove('open');
+      symbolPopover.classList.remove('open');
+      layoutPopover.classList.remove('open');
+      const target = document.getElementById(id);
+      if (target) target.classList.add('open');
+    }
+
+    function closeAllModals() {
+      document.querySelectorAll('.doc-modal-backdrop').forEach(m => m.classList.remove('open'));
+    }
+
+    document.querySelectorAll('.modal-close-x, .modal-btn-batal').forEach(btn => {
+      btn.addEventListener('click', closeAllModals);
+    });
+
+    // Trigger buttons for modals
+    document.getElementById('btn-opt-tambah-dokumen').addEventListener('click', () => openModal('modal-tambah-dokumen'));
+    document.getElementById('btn-opt-tambah-folder').addEventListener('click', () => openModal('modal-tambah-folder'));
+    document.querySelectorAll('.btn-folder-add').forEach(b => b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openModal('modal-tambah-dokumen');
+    }));
+    document.getElementById('btn-plus-bab').addEventListener('click', () => openModal('modal-tambah-bab'));
+    document.getElementById('btn-plus-papan').addEventListener('click', () => openModal('modal-buat-papan'));
+    document.getElementById('btn-plus-plotgrid').addEventListener('click', () => openModal('modal-buat-plotgrid'));
+
+    // Tambah ke Papan modal
+    document.querySelectorAll('.add-to-board-cell').forEach(cell => {
+      cell.addEventListener('click', () => openModal('modal-tambah-ke-papan'));
+    });
+
+    // 8b. Klik Dokumen/Bab di tree membuka tab di pane aktif
+    document.querySelectorAll('#doc-subsidebar .sb-row').forEach(row => {
+      if (row.classList.contains('tree-folder')) return;
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('button')) return;
+        const titleEl = row.querySelector('.sb-row-title');
+        if (!titleEl) return;
+        const title = titleEl.childNodes[0] ? titleEl.childNodes[0].textContent.trim() : titleEl.textContent.trim();
+        if (!title) return;
+        document.querySelectorAll('#doc-subsidebar .sb-row').forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+        openDocEverywhere(title);
+      });
+    });
+
+    // 9. Wizard Buat Papan Baru Logic (Standar, Vertikal, Horizontal, Custom)
+    const papanSizes = {
+      standar: [
+        { label: '2 × 2 (mini)', w: 2, h: 2 },
+        { label: '3 × 3 (kecil)', w: 3, h: 3 },
+        { label: '4 × 4 (sedang)', w: 4, h: 4 },
+        { label: '5 × 5 (Besar)', w: 5, h: 5 },
+        { label: '6 × 6 (sangat Besar)', w: 6, h: 6 }
+      ],
+      vertikal: [
+        { label: '4 × 2', w: 2, h: 4 },
+        { label: '6 × 2', w: 2, h: 6 },
+        { label: '5 × 3', w: 3, h: 5 },
+        { label: '8 × 3', w: 3, h: 8 }
+      ],
+      horizontal: [
+        { label: '2 × 4', w: 4, h: 2 },
+        { label: '2 × 6', w: 6, h: 2 },
+        { label: '3 × 5', w: 5, h: 3 },
+        { label: '3 × 8', w: 8, h: 3 }
+      ]
+    };
+
+    let curPapanType = 'standar';
+    let curPapanW = 3;
+    let curPapanH = 3;
+    let curPapanLabel = '3 × 3 (kecil)';
+
+    const sizeOptWrap = document.getElementById('papan-size-options');
+    const customDimsWrap = document.getElementById('papan-custom-dims');
+    const previewGrid = document.getElementById('papan-preview-grid');
+    const previewDimLabel = document.getElementById('preview-dim-label');
+    const previewTotalCells = document.getElementById('preview-total-cells');
+    const previewDimBadge = document.getElementById('preview-dim-badge');
+
+    function updatePapanPreview(w, h, label) {
+      curPapanW = w;
+      curPapanH = h;
+      curPapanLabel = label || `${w} × ${h}`;
+
+      previewDimLabel.textContent = curPapanLabel;
+      const total = w * h;
+      previewTotalCells.textContent = `${total} total Sel`;
+      previewDimBadge.textContent = `${w} × ${h} Dimensi`;
+
+      previewGrid.style.gridTemplateColumns = `repeat(${w}, 1fr)`;
+      let html = '';
+      for (let i = 0; i < total; i++) {
+        html += '<div class="preview-cell">+</div>';
+      }
+      previewGrid.innerHTML = html;
+    }
+
+    function renderPapanSizes(type) {
+      curPapanType = type;
+      if (type === 'custom') {
+        document.getElementById('papan-size-selector-wrap').style.display = 'none';
+        customDimsWrap.style.display = 'block';
+        const w = parseInt(document.getElementById('inp-custom-w').value) || 3;
+        const h = parseInt(document.getElementById('inp-custom-h').value) || 3;
+        updatePapanPreview(w, h, `${w} × ${h} (Custom)`);
+      } else {
+        document.getElementById('papan-size-selector-wrap').style.display = 'block';
+        customDimsWrap.style.display = 'none';
+        const list = papanSizes[type] || [];
+        sizeOptWrap.innerHTML = list.map((opt, idx) => `
+          <div class="papan-size-opt ${idx === 1 ? 'active' : ''}" data-w="${opt.w}" data-h="${opt.h}" data-lbl="${opt.label}">
+            <iconify-icon icon="lucide:grid-3x3" width="16"></iconify-icon>
+            <span>${opt.label}</span>
+          </div>
+        `).join('');
+
+        // select default (idx 1 or 0)
+        const def = list[1] || list[0];
+        if (def) updatePapanPreview(def.w, def.h, def.label);
+
+        sizeOptWrap.querySelectorAll('.papan-size-opt').forEach(el => {
+          el.addEventListener('click', () => {
+            sizeOptWrap.querySelectorAll('.papan-size-opt').forEach(o => o.classList.remove('active'));
+            el.classList.add('active');
+            updatePapanPreview(parseInt(el.dataset.w), parseInt(el.dataset.h), el.dataset.lbl);
+          });
+        });
+      }
+    }
+
+    document.querySelectorAll('.papan-type-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.papan-type-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        renderPapanSizes(card.dataset.type);
+      });
+    });
+
+    document.getElementById('inp-custom-w').addEventListener('input', () => {
+      const w = Math.min(10, Math.max(1, parseInt(document.getElementById('inp-custom-w').value) || 1));
+      const h = Math.min(10, Math.max(1, parseInt(document.getElementById('inp-custom-h').value) || 1));
+      updatePapanPreview(w, h, `${w} × ${h} (Custom)`);
+    });
+    document.getElementById('inp-custom-h').addEventListener('input', () => {
+      const w = Math.min(10, Math.max(1, parseInt(document.getElementById('inp-custom-w').value) || 1));
+      const h = Math.min(10, Math.max(1, parseInt(document.getElementById('inp-custom-h').value) || 1));
+      updatePapanPreview(w, h, `${w} × ${h} (Custom)`);
+    });
+
+    // Initial render wizard sizes
+    renderPapanSizes('standar');
+
+    document.getElementById('btn-confirm-buat-papan').addEventListener('click', () => {
+      const title = document.getElementById('inp-papan-title').value || 'Papan Baru';
+      closeAllModals();
+      showView('papan', title, `${curPapanW} × ${curPapanH}`, `${curPapanW * curPapanH} total sel`);
+    });
+
+    document.getElementById('btn-confirm-buat-plotgrid').addEventListener('click', () => {
+      const title = document.getElementById('inp-plotgrid-title').value || 'Plot Grid Baru';
+      closeAllModals();
+      showView('plotgrid', title, '3 × 3', '9 total sel');
+    });
+
+    // Close popovers on window click
+    window.addEventListener('click', (e) => {
+      if (!symbolPopover.contains(e.target) && e.target !== symbolBtn) {
+        symbolPopover.classList.remove('open');
+      }
+      if (!layoutPopover.contains(e.target) && !layoutBtn.contains(e.target)) {
+        layoutPopover.classList.remove('open');
+      }
+      if (!plusLorePopover.contains(e.target) && e.target !== btnPlusLore) {
+        plusLorePopover.classList.remove('open');
+      }
+      if (awbWorldDropdown && !awbWorldDropdown.contains(e.target) && (!btnToggleWorldMenu || !btnToggleWorldMenu.contains(e.target))) {
+        awbWorldDropdown.classList.remove('open');
+      }
+    });
   </script>
 </body>
 
