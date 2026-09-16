@@ -1578,7 +1578,7 @@
           <span class="awb-nav-box"><iconify-icon icon="lucide:layout-dashboard" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Dashboard</span>
         </a>
-        <a class="awb-nav-link active" href="dokumen.page.html" title="Dokumen">
+        <a class="awb-nav-link active" title="Dokumen">
           <span class="awb-nav-box"><iconify-icon icon="lucide:book-open" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Dokumen</span>
         </a>
@@ -1594,7 +1594,7 @@
           <span class="awb-nav-box"><iconify-icon icon="lucide:calendar-range" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Linimasa</span>
         </a>
-        <a class="awb-nav-link" href="jaringan.page.html" title="Graph">
+        <a class="awb-nav-link" href="graph.page.html" title="Graph">
           <span class="awb-nav-box"><iconify-icon icon="lucide:network" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Graph</span>
         </a>
@@ -2646,24 +2646,24 @@
 
       const cols = activeLayout === '1' ? '1fr'
         : activeLayout === '2' ? '1fr 1fr'
-        : activeLayout === '3' ? '1fr'
-        : activeLayout === '4' ? '1fr 1fr 1fr'
-        : activeLayout === '5' ? '1fr'
-        : activeLayout === '6' ? '1fr 1fr'
-        : activeLayout === '7' ? '1fr 1fr'
-        : activeLayout === '8' ? '1.2fr 1fr'
-        : activeLayout === '9' ? '1fr 1fr'
-        : '1fr 1fr';
+          : activeLayout === '3' ? '1fr'
+            : activeLayout === '4' ? '1fr 1fr 1fr'
+              : activeLayout === '5' ? '1fr'
+                : activeLayout === '6' ? '1fr 1fr'
+                  : activeLayout === '7' ? '1fr 1fr'
+                    : activeLayout === '8' ? '1.2fr 1fr'
+                      : activeLayout === '9' ? '1fr 1fr'
+                        : '1fr 1fr';
       const rows = activeLayout === '1' ? '1fr'
         : activeLayout === '2' ? '1fr'
-        : activeLayout === '3' ? '1fr 1fr'
-        : activeLayout === '4' ? '1fr'
-        : activeLayout === '5' ? '1fr 1fr 1fr'
-        : activeLayout === '6' ? '1fr 1fr'
-        : activeLayout === '7' ? '1fr 1fr'
-        : activeLayout === '8' ? '1fr 1fr'
-        : activeLayout === '9' ? '1fr 1fr'
-        : '1fr 1fr';
+          : activeLayout === '3' ? '1fr 1fr'
+            : activeLayout === '4' ? '1fr'
+              : activeLayout === '5' ? '1fr 1fr 1fr'
+                : activeLayout === '6' ? '1fr 1fr'
+                  : activeLayout === '7' ? '1fr 1fr'
+                    : activeLayout === '8' ? '1fr 1fr'
+                      : activeLayout === '9' ? '1fr 1fr'
+                        : '1fr 1fr';
       editorGrid.style.gridTemplateColumns = cols;
       editorGrid.style.gridTemplateRows = rows;
 

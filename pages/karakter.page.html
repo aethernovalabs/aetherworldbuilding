@@ -86,7 +86,9 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .char-card-img iconify-icon { opacity: 0.5; }
+    .char-card-img iconify-icon {
+      opacity: 0.5;
+    }
 
     .char-card .char-status {
       position: absolute;
@@ -135,8 +137,14 @@
       align-items: center;
     }
 
-    .char-actions .win-btn { width: 24px; height: 24px; }
-    .char-actions .del { color: var(--danger); }
+    .char-actions .win-btn {
+      width: 24px;
+      height: 24px;
+    }
+
+    .char-actions .del {
+      color: var(--danger);
+    }
 
     /* Add Card */
     .char-card-add {
@@ -177,7 +185,10 @@
       overflow: hidden;
     }
 
-    .char-modal-frame .modal-header { flex-shrink: 0; }
+    .char-modal-frame .modal-header {
+      flex-shrink: 0;
+    }
+
     .char-modal-frame .modal-footer {
       flex-shrink: 0;
       position: sticky;
@@ -236,7 +247,11 @@
       border-bottom-color: var(--danger);
       background: rgba(239, 68, 68, 0.08);
     }
-    .char-modal-tab.active .tab-ico { border-color: var(--danger); color: var(--danger); }
+
+    .char-modal-tab.active .tab-ico {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
 
     .char-modal-body {
       flex: 1;
@@ -384,139 +399,391 @@
       background: var(--bg-card);
     }
 
-    .char-table-wrap .tag-red { color: var(--danger); font-size: 0.76rem; }
-    .char-row-name { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+    .char-table-wrap .tag-red {
+      color: var(--danger);
+      font-size: 0.76rem;
+    }
+
+    .char-row-name {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+    }
+
     .char-row-thumb {
-      width: 26px; height: 22px; border: 1px solid var(--border); border-radius: 4px;
-      display: inline-flex; align-items: center; justify-content: center;
-      background: var(--bg-surface); color: var(--text-faint); flex-shrink: 0;
+      width: 26px;
+      height: 22px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-surface);
+      color: var(--text-faint);
+      flex-shrink: 0;
     }
 
     /* Sidebar kanan detail ala LihatInformasiKarakter */
-.char-detail {
-      position: fixed; top: 0; right: 0; bottom: 0;
-      width: 340px; flex-shrink: 0; border-left: 1px solid var(--border);
-      background: var(--bg-card); display: none; flex-direction: column;
+    .char-detail {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 340px;
+      flex-shrink: 0;
+      border-left: 1px solid var(--border);
+      background: var(--bg-card);
+      display: none;
+      flex-direction: column;
       z-index: 100;
     }
-    .char-detail.open { display: flex; }
+
+    .char-detail.open {
+      display: flex;
+    }
+
     .char-detail-head {
-      padding: 0.75rem 1rem; border-bottom: 1px solid var(--border);
-      display: flex; align-items: flex-start; gap: 0.6rem;
-      position: sticky; top: 0; background: var(--bg-card); z-index: 2;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      position: sticky;
+      top: 0;
+      background: var(--bg-card);
+      z-index: 2;
     }
+
     .char-detail-buttons {
-      display: flex; gap: 0.4rem; margin-left: auto; flex-shrink: 0;
+      display: flex;
+      gap: 0.4rem;
+      margin-left: auto;
+      flex-shrink: 0;
     }
+
     .char-detail-buttons .win-btn {
-      width: 28px; height: 28px; padding: 0;
+      width: 28px;
+      height: 28px;
+      padding: 0;
     }
+
     .char-detail-info {
-      flex: 1; min-width: 0;
+      flex: 1;
+      min-width: 0;
     }
+
     .char-detail-name {
-      font-weight: 700; font-size: 0.88rem; color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--text-main);
     }
+
     .char-detail-sub {
-      font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.1rem;
     }
+
     .char-detail-body {
-      flex: 1; overflow-y: auto; min-height: 0; padding: 0 1rem;
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding: 0 1rem;
     }
+
     .char-detail-header-content {
-      display: flex; flex-direction: column; gap: 0.6rem; padding: 0.75rem 1rem 0.5rem; flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      padding: 0.75rem 1rem 0.5rem;
+      flex-shrink: 0;
     }
+
     .char-detail-sections {
-      display: flex; flex-direction: column; gap: 0.6rem; padding-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      padding-bottom: 1.5rem;
     }
+
     .char-desc-box {
-      border: 1px solid var(--border); border-radius: var(--radius-sm);
-      padding: 0.65rem; background: var(--bg-dark); font-size: 0.78rem;
-      color: var(--text-muted); line-height: 1.5; min-height: 60px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem;
+      background: var(--bg-dark);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      min-height: 60px;
     }
+
     .char-variant-row {
-      display: flex; gap: 0.35rem; flex-wrap: wrap;
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
     }
+
     .char-variant-btn {
-      padding: 0.25rem 0.6rem; border: 1px solid var(--border); border-radius: 12px;
-      background: var(--bg-surface); font-size: 0.72rem; cursor: pointer;
-      transition: all 0.15s; color: var(--text-muted);
+      padding: 0.25rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-surface);
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--text-muted);
     }
-    .char-variant-btn:hover { background: var(--bg-dark); }
-    .char-variant-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
-    
+
+    .char-variant-btn:hover {
+      background: var(--bg-dark);
+    }
+
+    .char-variant-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
     .char-section {
-      border: 1px solid var(--border); border-radius: var(--radius-sm);
-      background: var(--bg-dark); overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-dark);
+      overflow: hidden;
     }
+
     .char-section-head {
-      display: flex; align-items: center; gap: 0.5rem; padding: 0.65rem;
-      border-bottom: 1px solid var(--border); cursor: pointer;
-      font-size: 0.8rem; font-weight: 700; user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 700;
+      user-select: none;
       transition: all 0.15s;
     }
-    .char-section-head:hover { background: rgba(139,92,246,0.05); }
+
+    .char-section-head:hover {
+      background: rgba(139, 92, 246, 0.05);
+    }
+
     .char-section-toggle {
-      width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;
-      font-size: 0.65rem; color: var(--text-muted); flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
     }
+
     .char-section-body {
-      padding: 0.65rem; display: flex; flex-direction: column; gap: 0.55rem;
+      padding: 0.65rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
     }
-    .char-section.collapsed .char-section-body { display: none; }
+
+    .char-section.collapsed .char-section-body {
+      display: none;
+    }
+
     .char-row {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem 0.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.35rem 0.5rem;
       font-size: 0.75rem;
     }
-    .char-row-label { color: var(--text-faint); font-weight: 600; }
-    .char-row-value { color: var(--text-main); }
-    .char-chip-row { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+
+    .char-row-label {
+      color: var(--text-faint);
+      font-weight: 600;
+    }
+
+    .char-row-value {
+      color: var(--text-main);
+    }
+
+    .char-chip-row {
+      display: flex;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
     .char-chip {
-      padding: 0.2rem 0.45rem; border: 1px solid var(--border); border-radius: 10px;
-      background: var(--bg-surface); font-size: 0.7rem; color: var(--text-muted);
+      padding: 0.2rem 0.45rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-surface);
+      font-size: 0.7rem;
+      color: var(--text-muted);
     }
-    .info-block { display: flex; flex-direction: column; gap: 0.2rem; }
-    .info-block .k { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); }
-    .info-block .v { font-size: 0.75rem; color: var(--text-main); line-height: 1.5; }
-    .info-sub { margin-left: 0.15rem; display: flex; flex-direction: column; gap: 0.35rem; }
+
+    .info-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .info-block .k {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .info-block .v {
+      font-size: 0.75rem;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    .info-sub {
+      margin-left: 0.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
     .char-hub-card {
-      border: 1px solid var(--border); border-radius: var(--radius-sm);
-      padding: 0.5rem; background: var(--bg-card); display: flex; flex-direction: column; gap: 0.35rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem;
+      background: var(--bg-card);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
     }
-    .char-hub-top { display: flex; align-items: center; gap: 0.5rem; }
+
+    .char-hub-top {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
     .char-hub-icon {
-      width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 4px;
-      background: var(--bg-surface); display: flex; align-items: center; justify-content: center;
-      color: var(--text-faint); flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-faint);
+      flex-shrink: 0;
     }
-    .char-hub-name { font-size: 0.78rem; font-weight: 700; color: var(--text-main); }
+
+    .char-hub-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
     .char-hub-type {
-      font-size: 0.68rem; color: var(--text-faint); border: 1px solid var(--border);
-      padding: 0.05rem 0.4rem; border-radius: 3px; margin-left: auto; white-space: nowrap;
+      font-size: 0.68rem;
+      color: var(--text-faint);
+      border: 1px solid var(--border);
+      padding: 0.05rem 0.4rem;
+      border-radius: 3px;
+      margin-left: auto;
+      white-space: nowrap;
     }
-    .char-hub-desc { font-size: 0.73rem; color: var(--text-muted); line-height: 1.5; }
+
+    .char-hub-desc {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
     .doc-item {
-      display: flex; align-items: center; gap: 0.4rem;
-      border: 1px solid var(--border); border-radius: var(--radius-sm);
-      padding: 0.4rem 0.5rem; font-size: 0.75rem; color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.4rem 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-main);
     }
 
     /* Modal buat/edit ala wireframe */
-    .char-create-head { display: flex; align-items: center; gap: 0.7rem; }
-    .char-create-avatar {
-      width: 44px; height: 44px; border: 1px solid var(--border); border-radius: 6px;
-      background: var(--bg-surface); display: flex; align-items: center; justify-content: center;
-      color: var(--text-faint); flex-shrink: 0;
+    .char-create-head {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
     }
-    .char-create-head small { font-size: 0.75rem; color: var(--text-muted); }
-    .field-block { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.7rem; background: var(--bg-dark); display: flex; flex-direction: column; gap: 0.5rem; }
-    .field-block-title { font-size: 0.8rem; font-weight: 700; }
-    .check2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem 1rem; font-size: 0.8rem; color: var(--text-muted); }
-    .hub-card { border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; }
-    .hub-card:last-child { border-bottom: none; }
-    .hub-two { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.5rem 0.6rem; background: rgba(139,92,246,0.06); font-size: 0.8rem; }
 
-    @media (max-width: 1100px) { .char-detail { position: fixed; right: 0; top: 0; bottom: 0; z-index: 90; box-shadow: -16px 0 40px rgba(0,0,0,0.5); } }
+    .char-create-avatar {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-faint);
+      flex-shrink: 0;
+    }
+
+    .char-create-head small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .field-block {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem;
+      background: var(--bg-dark);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .field-block-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .check2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.35rem 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .hub-card {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.8rem;
+    }
+
+    .hub-card:last-child {
+      border-bottom: none;
+    }
+
+    .hub-two {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.6rem;
+      background: rgba(139, 92, 246, 0.06);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 1100px) {
+      .char-detail {
+        position: fixed;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 90;
+        box-shadow: -16px 0 40px rgba(0, 0, 0, 0.5);
+      }
+    }
 
     @media (max-width: 640px) {
 
@@ -559,7 +826,7 @@
           <span class="awb-nav-box"><iconify-icon icon="lucide:book-open" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Dokumen</span>
         </a>
-        <a class="awb-nav-link active" href="karakter.page.html" title="Karakter">
+        <a class="awb-nav-link active" title="Karakter">
           <span class="awb-nav-box"><iconify-icon icon="lucide:users" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Karakter</span>
         </a>
@@ -571,7 +838,7 @@
           <span class="awb-nav-box"><iconify-icon icon="lucide:calendar-range" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Linimasa</span>
         </a>
-        <a class="awb-nav-link" href="jaringan.page.html" title="Graph">
+        <a class="awb-nav-link" href="graph.page.html" title="Graph">
           <span class="awb-nav-box"><iconify-icon icon="lucide:network" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Graph</span>
         </a>
@@ -611,139 +878,709 @@
       </div>
 
       <div style="display:flex;flex:1;min-height:0;overflow-y:auto;">
-      <div style="flex:1;min-width:0;overflow-y:auto;">
-      <div class="page-body">
-        <div class="char-filter-panel">
-          <div class="char-filter-row">
-            <div class="search-wrap">
-              <iconify-icon icon="lucide:search"></iconify-icon>
-              <input type="text" class="search-field" placeholder="Cari nama karakter">
-            </div>
-            <select class="char-select">
-              <option>Semua Status</option>
-              <option>Hidup</option>
-              <option>Mati</option>
-            </select>
-            <select class="char-select">
-              <option>Semua Spesies</option>
-            </select>
-            <select class="char-select">
-              <option>Semua Gelar</option>
-            </select>
-            <select class="char-select">
-              <option>Semua Faksi</option>
-            </select>
-            <select class="char-select">
-              <option>Semua Lokasi</option>
-            </select>
-            <span style="display:flex;gap:0.3rem;margin-left:auto;" class="view-toggle">
-              <button class="win-btn view-btn active" id="view-grid" title="Grid" onclick="setCharView('grid')"><iconify-icon icon="lucide:layout-grid"></iconify-icon></button>
-              <button class="win-btn view-btn" id="view-list" title="List" onclick="setCharView('list')"><iconify-icon icon="lucide:list"></iconify-icon></button>
-            </span>
-          </div>
-          <div class="char-tag-row">Tag: <span class="badge">tag1</span> <span class="badge">tag2</span> <span
-              class="badge">tag3</span></div>
-        </div>
-        <div class="char-grid" id="char-grid">
-
-          <div class="char-card" onclick="openCharDetail('Name')">
-            <div class="char-card-img"><iconify-icon icon="lucide:image" width="44"></iconify-icon><span class="char-status">Hidup</span></div>
-            <div class="char-info">
-              <div class="char-name">Name <span class="char-actions"><button class="win-btn" onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn del" onclick="event.stopPropagation()"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></span>
+        <div style="flex:1;min-width:0;overflow-y:auto;">
+          <div class="page-body">
+            <div class="char-filter-panel">
+              <div class="char-filter-row">
+                <div class="search-wrap">
+                  <iconify-icon icon="lucide:search"></iconify-icon>
+                  <input type="text" class="search-field" placeholder="Cari nama karakter">
+                </div>
+                <select class="char-select">
+                  <option>Semua Status</option>
+                  <option>Hidup</option>
+                  <option>Mati</option>
+                </select>
+                <select class="char-select">
+                  <option>Semua Spesies</option>
+                </select>
+                <select class="char-select">
+                  <option>Semua Gelar</option>
+                </select>
+                <select class="char-select">
+                  <option>Semua Faksi</option>
+                </select>
+                <select class="char-select">
+                  <option>Semua Lokasi</option>
+                </select>
+                <span style="display:flex;gap:0.3rem;margin-left:auto;" class="view-toggle">
+                  <button class="win-btn view-btn active" id="view-grid" title="Grid"
+                    onclick="setCharView('grid')"><iconify-icon icon="lucide:layout-grid"></iconify-icon></button>
+                  <button class="win-btn view-btn" id="view-list" title="List"
+                    onclick="setCharView('list')"><iconify-icon icon="lucide:list"></iconify-icon></button>
+                </span>
               </div>
-              <div class="char-meta">Spesies: Spesies1 Spesies2</div>
-              <div class="char-meta">Lokasi: Lokasi1</div>
-              <div class="char-meta">Faksi: Faksi1</div>
-              <div class="char-meta">Gelar: Gelar1</div>
-              <div class="char-tags">Tag1 tag2</div>
+              <div class="char-tag-row">Tag: <span class="badge">tag1</span> <span class="badge">tag2</span> <span
+                  class="badge">tag3</span></div>
             </div>
-          </div>
+            <div class="char-grid" id="char-grid">
 
-          <div class="char-card" onclick="openCharDetail('Name')">
-            <div class="char-card-img"><iconify-icon icon="lucide:image" width="44"></iconify-icon><span class="char-status">Hidup</span></div>
-            <div class="char-info">
-              <div class="char-name">Name <span class="char-actions"><button class="win-btn" onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn del" onclick="event.stopPropagation()"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></span>
+              <div class="char-card" onclick="openCharDetail('Name')">
+                <div class="char-card-img"><iconify-icon icon="lucide:image" width="44"></iconify-icon><span
+                    class="char-status">Hidup</span></div>
+                <div class="char-info">
+                  <div class="char-name">Name <span class="char-actions"><button class="win-btn"
+                        onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon icon="lucide:pen-line"
+                          width="14"></iconify-icon></button><button class="win-btn del"
+                        onclick="event.stopPropagation()"><iconify-icon icon="lucide:trash-2"
+                          width="14"></iconify-icon></button></span>
+                  </div>
+                  <div class="char-meta">Spesies: Spesies1 Spesies2</div>
+                  <div class="char-meta">Lokasi: Lokasi1</div>
+                  <div class="char-meta">Faksi: Faksi1</div>
+                  <div class="char-meta">Gelar: Gelar1</div>
+                  <div class="char-tags">Tag1 tag2</div>
+                </div>
               </div>
-              <div class="char-meta">Spesies: Spesies1 Spesies2</div>
-              <div class="char-meta">Lokasi: Lokasi1</div>
-              <div class="char-meta">Faksi: Faksi1</div>
-              <div class="char-meta">Gelar: Gelar1</div>
-              <div class="char-tags">Tag1 tag2</div>
-            </div>
-          </div>
 
-          <div class="char-card" onclick="openCharDetail('Name')">
-            <div class="char-card-img"><iconify-icon icon="lucide:image" width="44"></iconify-icon><span class="char-status">Hidup</span></div>
-            <div class="char-info">
-              <div class="char-name">Name <span class="char-actions"><button class="win-btn" onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn del" onclick="event.stopPropagation()"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></span>
+              <div class="char-card" onclick="openCharDetail('Name')">
+                <div class="char-card-img"><iconify-icon icon="lucide:image" width="44"></iconify-icon><span
+                    class="char-status">Hidup</span></div>
+                <div class="char-info">
+                  <div class="char-name">Name <span class="char-actions"><button class="win-btn"
+                        onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon icon="lucide:pen-line"
+                          width="14"></iconify-icon></button><button class="win-btn del"
+                        onclick="event.stopPropagation()"><iconify-icon icon="lucide:trash-2"
+                          width="14"></iconify-icon></button></span>
+                  </div>
+                  <div class="char-meta">Spesies: Spesies1 Spesies2</div>
+                  <div class="char-meta">Lokasi: Lokasi1</div>
+                  <div class="char-meta">Faksi: Faksi1</div>
+                  <div class="char-meta">Gelar: Gelar1</div>
+                  <div class="char-tags">Tag1 tag2</div>
+                </div>
               </div>
-              <div class="char-meta">Spesies: Spesies1 Spesies2</div>
-              <div class="char-meta">Lokasi: Lokasi1</div>
-              <div class="char-meta">Faksi: Faksi1</div>
-              <div class="char-meta">Gelar: Gelar1</div>
-              <div class="char-tags">Tag1 tag2</div>
+
+              <div class="char-card" onclick="openCharDetail('Name')">
+                <div class="char-card-img"><iconify-icon icon="lucide:image" width="44"></iconify-icon><span
+                    class="char-status">Hidup</span></div>
+                <div class="char-info">
+                  <div class="char-name">Name <span class="char-actions"><button class="win-btn"
+                        onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon icon="lucide:pen-line"
+                          width="14"></iconify-icon></button><button class="win-btn del"
+                        onclick="event.stopPropagation()"><iconify-icon icon="lucide:trash-2"
+                          width="14"></iconify-icon></button></span>
+                  </div>
+                  <div class="char-meta">Spesies: Spesies1 Spesies2</div>
+                  <div class="char-meta">Lokasi: Lokasi1</div>
+                  <div class="char-meta">Faksi: Faksi1</div>
+                  <div class="char-meta">Gelar: Gelar1</div>
+                  <div class="char-tags">Tag1 tag2</div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="char-table-wrap" id="char-table" style="display:none;">
+              <table class="list-table">
+                <thead>
+                  <tr>
+                    <th>Nama</th>
+                    <th>Status</th>
+                    <th>Gelar</th>
+                    <th>Spesies</th>
+                    <th>Lokasi</th>
+                    <th>Faksi</th>
+                    <th>Tag</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr onclick="openCharDetail('Name')">
+                    <td><span class="char-row-name"><span class="char-row-thumb"><iconify-icon icon="lucide:image"
+                            width="14"></iconify-icon></span>Name</span></td>
+                    <td>Hidup</td>
+                    <td>Gelar1</td>
+                    <td>Spesies1, Spesies2</td>
+                    <td>Lokasi1</td>
+                    <td>Faksi1</td>
+                    <td><span class="tag-red">Tag1, tag2</span></td>
+                    <td><button class="win-btn" onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon
+                          icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn"
+                        style="color:var(--danger);" onclick="event.stopPropagation()"><iconify-icon
+                          icon="lucide:trash-2" width="14"></iconify-icon></button></td>
+                  </tr>
+                  <tr onclick="openCharDetail('Name')">
+                    <td><span class="char-row-name"><span class="char-row-thumb"><iconify-icon icon="lucide:image"
+                            width="14"></iconify-icon></span>Name</span></td>
+                    <td>Hidup</td>
+                    <td>Gelar1</td>
+                    <td>Spesies1, Spesies2</td>
+                    <td>Lokasi1</td>
+                    <td>Faksi1</td>
+                    <td><span class="tag-red">Tag1, tag2</span></td>
+                    <td><button class="win-btn" onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon
+                          icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn"
+                        style="color:var(--danger);" onclick="event.stopPropagation()"><iconify-icon
+                          icon="lucide:trash-2" width="14"></iconify-icon></button></td>
+                  </tr>
+                  <tr onclick="openCharDetail('Name')">
+                    <td><span class="char-row-name"><span class="char-row-thumb"><iconify-icon icon="lucide:image"
+                            width="14"></iconify-icon></span>Name</span></td>
+                    <td>Hidup</td>
+                    <td>Gelar1</td>
+                    <td>Spesies1, Spesies2</td>
+                    <td>Lokasi1</td>
+                    <td>Faksi1</td>
+                    <td><span class="tag-red">Tag1, tag2</span></td>
+                    <td><button class="win-btn" onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon
+                          icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn"
+                        style="color:var(--danger);" onclick="event.stopPropagation()"><iconify-icon
+                          icon="lucide:trash-2" width="14"></iconify-icon></button></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-
         </div>
 
-        <div class="char-table-wrap" id="char-table" style="display:none;">
-          <table class="list-table">
-            <thead><tr><th>Nama</th><th>Status</th><th>Gelar</th><th>Spesies</th><th>Lokasi</th><th>Faksi</th><th>Tag</th><th>Action</th></tr></thead>
-            <tbody>
-              <tr onclick="openCharDetail('Name')">
-                <td><span class="char-row-name"><span class="char-row-thumb"><iconify-icon icon="lucide:image" width="14"></iconify-icon></span>Name</span></td>
-                <td>Hidup</td><td>Gelar1</td><td>Spesies1, Spesies2</td><td>Lokasi1</td><td>Faksi1</td>
-                <td><span class="tag-red">Tag1, tag2</span></td>
-                <td><button class="win-btn" onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn" style="color:var(--danger);" onclick="event.stopPropagation()"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></td>
-              </tr>
-              <tr onclick="openCharDetail('Name')">
-                <td><span class="char-row-name"><span class="char-row-thumb"><iconify-icon icon="lucide:image" width="14"></iconify-icon></span>Name</span></td>
-                <td>Hidup</td><td>Gelar1</td><td>Spesies1, Spesies2</td><td>Lokasi1</td><td>Faksi1</td>
-                <td><span class="tag-red">Tag1, tag2</span></td>
-                <td><button class="win-btn" onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn" style="color:var(--danger);" onclick="event.stopPropagation()"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></td>
-              </tr>
-              <tr onclick="openCharDetail('Name')">
-                <td><span class="char-row-name"><span class="char-row-thumb"><iconify-icon icon="lucide:image" width="14"></iconify-icon></span>Name</span></td>
-                <td>Hidup</td><td>Gelar1</td><td>Spesies1, Spesies2</td><td>Lokasi1</td><td>Faksi1</td>
-                <td><span class="tag-red">Tag1, tag2</span></td>
-                <td><button class="win-btn" onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn" style="color:var(--danger);" onclick="event.stopPropagation()"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-       </div>
-       </div>
-
-       <!-- Sidebar kanan detail ala LihatInformasiKarakter -->
-       <aside class="char-detail" id="char-detail">
-         <div class="char-detail-head">
-           <span class="char-row-thumb" style="width:32px;height:32px;"><iconify-icon icon="lucide:image" width="16"></iconify-icon></span>
-           <div class="char-detail-info">
-             <div class="char-detail-name" id="detail-name">Nama Lengkap</div>
-             <div class="char-detail-sub" id="detail-sub">Nama Depan Nama Belakang</div>
-           </div>
-           <div class="char-detail-buttons">
-             <button class="win-btn" title="Close" onclick="document.getElementById('char-detail').classList.remove('open')"><iconify-icon icon="lucide:x" width="16"></iconify-icon></button>
-             <button class="win-btn" title="Edit" onclick="openCharModal(document.getElementById('detail-name').textContent)"><iconify-icon icon="lucide:pen-line" width="16"></iconify-icon></button>
-             <button class="win-btn" title="Download"><iconify-icon icon="lucide:download" width="16"></iconify-icon></button>
-           </div>
-         </div>
-         <div class="char-detail-body">
-           <div class="char-detail-header-content">
-             <div class="char-variant-row" id="variant-row"></div>
-             <div class="char-desc-box" id="detail-desc">Deskripsi karakter</div>
-           </div>
-           <div class="char-detail-sections">
-              <div class="char-section" data-section="identitas"><div class="char-section-head" onclick="toggleCharSection(this)"><span class="char-section-toggle">v</span><span>Identitas</span></div><div class="char-section-body"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-bottom:0.6rem;"><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Status</div><div style="font-size:0.78rem;color:var(--text-main);">Hidup</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Tanggal Lahir</div><div style="font-size:0.78rem;color:var(--text-main);">29/07/2001</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Tempat Lahir</div><div style="font-size:0.78rem;color:var(--text-main);">Lokasi</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-bottom:0.6rem;"><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Usia</div><div style="font-size:0.78rem;color:var(--text-main);">200 tahun</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Jenis Kelamin</div><div style="font-size:0.78rem;color:var(--text-main);">Laki-Laki</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Alias</div><div style="font-size:0.78rem;color:var(--text-main);">Alias</div></div></div><div style="margin-bottom:0.6rem;"><div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.3rem;"><strong>Spesies</strong></div><div class="char-chip-row" id="detail-spesies"><span class="char-chip">Spesies1</span><span class="char-chip">Spesies2</span></div></div><div><div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.3rem;"><strong>Lokasi Penting</strong></div><div class="char-chip-row" id="detail-lokasi"><span class="char-chip">Lokasi1</span><span class="char-chip">Lokasi2</span></div></div></div></div>
-              <div class="char-section" data-section="penampilan"><div class="char-section-head" onclick="toggleCharSection(this)"><span class="char-section-toggle">v</span><span>Penampilan</span></div><div class="char-section-body"><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Tinggi</div><div style="font-size:0.78rem;color:var(--text-main);">2 Meter</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Memiliki Fisik Tambahan</div><div class="char-chip-row" id="detail-fisik-tambahan"><span class="char-chip">Taring</span><span class="char-chip">Cakar</span><span class="char-chip">Tanduk</span><span class="char-chip">Bulu</span><span class="char-chip">Sayap</span><span class="char-chip">Ekor</span><span class="char-chip">Sisik</span></div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Deskripsi Fisik</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Deskripsi Fisik Unik</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Deskripsi Pakaian</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Deskripsi Aksesoris</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div></div></div>
-              <div class="char-section" data-section="kepribadian"><div class="char-section-head" onclick="toggleCharSection(this)"><span class="char-section-toggle">v</span><span>Kepribadian</span></div><div class="char-section-body"><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Deskripsi Psikologis</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Motivasi</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Kekurangan dan Ketakutan</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Rahasia</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Suka</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Tidak Suka</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div></div></div>
-              <div class="char-section" data-section="latar"><div class="char-section-head" onclick="toggleCharSection(this)"><span class="char-section-toggle">v</span><span>Latar Belakang</span></div><div class="char-section-body"><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Gelar</div><div class="char-chip-row"><span class="char-chip">Gelar1</span><span class="char-chip">Gelar2</span><span class="char-chip">Gelar3</span></div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Pekerjaan</div><div class="char-chip-row"><span class="char-chip">Pekerjaan1</span><span class="char-chip">Pekerjaan2</span><span class="char-chip">Pekerjaan3</span></div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Latar Belakang Pribadi</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Faksi</div><div class="char-chip-row"><span class="char-chip">Faksi1</span><span class="char-chip">Faksi2</span><span class="char-chip">Faksi3</span></div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Agama</div><div class="char-chip-row"><span class="char-chip">Agama1</span><span class="char-chip">Agama2</span><span class="char-chip">Agama3</span></div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Kelompok dan Organisasi</div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Anggota Kelompok</div><div class="char-chip-row"><span class="char-chip">Kelompok1</span><span class="char-chip">Kelompok2</span><span class="char-chip">Kelompok3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Pemimpin Kelompok</div><div class="char-chip-row"><span class="char-chip">Kelompok1</span><span class="char-chip">Kelompok2</span><span class="char-chip">Kelompok3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Pendiri Kelompok</div><div class="char-chip-row"><span class="char-chip">Kelompok1</span><span class="char-chip">Kelompok2</span><span class="char-chip">Kelompok3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Mantan anggota Kelompok</div><div class="char-chip-row"><span class="char-chip">Kelompok1</span><span class="char-chip">Kelompok2</span><span class="char-chip">Kelompok3</span></div></div><div><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Mantan pemimpin Kelompok</div><div class="char-chip-row"><span class="char-chip">Kelompok1</span><span class="char-chip">Kelompok2</span><span class="char-chip">Kelompok3</span></div></div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Dewa dan Ilahi</div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Pengikut Dewa</div><div class="char-chip-row"><span class="char-chip">Dewa1</span><span class="char-chip">Dewa2</span><span class="char-chip">Dewa3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Diberkati oleh dewa</div><div class="char-chip-row"><span class="char-chip">Dewa1</span><span class="char-chip">Dewa2</span><span class="char-chip">Dewa3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Dikutuk oleh Dewa</div><div class="char-chip-row"><span class="char-chip">Dewa1</span><span class="char-chip">Dewa2</span><span class="char-chip">Dewa3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Musuh Dewa</div><div class="char-chip-row"><span class="char-chip">Dewa1</span><span class="char-chip">Dewa2</span><span class="char-chip">Dewa3</span></div></div><div><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Mantan pengikut dewa</div><div class="char-chip-row"><span class="char-chip">Dewa1</span><span class="char-chip">Dewa2</span><span class="char-chip">Dewa3</span></div></div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Makhluk dan binatang</div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Makhluk yang di jinakan</div><div class="char-chip-row"><span class="char-chip">Makhluk1</span><span class="char-chip">Makhluk2</span><span class="char-chip">Makhluk3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Makhluk Sahabat</div><div class="char-chip-row"><span class="char-chip">Makhluk1</span><span class="char-chip">Makhluk2</span><span class="char-chip">Makhluk3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Makhluk yang di buru</div><div class="char-chip-row"><span class="char-chip">Makhluk1</span><span class="char-chip">Makhluk2</span><span class="char-chip">Makhluk3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Makhluk yang di lindungi</div><div class="char-chip-row"><span class="char-chip">Makhluk1</span><span class="char-chip">Makhluk2</span><span class="char-chip">Makhluk3</span></div></div><div><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Makhluk yang di temui</div><div class="char-chip-row"><span class="char-chip">Makhluk1</span><span class="char-chip">Makhluk2</span><span class="char-chip">Makhluk3</span></div></div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Objek dan Artefak</div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Objek yang di miliki</div><div class="char-chip-row"><span class="char-chip">Objek1</span><span class="char-chip">Objek2</span><span class="char-chip">Objek3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Objek yang pernah dimiliki</div><div class="char-chip-row"><span class="char-chip">Objek1</span><span class="char-chip">Objek2</span><span class="char-chip">Objek3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Pencipta Objek</div><div class="char-chip-row"><span class="char-chip">Objek1</span><span class="char-chip">Objek2</span><span class="char-chip">Objek3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Penemu Objek</div><div class="char-chip-row"><span class="char-chip">Objek1</span><span class="char-chip">Objek2</span><span class="char-chip">Objek3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Pencari Objek</div><div class="char-chip-row"><span class="char-chip">Objek1</span><span class="char-chip">Objek2</span><span class="char-chip">Objek3</span></div></div><div><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Penjaga Objek</div><div class="char-chip-row"><span class="char-chip">Objek1</span><span class="char-chip">Objek2</span><span class="char-chip">Objek3</span></div></div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);"><div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Peristiwa dan Sejarah</div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Peserta Peristiwa</div><div class="char-chip-row"><span class="char-chip">Peristiwa1</span><span class="char-chip">Peristiwa2</span><span class="char-chip">Peristiwa3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Tokoh Kunci Peristiwa</div><div class="char-chip-row"><span class="char-chip">Peristiwa1</span><span class="char-chip">Peristiwa2</span><span class="char-chip">Peristiwa3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Pahlawan Peristiwa</div><div class="char-chip-row"><span class="char-chip">Peristiwa1</span><span class="char-chip">Peristiwa2</span><span class="char-chip">Peristiwa3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Penyebab Peristiwa</div><div class="char-chip-row"><span class="char-chip">Peristiwa1</span><span class="char-chip">Peristiwa2</span><span class="char-chip">Peristiwa3</span></div></div><div><div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Saksi Peristiwa</div><div class="char-chip-row"><span class="char-chip">Peristiwa1</span><span class="char-chip">Peristiwa2</span><span class="char-chip">Peristiwa3</span></div></div></div></div></div>
-                                                       <div class="char-section" data-section="kemampuan"><div class="char-section-head" onclick="toggleCharSection(this)"><span class="char-section-toggle">v</span><span>Kemampuan</span></div><div class="char-section-body"><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Sifat dan Keterampilan</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Keterampilan Fisik</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Keterampilan Mental</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Keterampilan Magic</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Sistem Sihir</div><div style="margin-bottom:0.4rem;border-top:1px solid var(--border);padding-top:0.4rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Magic dan Spell yang digunakan</div><div class="char-chip-row"><span class="char-chip">Magic1</span><span class="char-chip">Magic2</span><span class="char-chip">Magic3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Magic dan Spell yang di ketahui</div><div class="char-chip-row"><span class="char-chip">Magic1</span><span class="char-chip">Magic2</span><span class="char-chip">Magic3</span></div></div><div><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Magic dan Spell yang pernah di pelajari</div><div class="char-chip-row"><span class="char-chip">Magic1</span><span class="char-chip">Magic2</span><span class="char-chip">Magic3</span></div></div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Teknologi</div><div style="margin-bottom:0.4rem;border-top:1px solid var(--border);padding-top:0.4rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Teknologi yang digunakan</div><div class="char-chip-row"><span class="char-chip">Teknologi1</span><span class="char-chip">Teknologi2</span><span class="char-chip">Teknologi3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Teknologi yang di ketahui</div><div class="char-chip-row"><span class="char-chip">Teknologi1</span><span class="char-chip">Teknologi2</span><span class="char-chip">Teknologi3</span></div></div><div style="margin-bottom:0.4rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Teknologi yang pernah di buat</div><div class="char-chip-row"><span class="char-chip">Teknologi1</span><span class="char-chip">Teknologi2</span><span class="char-chip">Teknologi3</span></div></div><div><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Memiliki Akses ke teknologi</div><div class="char-chip-row"><span class="char-chip">Teknologi1</span><span class="char-chip">Teknologi2</span><span class="char-chip">Teknologi3</span></div></div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Bahasa</div><div class="char-chip-row"><span class="char-chip">Bahasa1</span><span class="char-chip">Bahasa2</span><span class="char-chip">Bahasa3</span></div></div></div></div>              <div class="char-section" data-section="hubungan"><div class="char-section-head" onclick="toggleCharSection(this)"><span class="char-section-toggle">v</span><span>Hubungan</span></div><div class="char-section-body"><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;display:flex;align-items:flex-start;gap:0.4rem;"><div style="width:28px;height:28px;border:1px solid var(--border);border-radius:4px;background:var(--bg-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-faint);"><iconify-icon icon="lucide:users" width="14"></iconify-icon></div><div style="flex:1;min-width:0;"><div style="font-size:0.78rem;font-weight:700;color:var(--text-main);">Nama</div><div style="font-size:0.75rem;color:var(--text-muted);">Penjelasan</div></div><div style="font-size:0.68rem;border:1px solid var(--border);padding:0.1rem 0.35rem;border-radius:3px;background:var(--bg-dark);color:var(--text-muted);white-space:nowrap;flex-shrink:0;">Teman</div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);display:flex;align-items:flex-start;gap:0.4rem;"><div style="width:28px;height:28px;border:1px solid var(--border);border-radius:4px;background:var(--bg-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-faint);"><iconify-icon icon="lucide:users" width="14"></iconify-icon></div><div style="flex:1;min-width:0;"><div style="font-size:0.78rem;font-weight:700;color:var(--text-main);">Nama</div><div style="font-size:0.75rem;color:var(--text-muted);">Penjelasan</div></div><div style="font-size:0.68rem;border:1px solid var(--border);padding:0.1rem 0.35rem;border-radius:3px;background:var(--bg-dark);color:var(--text-muted);white-space:nowrap;flex-shrink:0;">Musuh</div></div></div></div>              <div class="char-section" data-section="catatan"><div class="char-section-head" onclick="toggleCharSection(this)"><span class="char-section-toggle">v</span><span>Catatan</span></div><div class="char-section-body"><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Tag</div><div class="char-chip-row"><span class="char-chip">Tag1</span><span class="char-chip">Tag2</span><span class="char-chip">Tag3</span></div></div><div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);"><div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Catatan</div><div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Catatan</div></div></div></div>              <div class="char-section" data-section="dokumen"><div class="char-section-head" onclick="toggleCharSection(this)"><span class="char-section-toggle">v</span><span>Dokumen Terikat</span></div><div class="char-section-body"><div style="display:flex;align-items:center;gap:0.4rem;border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.45rem 0.5rem;margin-bottom:0.4rem;background:var(--bg-surface);"><input type="checkbox" style="width:16px;height:16px;cursor:pointer;"><span style="font-size:0.78rem;color:var(--text-main);">Dokumen1</span></div><div style="display:flex;align-items:center;gap:0.4rem;border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.45rem 0.5rem;background:var(--bg-surface);"><input type="checkbox" style="width:16px;height:16px;cursor:pointer;"><span style="font-size:0.78rem;color:var(--text-main);">Dokumen2</span></div></div></div>
+        <!-- Sidebar kanan detail ala LihatInformasiKarakter -->
+        <aside class="char-detail" id="char-detail">
+          <div class="char-detail-head">
+            <span class="char-row-thumb" style="width:32px;height:32px;"><iconify-icon icon="lucide:image"
+                width="16"></iconify-icon></span>
+            <div class="char-detail-info">
+              <div class="char-detail-name" id="detail-name">Nama Lengkap</div>
+              <div class="char-detail-sub" id="detail-sub">Nama Depan Nama Belakang</div>
+            </div>
+            <div class="char-detail-buttons">
+              <button class="win-btn" title="Close"
+                onclick="document.getElementById('char-detail').classList.remove('open')"><iconify-icon icon="lucide:x"
+                  width="16"></iconify-icon></button>
+              <button class="win-btn" title="Edit"
+                onclick="openCharModal(document.getElementById('detail-name').textContent)"><iconify-icon
+                  icon="lucide:pen-line" width="16"></iconify-icon></button>
+              <button class="win-btn" title="Download"><iconify-icon icon="lucide:download"
+                  width="16"></iconify-icon></button>
             </div>
           </div>
-       </aside>
-       </div>
+          <div class="char-detail-body">
+            <div class="char-detail-header-content">
+              <div class="char-variant-row" id="variant-row"></div>
+              <div class="char-desc-box" id="detail-desc">Deskripsi karakter</div>
+            </div>
+            <div class="char-detail-sections">
+              <div class="char-section" data-section="identitas">
+                <div class="char-section-head" onclick="toggleCharSection(this)"><span
+                    class="char-section-toggle">v</span><span>Identitas</span></div>
+                <div class="char-section-body">
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-bottom:0.6rem;">
+                    <div
+                      style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);">
+                      <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Status
+                      </div>
+                      <div style="font-size:0.78rem;color:var(--text-main);">Hidup</div>
+                    </div>
+                    <div
+                      style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);">
+                      <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">
+                        Tanggal Lahir</div>
+                      <div style="font-size:0.78rem;color:var(--text-main);">29/07/2001</div>
+                    </div>
+                    <div
+                      style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);">
+                      <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Tempat
+                        Lahir</div>
+                      <div style="font-size:0.78rem;color:var(--text-main);">Lokasi</div>
+                    </div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-bottom:0.6rem;">
+                    <div
+                      style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);">
+                      <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Usia
+                      </div>
+                      <div style="font-size:0.78rem;color:var(--text-main);">200 tahun</div>
+                    </div>
+                    <div
+                      style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);">
+                      <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Jenis
+                        Kelamin</div>
+                      <div style="font-size:0.78rem;color:var(--text-main);">Laki-Laki</div>
+                    </div>
+                    <div
+                      style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);">
+                      <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Alias
+                      </div>
+                      <div style="font-size:0.78rem;color:var(--text-main);">Alias</div>
+                    </div>
+                  </div>
+                  <div style="margin-bottom:0.6rem;">
+                    <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.3rem;">
+                      <strong>Spesies</strong>
+                    </div>
+                    <div class="char-chip-row" id="detail-spesies"><span class="char-chip">Spesies1</span><span
+                        class="char-chip">Spesies2</span></div>
+                  </div>
+                  <div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.3rem;"><strong>Lokasi
+                        Penting</strong></div>
+                    <div class="char-chip-row" id="detail-lokasi"><span class="char-chip">Lokasi1</span><span
+                        class="char-chip">Lokasi2</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="char-section" data-section="penampilan">
+                <div class="char-section-head" onclick="toggleCharSection(this)"><span
+                    class="char-section-toggle">v</span><span>Penampilan</span></div>
+                <div class="char-section-body">
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Tinggi
+                    </div>
+                    <div style="font-size:0.78rem;color:var(--text-main);">2 Meter</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Memiliki
+                      Fisik Tambahan</div>
+                    <div class="char-chip-row" id="detail-fisik-tambahan"><span class="char-chip">Taring</span><span
+                        class="char-chip">Cakar</span><span class="char-chip">Tanduk</span><span
+                        class="char-chip">Bulu</span><span class="char-chip">Sayap</span><span
+                        class="char-chip">Ekor</span><span class="char-chip">Sisik</span></div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                      Deskripsi Fisik</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                      Deskripsi Fisik Unik</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                      Deskripsi Pakaian</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                      Deskripsi Aksesoris</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                </div>
+              </div>
+              <div class="char-section" data-section="kepribadian">
+                <div class="char-section-head" onclick="toggleCharSection(this)"><span
+                    class="char-section-toggle">v</span><span>Kepribadian</span></div>
+                <div class="char-section-body">
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                      Deskripsi Psikologis</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Motivasi
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                      Kekurangan dan Ketakutan</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Rahasia
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Suka
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Tidak
+                      Suka</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                </div>
+              </div>
+              <div class="char-section" data-section="latar">
+                <div class="char-section-head" onclick="toggleCharSection(this)"><span
+                    class="char-section-toggle">v</span><span>Latar Belakang</span></div>
+                <div class="char-section-body">
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Gelar
+                    </div>
+                    <div class="char-chip-row"><span class="char-chip">Gelar1</span><span
+                        class="char-chip">Gelar2</span><span class="char-chip">Gelar3</span></div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                      Pekerjaan</div>
+                    <div class="char-chip-row"><span class="char-chip">Pekerjaan1</span><span
+                        class="char-chip">Pekerjaan2</span><span class="char-chip">Pekerjaan3</span></div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Latar
+                      Belakang Pribadi</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Faksi
+                    </div>
+                    <div class="char-chip-row"><span class="char-chip">Faksi1</span><span
+                        class="char-chip">Faksi2</span><span class="char-chip">Faksi3</span></div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Agama
+                    </div>
+                    <div class="char-chip-row"><span class="char-chip">Agama1</span><span
+                        class="char-chip">Agama2</span><span class="char-chip">Agama3</span></div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">
+                      Kelompok dan Organisasi</div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Anggota Kelompok
+                      </div>
+                      <div class="char-chip-row"><span class="char-chip">Kelompok1</span><span
+                          class="char-chip">Kelompok2</span><span class="char-chip">Kelompok3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Pemimpin Kelompok
+                      </div>
+                      <div class="char-chip-row"><span class="char-chip">Kelompok1</span><span
+                          class="char-chip">Kelompok2</span><span class="char-chip">Kelompok3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Pendiri Kelompok
+                      </div>
+                      <div class="char-chip-row"><span class="char-chip">Kelompok1</span><span
+                          class="char-chip">Kelompok2</span><span class="char-chip">Kelompok3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Mantan anggota
+                        Kelompok</div>
+                      <div class="char-chip-row"><span class="char-chip">Kelompok1</span><span
+                          class="char-chip">Kelompok2</span><span class="char-chip">Kelompok3</span></div>
+                    </div>
+                    <div>
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Mantan pemimpin
+                        Kelompok</div>
+                      <div class="char-chip-row"><span class="char-chip">Kelompok1</span><span
+                          class="char-chip">Kelompok2</span><span class="char-chip">Kelompok3</span></div>
+                    </div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Dewa
+                      dan Ilahi</div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Pengikut Dewa</div>
+                      <div class="char-chip-row"><span class="char-chip">Dewa1</span><span
+                          class="char-chip">Dewa2</span><span class="char-chip">Dewa3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Diberkati oleh dewa
+                      </div>
+                      <div class="char-chip-row"><span class="char-chip">Dewa1</span><span
+                          class="char-chip">Dewa2</span><span class="char-chip">Dewa3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Dikutuk oleh Dewa
+                      </div>
+                      <div class="char-chip-row"><span class="char-chip">Dewa1</span><span
+                          class="char-chip">Dewa2</span><span class="char-chip">Dewa3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Musuh Dewa</div>
+                      <div class="char-chip-row"><span class="char-chip">Dewa1</span><span
+                          class="char-chip">Dewa2</span><span class="char-chip">Dewa3</span></div>
+                    </div>
+                    <div>
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Mantan pengikut dewa
+                      </div>
+                      <div class="char-chip-row"><span class="char-chip">Dewa1</span><span
+                          class="char-chip">Dewa2</span><span class="char-chip">Dewa3</span></div>
+                    </div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Makhluk
+                      dan binatang</div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Makhluk yang di
+                        jinakan</div>
+                      <div class="char-chip-row"><span class="char-chip">Makhluk1</span><span
+                          class="char-chip">Makhluk2</span><span class="char-chip">Makhluk3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Makhluk Sahabat</div>
+                      <div class="char-chip-row"><span class="char-chip">Makhluk1</span><span
+                          class="char-chip">Makhluk2</span><span class="char-chip">Makhluk3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Makhluk yang di buru
+                      </div>
+                      <div class="char-chip-row"><span class="char-chip">Makhluk1</span><span
+                          class="char-chip">Makhluk2</span><span class="char-chip">Makhluk3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Makhluk yang di
+                        lindungi</div>
+                      <div class="char-chip-row"><span class="char-chip">Makhluk1</span><span
+                          class="char-chip">Makhluk2</span><span class="char-chip">Makhluk3</span></div>
+                    </div>
+                    <div>
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Makhluk yang di temui
+                      </div>
+                      <div class="char-chip-row"><span class="char-chip">Makhluk1</span><span
+                          class="char-chip">Makhluk2</span><span class="char-chip">Makhluk3</span></div>
+                    </div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Objek
+                      dan Artefak</div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Objek yang di miliki
+                      </div>
+                      <div class="char-chip-row"><span class="char-chip">Objek1</span><span
+                          class="char-chip">Objek2</span><span class="char-chip">Objek3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Objek yang pernah
+                        dimiliki</div>
+                      <div class="char-chip-row"><span class="char-chip">Objek1</span><span
+                          class="char-chip">Objek2</span><span class="char-chip">Objek3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Pencipta Objek</div>
+                      <div class="char-chip-row"><span class="char-chip">Objek1</span><span
+                          class="char-chip">Objek2</span><span class="char-chip">Objek3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Penemu Objek</div>
+                      <div class="char-chip-row"><span class="char-chip">Objek1</span><span
+                          class="char-chip">Objek2</span><span class="char-chip">Objek3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Pencari Objek</div>
+                      <div class="char-chip-row"><span class="char-chip">Objek1</span><span
+                          class="char-chip">Objek2</span><span class="char-chip">Objek3</span></div>
+                    </div>
+                    <div>
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Penjaga Objek</div>
+                      <div class="char-chip-row"><span class="char-chip">Objek1</span><span
+                          class="char-chip">Objek2</span><span class="char-chip">Objek3</span></div>
+                    </div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);">
+                    <div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">
+                      Peristiwa dan Sejarah</div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Peserta Peristiwa
+                      </div>
+                      <div class="char-chip-row"><span class="char-chip">Peristiwa1</span><span
+                          class="char-chip">Peristiwa2</span><span class="char-chip">Peristiwa3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Tokoh Kunci Peristiwa
+                      </div>
+                      <div class="char-chip-row"><span class="char-chip">Peristiwa1</span><span
+                          class="char-chip">Peristiwa2</span><span class="char-chip">Peristiwa3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Pahlawan Peristiwa
+                      </div>
+                      <div class="char-chip-row"><span class="char-chip">Peristiwa1</span><span
+                          class="char-chip">Peristiwa2</span><span class="char-chip">Peristiwa3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Penyebab Peristiwa
+                      </div>
+                      <div class="char-chip-row"><span class="char-chip">Peristiwa1</span><span
+                          class="char-chip">Peristiwa2</span><span class="char-chip">Peristiwa3</span></div>
+                    </div>
+                    <div>
+                      <div style="font-size:0.7rem;color:var(--text-faint);margin-bottom:0.15rem;">Saksi Peristiwa</div>
+                      <div class="char-chip-row"><span class="char-chip">Peristiwa1</span><span
+                          class="char-chip">Peristiwa2</span><span class="char-chip">Peristiwa3</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="char-section" data-section="kemampuan">
+                <div class="char-section-head" onclick="toggleCharSection(this)"><span
+                    class="char-section-toggle">v</span><span>Kemampuan</span></div>
+                <div class="char-section-body">
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Sifat
+                      dan Keterampilan</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                      Keterampilan Fisik</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                      Keterampilan Mental</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                      Keterampilan Magic</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Deskripsi</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">Sistem
+                      Sihir</div>
+                    <div style="margin-bottom:0.4rem;border-top:1px solid var(--border);padding-top:0.4rem;">
+                      <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Magic
+                        dan Spell yang digunakan</div>
+                      <div class="char-chip-row"><span class="char-chip">Magic1</span><span
+                          class="char-chip">Magic2</span><span class="char-chip">Magic3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Magic
+                        dan Spell yang di ketahui</div>
+                      <div class="char-chip-row"><span class="char-chip">Magic1</span><span
+                          class="char-chip">Magic2</span><span class="char-chip">Magic3</span></div>
+                    </div>
+                    <div>
+                      <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Magic
+                        dan Spell yang pernah di pelajari</div>
+                      <div class="char-chip-row"><span class="char-chip">Magic1</span><span
+                          class="char-chip">Magic2</span><span class="char-chip">Magic3</span></div>
+                    </div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.75rem;font-weight:700;color:var(--text-faint);margin-bottom:0.3rem;">
+                      Teknologi</div>
+                    <div style="margin-bottom:0.4rem;border-top:1px solid var(--border);padding-top:0.4rem;">
+                      <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                        Teknologi yang digunakan</div>
+                      <div class="char-chip-row"><span class="char-chip">Teknologi1</span><span
+                          class="char-chip">Teknologi2</span><span class="char-chip">Teknologi3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                        Teknologi yang di ketahui</div>
+                      <div class="char-chip-row"><span class="char-chip">Teknologi1</span><span
+                          class="char-chip">Teknologi2</span><span class="char-chip">Teknologi3</span></div>
+                    </div>
+                    <div style="margin-bottom:0.4rem;">
+                      <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                        Teknologi yang pernah di buat</div>
+                      <div class="char-chip-row"><span class="char-chip">Teknologi1</span><span
+                          class="char-chip">Teknologi2</span><span class="char-chip">Teknologi3</span></div>
+                    </div>
+                    <div>
+                      <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">
+                        Memiliki Akses ke teknologi</div>
+                      <div class="char-chip-row"><span class="char-chip">Teknologi1</span><span
+                          class="char-chip">Teknologi2</span><span class="char-chip">Teknologi3</span></div>
+                    </div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Bahasa
+                    </div>
+                    <div class="char-chip-row"><span class="char-chip">Bahasa1</span><span
+                        class="char-chip">Bahasa2</span><span class="char-chip">Bahasa3</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="char-section" data-section="hubungan">
+                <div class="char-section-head" onclick="toggleCharSection(this)"><span
+                    class="char-section-toggle">v</span><span>Hubungan</span></div>
+                <div class="char-section-body">
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;display:flex;align-items:flex-start;gap:0.4rem;">
+                    <div
+                      style="width:28px;height:28px;border:1px solid var(--border);border-radius:4px;background:var(--bg-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-faint);">
+                      <iconify-icon icon="lucide:users" width="14"></iconify-icon>
+                    </div>
+                    <div style="flex:1;min-width:0;">
+                      <div style="font-size:0.78rem;font-weight:700;color:var(--text-main);">Nama</div>
+                      <div style="font-size:0.75rem;color:var(--text-muted);">Penjelasan</div>
+                    </div>
+                    <div
+                      style="font-size:0.68rem;border:1px solid var(--border);padding:0.1rem 0.35rem;border-radius:3px;background:var(--bg-dark);color:var(--text-muted);white-space:nowrap;flex-shrink:0;">
+                      Teman</div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);display:flex;align-items:flex-start;gap:0.4rem;">
+                    <div
+                      style="width:28px;height:28px;border:1px solid var(--border);border-radius:4px;background:var(--bg-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-faint);">
+                      <iconify-icon icon="lucide:users" width="14"></iconify-icon>
+                    </div>
+                    <div style="flex:1;min-width:0;">
+                      <div style="font-size:0.78rem;font-weight:700;color:var(--text-main);">Nama</div>
+                      <div style="font-size:0.75rem;color:var(--text-muted);">Penjelasan</div>
+                    </div>
+                    <div
+                      style="font-size:0.68rem;border:1px solid var(--border);padding:0.1rem 0.35rem;border-radius:3px;background:var(--bg-dark);color:var(--text-muted);white-space:nowrap;flex-shrink:0;">
+                      Musuh</div>
+                  </div>
+                </div>
+              </div>
+              <div class="char-section" data-section="catatan">
+                <div class="char-section-head" onclick="toggleCharSection(this)"><span
+                    class="char-section-toggle">v</span><span>Catatan</span></div>
+                <div class="char-section-body">
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);margin-bottom:0.5rem;">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Tag
+                    </div>
+                    <div class="char-chip-row"><span class="char-chip">Tag1</span><span
+                        class="char-chip">Tag2</span><span class="char-chip">Tag3</span></div>
+                  </div>
+                  <div
+                    style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--text-faint);margin-bottom:0.2rem;">Catatan
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;">Isi Catatan</div>
+                  </div>
+                </div>
+              </div>
+              <div class="char-section" data-section="dokumen">
+                <div class="char-section-head" onclick="toggleCharSection(this)"><span
+                    class="char-section-toggle">v</span><span>Dokumen Terikat</span></div>
+                <div class="char-section-body">
+                  <div
+                    style="display:flex;align-items:center;gap:0.4rem;border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.45rem 0.5rem;margin-bottom:0.4rem;background:var(--bg-surface);">
+                    <input type="checkbox" style="width:16px;height:16px;cursor:pointer;"><span
+                      style="font-size:0.78rem;color:var(--text-main);">Dokumen1</span>
+                  </div>
+                  <div
+                    style="display:flex;align-items:center;gap:0.4rem;border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.45rem 0.5rem;background:var(--bg-surface);">
+                    <input type="checkbox" style="width:16px;height:16px;cursor:pointer;"><span
+                      style="font-size:0.78rem;color:var(--text-main);">Dokumen2</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
     </div>
   </div>
 
@@ -753,7 +1590,9 @@
       <div class="modal-header">
         <div class="char-create-head">
           <span class="char-create-avatar"><iconify-icon icon="lucide:image" width="20"></iconify-icon></span>
-          <div><h3 id="char-modal-title">Buat karakter</h3><small id="char-modal-sub">Nama Karakter</small></div>
+          <div>
+            <h3 id="char-modal-title">Buat karakter</h3><small id="char-modal-sub">Nama Karakter</small>
+          </div>
         </div>
         <div style="display:flex;align-items:center;gap:0.4rem;">
           <span class="badge" id="base-varian-wrap" style="display:none;">Base Varian <select
@@ -765,14 +1604,22 @@
         </div>
       </div>
       <div class="char-modal-tabs" id="char-tabs">
-        <div class="char-modal-tab active" data-pane="pane-identitas"><span class="tab-ico"><iconify-icon icon="lucide:user" width="18"></iconify-icon></span>Identitas</div>
-        <div class="char-modal-tab" data-pane="pane-penampilan"><span class="tab-ico"><iconify-icon icon="lucide:shirt" width="18"></iconify-icon></span>Penampilan</div>
-        <div class="char-modal-tab" data-pane="pane-kepribadian"><span class="tab-ico"><iconify-icon icon="lucide:brain" width="18"></iconify-icon></span>Kepribadian</div>
-        <div class="char-modal-tab" data-pane="pane-latar"><span class="tab-ico"><iconify-icon icon="lucide:scroll-text" width="18"></iconify-icon></span>Latar Belakang</div>
-        <div class="char-modal-tab" data-pane="pane-kemampuan"><span class="tab-ico"><iconify-icon icon="lucide:zap" width="18"></iconify-icon></span>Kemampuan</div>
-        <div class="char-modal-tab" data-pane="pane-hubungan"><span class="tab-ico"><iconify-icon icon="lucide:heart-handshake" width="18"></iconify-icon></span>Hubungan</div>
-        <div class="char-modal-tab" data-pane="pane-catatan"><span class="tab-ico"><iconify-icon icon="lucide:notebook-pen" width="18"></iconify-icon></span>Catatan</div>
-        <div class="char-modal-tab" data-pane="pane-varian" id="tab-varian" style="display:none;"><span class="tab-ico"><iconify-icon icon="lucide:copy" width="18"></iconify-icon></span>Varian</div>
+        <div class="char-modal-tab active" data-pane="pane-identitas"><span class="tab-ico"><iconify-icon
+              icon="lucide:user" width="18"></iconify-icon></span>Identitas</div>
+        <div class="char-modal-tab" data-pane="pane-penampilan"><span class="tab-ico"><iconify-icon icon="lucide:shirt"
+              width="18"></iconify-icon></span>Penampilan</div>
+        <div class="char-modal-tab" data-pane="pane-kepribadian"><span class="tab-ico"><iconify-icon icon="lucide:brain"
+              width="18"></iconify-icon></span>Kepribadian</div>
+        <div class="char-modal-tab" data-pane="pane-latar"><span class="tab-ico"><iconify-icon icon="lucide:scroll-text"
+              width="18"></iconify-icon></span>Latar Belakang</div>
+        <div class="char-modal-tab" data-pane="pane-kemampuan"><span class="tab-ico"><iconify-icon icon="lucide:zap"
+              width="18"></iconify-icon></span>Kemampuan</div>
+        <div class="char-modal-tab" data-pane="pane-hubungan"><span class="tab-ico"><iconify-icon
+              icon="lucide:heart-handshake" width="18"></iconify-icon></span>Hubungan</div>
+        <div class="char-modal-tab" data-pane="pane-catatan"><span class="tab-ico"><iconify-icon
+              icon="lucide:notebook-pen" width="18"></iconify-icon></span>Catatan</div>
+        <div class="char-modal-tab" data-pane="pane-varian" id="tab-varian" style="display:none;"><span
+            class="tab-ico"><iconify-icon icon="lucide:copy" width="18"></iconify-icon></span>Varian</div>
       </div>
       <div class="char-modal-body">
         <!-- Tab: Identitas = BuatKarakterIdentitas.png -->
@@ -784,12 +1631,25 @@
               <div><label class="form-label">Nama Belakang</label><input type="text" class="form-input"></div>
             </div>
             <div class="form-row">
-              <div><label class="form-label">Tanggal Lahir</label><div style="display:flex;gap:0.4rem;"><input type="text" class="form-input" style="flex:1;"><button class="win-btn" style="border:1px solid var(--border);" title="Kalender"><iconify-icon icon="lucide:calendar" width="15"></iconify-icon></button></div></div>
+              <div><label class="form-label">Tanggal Lahir</label>
+                <div style="display:flex;gap:0.4rem;"><input type="text" class="form-input" style="flex:1;"><button
+                    class="win-btn" style="border:1px solid var(--border);" title="Kalender"><iconify-icon
+                      icon="lucide:calendar" width="15"></iconify-icon></button></div>
+              </div>
               <div><label class="form-label">Usia</label><input type="text" class="form-input"></div>
             </div>
             <div class="form-row">
-              <div><label class="form-label">Jenis Kelamin</label><select class="form-input"><option>None</option><option>Laki-laki</option><option>Perempuan</option><option>Lainnya</option></select></div>
-              <div><label class="form-label">Status</label><select class="form-input"><option>None</option><option>Hidup</option><option>Mati</option></select></div>
+              <div><label class="form-label">Jenis Kelamin</label><select class="form-input">
+                  <option>None</option>
+                  <option>Laki-laki</option>
+                  <option>Perempuan</option>
+                  <option>Lainnya</option>
+                </select></div>
+              <div><label class="form-label">Status</label><select class="form-input">
+                  <option>None</option>
+                  <option>Hidup</option>
+                  <option>Mati</option>
+                </select></div>
             </div>
             <div class="form-row">
               <div><label class="form-label">Alias</label><input type="text" class="form-input"></div>
@@ -806,16 +1666,39 @@
             <div class="field-block-title">Tempat Penting</div>
             <input type="text" class="form-input">
             <div class="chip-row"><span class="chip">Lokasi1 x</span><span class="chip">Lokasi2 x</span></div>
-            <div style="margin-top:0.4rem;"><label class="form-label">Tempat Lahir</label><input type="text" class="form-input"></div>
+            <div style="margin-top:0.4rem;"><label class="form-label">Tempat Lahir</label><input type="text"
+                class="form-input"></div>
           </div>
           <div class="field-block">
             <div class="field-block-title">Custom Field</div>
-            <div style="display:flex;gap:0.5rem;"><input type="text" class="form-input" style="flex:2;"><select class="form-input" style="flex:1;"><option></option><option>Text</option><option>Number</option><option>Boolean</option><option>Linked</option></select><input type="text" class="form-input" style="flex:1;"></div>
-            <div class="custom-row"><span class="custom-name">Name Custom Field<br>(Text Type)</span><input type="text" class="form-input" style="flex:1;"><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2" width="16"></iconify-icon></button></div>
-            <div class="custom-row"><span class="custom-name">Name Custom Field<br>(Number Type)</span><input type="number" class="form-input" style="flex:1;"><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2" width="16"></iconify-icon></button></div>
-            <div class="custom-row"><span class="custom-name">Name Custom Field<br>(Boolean Type)</span><select class="form-input" style="flex:1;"><option>Pilih ya / tidak</option><option>Ya</option><option>Tidak</option></select><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2" width="16"></iconify-icon></button></div>
+            <div style="display:flex;gap:0.5rem;"><input type="text" class="form-input" style="flex:2;"><select
+                class="form-input" style="flex:1;">
+                <option></option>
+                <option>Text</option>
+                <option>Number</option>
+                <option>Boolean</option>
+                <option>Linked</option>
+              </select><input type="text" class="form-input" style="flex:1;"></div>
+            <div class="custom-row"><span class="custom-name">Name Custom Field<br>(Text Type)</span><input type="text"
+                class="form-input" style="flex:1;"><button class="win-btn" style="color:var(--danger);"><iconify-icon
+                  icon="lucide:trash-2" width="16"></iconify-icon></button></div>
+            <div class="custom-row"><span class="custom-name">Name Custom Field<br>(Number Type)</span><input
+                type="number" class="form-input" style="flex:1;"><button class="win-btn"
+                style="color:var(--danger);"><iconify-icon icon="lucide:trash-2" width="16"></iconify-icon></button>
+            </div>
+            <div class="custom-row"><span class="custom-name">Name Custom Field<br>(Boolean Type)</span><select
+                class="form-input" style="flex:1;">
+                <option>Pilih ya / tidak</option>
+                <option>Ya</option>
+                <option>Tidak</option>
+              </select><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"
+                  width="16"></iconify-icon></button></div>
             <div class="custom-row" style="flex-direction:column;align-items:stretch;">
-              <div style="display:flex;gap:0.5rem;align-items:center;"><span class="custom-name">Name Custom Field<br>(Linked Type)</span><input type="text" class="form-input"><select class="form-input"><option>Pilih jenis Element</option></select><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2" width="16"></iconify-icon></button></div>
+              <div style="display:flex;gap:0.5rem;align-items:center;"><span class="custom-name">Name Custom
+                  Field<br>(Linked Type)</span><input type="text" class="form-input"><select class="form-input">
+                  <option>Pilih jenis Element</option>
+                </select><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"
+                    width="16"></iconify-icon></button></div>
               <div class="chip-row"><span class="chip">Element1 x</span><span class="chip">Element2 x</span></div>
             </div>
           </div>
@@ -824,7 +1707,8 @@
           <div class="field-block">
             <div><label class="form-label">Tinggi ⓘ</label><input type="text" class="form-input"></div>
             <div style="display:flex;gap:0.9rem;flex-wrap:wrap;font-size:0.8rem;color:var(--text-main);">
-              <span>Kulit ⓘ</span><span>Wajah ⓘ</span><span>Rambut ⓘ</span><span>Dada/Payudara ⓘ</span><span>Pinggang ⓘ</span><span>Mata ⓘ</span>
+              <span>Kulit ⓘ</span><span>Wajah ⓘ</span><span>Rambut ⓘ</span><span>Dada/Payudara ⓘ</span><span>Pinggang
+                ⓘ</span><span>Mata ⓘ</span>
             </div>
             <div class="field-block-title" style="margin-top:0.4rem;">Memiliki Fisik Tambahan?</div>
             <div class="check2">
@@ -834,219 +1718,420 @@
               <label><input type="checkbox"> Ekor ⓘ</label>
             </div>
           </div>
-          <div class="field-block"><div class="field-block-title">Deskripsi Fisik</div><textarea class="form-input" rows="4"></textarea></div>
-          <div class="field-block"><div class="field-block-title">Deskripsi Fisik Unik</div><textarea class="form-input" rows="4"></textarea></div>
-          <div class="field-block"><div class="field-block-title">Deskripsi Pakaian</div><textarea class="form-input" rows="4"></textarea></div>
-          <div class="field-block"><div class="field-block-title">Deskripsi Aksesoris</div><textarea class="form-input" rows="4"></textarea></div>
+          <div class="field-block">
+            <div class="field-block-title">Deskripsi Fisik</div><textarea class="form-input" rows="4"></textarea>
+          </div>
+          <div class="field-block">
+            <div class="field-block-title">Deskripsi Fisik Unik</div><textarea class="form-input" rows="4"></textarea>
+          </div>
+          <div class="field-block">
+            <div class="field-block-title">Deskripsi Pakaian</div><textarea class="form-input" rows="4"></textarea>
+          </div>
+          <div class="field-block">
+            <div class="field-block-title">Deskripsi Aksesoris</div><textarea class="form-input" rows="4"></textarea>
+          </div>
         </div>
         <div class="char-pane" id="pane-kepribadian">
-          <div class="field-block"><div class="field-block-title">Deskripsi Psikologis</div><textarea class="form-input" rows="4"></textarea>
-            <div class="ref-hint">Tips:<br>• Bagaimana cara dia berhubungan? * Keyakinan? * Nilai? * Temperamen?<br>• Bagaimana cara dia berbicara atau gaya Bicara? * Apa saja sifat yang dia miliki?</div>
+          <div class="field-block">
+            <div class="field-block-title">Deskripsi Psikologis</div><textarea class="form-input" rows="4"></textarea>
+            <div class="ref-hint">Tips:<br>• Bagaimana cara dia berhubungan? * Keyakinan? * Nilai? * Temperamen?<br>•
+              Bagaimana cara dia berbicara atau gaya Bicara? * Apa saja sifat yang dia miliki?</div>
           </div>
           <div class="field-block">
             <div><label class="form-label">Motivasi</label><textarea class="form-input" rows="4"></textarea></div>
-            <div><label class="form-label">Kekurangan dan Ketakutan</label><textarea class="form-input" rows="4"></textarea></div>
+            <div><label class="form-label">Kekurangan dan Ketakutan</label><textarea class="form-input"
+                rows="4"></textarea></div>
             <div><label class="form-label">Rahasia</label><textarea class="form-input" rows="4"></textarea></div>
             <div><label class="form-label">Suka</label><textarea class="form-input" rows="4"></textarea></div>
             <div><label class="form-label">Tidak suka</label><textarea class="form-input" rows="4"></textarea></div>
           </div>
         </div>
         <div class="char-pane" id="pane-latar">
-          <div class="field-block"><div class="field-block-title">Gelar</div><input type="text" class="form-input"><div class="chip-row"><span class="chip">Gelar1 x</span><span class="chip">Gelar2 x</span><span class="chip">Gelar3 x</span></div></div>
-          <div class="field-block"><div class="field-block-title">Pekerjaan</div><input type="text" class="form-input"><div class="chip-row"><span class="chip">Pekerjaan1 x</span><span class="chip">Pekerjaan2 x</span><span class="chip">Pekerjaan3 x</span></div></div>
-          <div class="field-block"><div class="field-block-title">Latar Belakang Pribadi</div><textarea class="form-input" rows="3"></textarea></div>
-          <div class="field-block"><div class="field-block-title">Faksi</div><input type="text" class="form-input"><div class="chip-row"><span class="chip">Faksi1 x</span><span class="chip">Faksi2 x</span><span class="chip">Faksi3 x</span></div></div>
-          <div class="field-block"><div class="field-block-title">Agama</div><input type="text" class="form-input"><div class="chip-row"><span class="chip">Agama1 x</span><span class="chip">Agama2 x</span><span class="chip">Agama3 x</span></div></div>
-          <div class="field-block"><div class="field-block-title">Kelompok dan Organisasi</div>
-            <div><label class="form-label">Anggota Kelompok</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span class="chip">Kelompok3 x</span></div></div>
-            <div><label class="form-label">Pemimpin Kelompok</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span class="chip">Kelompok3 x</span></div></div>
-            <div><label class="form-label">Pendiri Kelompok</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span class="chip">Kelompok3 x</span></div></div>
-            <div><label class="form-label">Mantan anggota Kelompok</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span class="chip">Kelompok3 x</span></div></div>
-            <div><label class="form-label">Mantan pemimpin Kelompok</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span class="chip">Kelompok3 x</span></div></div>
+          <div class="field-block">
+            <div class="field-block-title">Gelar</div><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Gelar1 x</span><span class="chip">Gelar2 x</span><span
+                class="chip">Gelar3 x</span></div>
           </div>
-          <div class="field-block"><div class="field-block-title">Dewa dan Ilahi</div>
-            <div><label class="form-label">Pengikut Dewa</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span class="chip">Dewa3 x</span></div></div>
-            <div><label class="form-label">Diberkati oleh dewa</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span class="chip">Dewa3 x</span></div></div>
-            <div><label class="form-label">Dikutuk oleh Dewa</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span class="chip">Dewa3 x</span></div></div>
-            <div><label class="form-label">Musuh Dewa</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span class="chip">Dewa3 x</span></div></div>
-            <div><label class="form-label">Mantan pengikut dewa</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span class="chip">Dewa3 x</span></div></div>
+          <div class="field-block">
+            <div class="field-block-title">Pekerjaan</div><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Pekerjaan1 x</span><span class="chip">Pekerjaan2 x</span><span
+                class="chip">Pekerjaan3 x</span></div>
           </div>
-          <div class="field-block"><div class="field-block-title">Makhluk dan binatang</div>
-            <div><label class="form-label">Makhluk yang di jinakan</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span class="chip">Makhluk3 x</span></div></div>
-            <div><label class="form-label">Makhluk Sahabat</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span class="chip">Makhluk3 x</span></div></div>
-            <div><label class="form-label">Makhluk yang di buru</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span class="chip">Makhluk3 x</span></div></div>
-            <div><label class="form-label">Makhluk yang di lindungi</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span class="chip">Makhluk3 x</span></div></div>
-            <div><label class="form-label">Makhluk yang di temui</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span class="chip">Makhluk3 x</span></div></div>
+          <div class="field-block">
+            <div class="field-block-title">Latar Belakang Pribadi</div><textarea class="form-input" rows="3"></textarea>
           </div>
-          <div class="field-block"><div class="field-block-title">Objek dan Artefak</div>
-            <div><label class="form-label">Objek yang di miliki</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span class="chip">Objek3 x</span></div></div>
-            <div><label class="form-label">Objek yang pernah dimiliki</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span class="chip">Objek3 x</span></div></div>
-            <div><label class="form-label">Pencipta Objek</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span class="chip">Objek3 x</span></div></div>
-            <div><label class="form-label">Penemu Objek</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span class="chip">Objek3 x</span></div></div>
-            <div><label class="form-label">Pencari Objek</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span class="chip">Objek3 x</span></div></div>
-            <div><label class="form-label">Penjaga Objek</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span class="chip">Objek3 x</span></div></div>
+          <div class="field-block">
+            <div class="field-block-title">Faksi</div><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Faksi1 x</span><span class="chip">Faksi2 x</span><span
+                class="chip">Faksi3 x</span></div>
           </div>
-          <div class="field-block"><div class="field-block-title">Peristiwa dan Sejarah</div>
-            <div><label class="form-label">Peserta Peristiwa</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span class="chip">Peristiwa3 x</span></div></div>
-            <div><label class="form-label">Tokoh Kunci Peristiwa</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span class="chip">Peristiwa3 x</span></div></div>
-            <div><label class="form-label">Pahlawan Peristiwa</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span class="chip">Peristiwa3 x</span></div></div>
-            <div><label class="form-label">Penyebab Peristiwa</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span class="chip">Peristiwa3 x</span></div></div>
-            <div><label class="form-label">Saksi Peristiwa</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span class="chip">Peristiwa3 x</span></div></div>
+          <div class="field-block">
+            <div class="field-block-title">Agama</div><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Agama1 x</span><span class="chip">Agama2 x</span><span
+                class="chip">Agama3 x</span></div>
+          </div>
+          <div class="field-block">
+            <div class="field-block-title">Kelompok dan Organisasi</div>
+            <div><label class="form-label">Anggota Kelompok</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span
+                  class="chip">Kelompok3 x</span></div>
+            </div>
+            <div><label class="form-label">Pemimpin Kelompok</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span
+                  class="chip">Kelompok3 x</span></div>
+            </div>
+            <div><label class="form-label">Pendiri Kelompok</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span
+                  class="chip">Kelompok3 x</span></div>
+            </div>
+            <div><label class="form-label">Mantan anggota Kelompok</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span
+                  class="chip">Kelompok3 x</span></div>
+            </div>
+            <div><label class="form-label">Mantan pemimpin Kelompok</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span
+                  class="chip">Kelompok3 x</span></div>
+            </div>
+          </div>
+          <div class="field-block">
+            <div class="field-block-title">Dewa dan Ilahi</div>
+            <div><label class="form-label">Pengikut Dewa</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span
+                  class="chip">Dewa3 x</span></div>
+            </div>
+            <div><label class="form-label">Diberkati oleh dewa</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span
+                  class="chip">Dewa3 x</span></div>
+            </div>
+            <div><label class="form-label">Dikutuk oleh Dewa</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span
+                  class="chip">Dewa3 x</span></div>
+            </div>
+            <div><label class="form-label">Musuh Dewa</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span
+                  class="chip">Dewa3 x</span></div>
+            </div>
+            <div><label class="form-label">Mantan pengikut dewa</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span
+                  class="chip">Dewa3 x</span></div>
+            </div>
+          </div>
+          <div class="field-block">
+            <div class="field-block-title">Makhluk dan binatang</div>
+            <div><label class="form-label">Makhluk yang di jinakan</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span
+                  class="chip">Makhluk3 x</span></div>
+            </div>
+            <div><label class="form-label">Makhluk Sahabat</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span
+                  class="chip">Makhluk3 x</span></div>
+            </div>
+            <div><label class="form-label">Makhluk yang di buru</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span
+                  class="chip">Makhluk3 x</span></div>
+            </div>
+            <div><label class="form-label">Makhluk yang di lindungi</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span
+                  class="chip">Makhluk3 x</span></div>
+            </div>
+            <div><label class="form-label">Makhluk yang di temui</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span
+                  class="chip">Makhluk3 x</span></div>
+            </div>
+          </div>
+          <div class="field-block">
+            <div class="field-block-title">Objek dan Artefak</div>
+            <div><label class="form-label">Objek yang di miliki</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span
+                  class="chip">Objek3 x</span></div>
+            </div>
+            <div><label class="form-label">Objek yang pernah dimiliki</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span
+                  class="chip">Objek3 x</span></div>
+            </div>
+            <div><label class="form-label">Pencipta Objek</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span
+                  class="chip">Objek3 x</span></div>
+            </div>
+            <div><label class="form-label">Penemu Objek</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span
+                  class="chip">Objek3 x</span></div>
+            </div>
+            <div><label class="form-label">Pencari Objek</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span
+                  class="chip">Objek3 x</span></div>
+            </div>
+            <div><label class="form-label">Penjaga Objek</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span
+                  class="chip">Objek3 x</span></div>
+            </div>
+          </div>
+          <div class="field-block">
+            <div class="field-block-title">Peristiwa dan Sejarah</div>
+            <div><label class="form-label">Peserta Peristiwa</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span
+                  class="chip">Peristiwa3 x</span></div>
+            </div>
+            <div><label class="form-label">Tokoh Kunci Peristiwa</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span
+                  class="chip">Peristiwa3 x</span></div>
+            </div>
+            <div><label class="form-label">Pahlawan Peristiwa</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span
+                  class="chip">Peristiwa3 x</span></div>
+            </div>
+            <div><label class="form-label">Penyebab Peristiwa</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span
+                  class="chip">Peristiwa3 x</span></div>
+            </div>
+            <div><label class="form-label">Saksi Peristiwa</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span
+                  class="chip">Peristiwa3 x</span></div>
+            </div>
           </div>
         </div>
         <div class="char-pane" id="pane-kemampuan">
-          <div class="field-block"><div class="field-block-title">Sifat dan Keterampilan</div><textarea class="form-input" rows="2"></textarea>
-            <div><label class="form-label">Keterampilan Fisik</label><textarea class="form-input" rows="2"></textarea></div>
-            <div><label class="form-label">Keterampilan Mental</label><textarea class="form-input" rows="2"></textarea></div>
-            <div><label class="form-label">Keterampilan Magic</label><textarea class="form-input" rows="2"></textarea></div>
+          <div class="field-block">
+            <div class="field-block-title">Sifat dan Keterampilan</div><textarea class="form-input" rows="2"></textarea>
+            <div><label class="form-label">Keterampilan Fisik</label><textarea class="form-input" rows="2"></textarea>
+            </div>
+            <div><label class="form-label">Keterampilan Mental</label><textarea class="form-input" rows="2"></textarea>
+            </div>
+            <div><label class="form-label">Keterampilan Magic</label><textarea class="form-input" rows="2"></textarea>
+            </div>
           </div>
-          <div class="field-block"><div class="field-block-title">Sistem Sihir</div>
-            <div><label class="form-label">Magic dan Spell yang digunakan</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Magic1 x</span><span class="chip">Magic2 x</span><span class="chip">Magic3 x</span></div></div>
-            <div><label class="form-label">Magic dan Spell yang di ketahui</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Magic1 x</span><span class="chip">Magic2 x</span><span class="chip">Magic3 x</span></div></div>
-            <div><label class="form-label">Magic dan Spell yang pernah di pelajari</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Magic1 x</span><span class="chip">Magic2 x</span><span class="chip">Magic3 x</span></div></div>
+          <div class="field-block">
+            <div class="field-block-title">Sistem Sihir</div>
+            <div><label class="form-label">Magic dan Spell yang digunakan</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Magic1 x</span><span class="chip">Magic2 x</span><span
+                  class="chip">Magic3 x</span></div>
+            </div>
+            <div><label class="form-label">Magic dan Spell yang di ketahui</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Magic1 x</span><span class="chip">Magic2 x</span><span
+                  class="chip">Magic3 x</span></div>
+            </div>
+            <div><label class="form-label">Magic dan Spell yang pernah di pelajari</label><input type="text"
+                class="form-input">
+              <div class="chip-row"><span class="chip">Magic1 x</span><span class="chip">Magic2 x</span><span
+                  class="chip">Magic3 x</span></div>
+            </div>
           </div>
-          <div class="field-block"><div class="field-block-title">Teknologi</div>
-            <div><label class="form-label">Teknologi yang digunakan</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Teknologi1 x</span><span class="chip">Teknologi2 x</span><span class="chip">Teknologi3 x</span></div></div>
-            <div><label class="form-label">Teknologi yang diketahui</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Teknologi1 x</span><span class="chip">Teknologi2 x</span><span class="chip">Teknologi3 x</span></div></div>
-            <div><label class="form-label">Teknologi yang pernah di buat</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Teknologi1 x</span><span class="chip">Teknologi2 x</span><span class="chip">Teknologi3 x</span></div></div>
-            <div><label class="form-label">Memiliki Akses ke teknologi</label><input type="text" class="form-input"><div class="chip-row"><span class="chip">Teknologi1 x</span><span class="chip">Teknologi2 x</span><span class="chip">Teknologi3 x</span></div></div>
+          <div class="field-block">
+            <div class="field-block-title">Teknologi</div>
+            <div><label class="form-label">Teknologi yang digunakan</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Teknologi1 x</span><span class="chip">Teknologi2 x</span><span
+                  class="chip">Teknologi3 x</span></div>
+            </div>
+            <div><label class="form-label">Teknologi yang diketahui</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Teknologi1 x</span><span class="chip">Teknologi2 x</span><span
+                  class="chip">Teknologi3 x</span></div>
+            </div>
+            <div><label class="form-label">Teknologi yang pernah di buat</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Teknologi1 x</span><span class="chip">Teknologi2 x</span><span
+                  class="chip">Teknologi3 x</span></div>
+            </div>
+            <div><label class="form-label">Memiliki Akses ke teknologi</label><input type="text" class="form-input">
+              <div class="chip-row"><span class="chip">Teknologi1 x</span><span class="chip">Teknologi2 x</span><span
+                  class="chip">Teknologi3 x</span></div>
+            </div>
           </div>
-          <div class="field-block"><div class="field-block-title">Bahasa</div><input type="text" class="form-input"><div class="chip-row"><span class="chip">Bahasa1 x</span><span class="chip">Bahasa2 x</span><span class="chip">Bahasa3 x</span></div></div>
+          <div class="field-block">
+            <div class="field-block-title">Bahasa</div><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Bahasa1 x</span><span class="chip">Bahasa2 x</span><span
+                class="chip">Bahasa3 x</span></div>
+          </div>
         </div>
         <div class="char-pane" id="pane-hubungan">
-          <div style="display:flex;align-items:center;justify-content:space-between;"><strong>Hubungan Pribadi</strong><button class="btn-action" style="padding:0.3rem 0.65rem;font-size:0.78rem;">+ Hubungan</button></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;"><strong>Hubungan
+              Pribadi</strong><button class="btn-action" style="padding:0.3rem 0.65rem;font-size:0.78rem;">+
+              Hubungan</button></div>
           <div class="field-block hub-card">
-            <div style="display:flex;align-items:center;justify-content:space-between;"><strong>Hubungan Dengan {name}</strong><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><strong>Hubungan Dengan
+                {name}</strong><button class="win-btn" style="color:var(--danger);"><iconify-icon
+                  icon="lucide:trash-2"></iconify-icon></button></div>
             <div class="form-row">
-              <div><label class="form-label">Pilih karakter</label><select class="form-input"><option></option></select></div>
-              <div><label class="form-label">Type Hubungan</label><select class="form-input"><option></option></select></div>
+              <div><label class="form-label">Pilih karakter</label><select class="form-input">
+                  <option></option>
+                </select></div>
+              <div><label class="form-label">Type Hubungan</label><select class="form-input">
+                  <option></option>
+                </select></div>
             </div>
-            <div><label class="form-label">Deskripsi Hubungan</label><textarea class="form-input" rows="3"></textarea></div>
-            <div class="hub-two"><label style="display:flex;gap:0.4rem;align-items:center;"><input type="checkbox" checked> Hubungan Dua Arah</label>
-              <div style="margin-top:0.4rem;"><label class="form-label">Type Hubungan Invert</label><select class="form-input"><option></option></select></div>
+            <div><label class="form-label">Deskripsi Hubungan</label><textarea class="form-input" rows="3"></textarea>
+            </div>
+            <div class="hub-two"><label style="display:flex;gap:0.4rem;align-items:center;"><input type="checkbox"
+                  checked> Hubungan Dua Arah</label>
+              <div style="margin-top:0.4rem;"><label class="form-label">Type Hubungan Invert</label><select
+                  class="form-input">
+                  <option></option>
+                </select></div>
             </div>
           </div>
           <div class="field-block hub-card">
-            <div style="display:flex;align-items:center;justify-content:space-between;"><strong>Hubungan Dengan {name}</strong><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><strong>Hubungan Dengan
+                {name}</strong><button class="win-btn" style="color:var(--danger);"><iconify-icon
+                  icon="lucide:trash-2"></iconify-icon></button></div>
             <div class="form-row">
-              <div><label class="form-label">Pilih karakter</label><select class="form-input"><option></option></select></div>
-              <div><label class="form-label">Type Hubungan</label><select class="form-input"><option></option></select></div>
+              <div><label class="form-label">Pilih karakter</label><select class="form-input">
+                  <option></option>
+                </select></div>
+              <div><label class="form-label">Type Hubungan</label><select class="form-input">
+                  <option></option>
+                </select></div>
             </div>
-            <div><label class="form-label">Deskripsi Hubungan</label><textarea class="form-input" rows="3"></textarea></div>
-            <div class="hub-two"><label style="display:flex;gap:0.4rem;align-items:center;"><input type="checkbox" checked> Hubungan Dua Arah</label>
-              <div style="margin-top:0.4rem;"><label class="form-label">Type Hubungan Invert</label><select class="form-input"><option></option></select></div>
+            <div><label class="form-label">Deskripsi Hubungan</label><textarea class="form-input" rows="3"></textarea>
+            </div>
+            <div class="hub-two"><label style="display:flex;gap:0.4rem;align-items:center;"><input type="checkbox"
+                  checked> Hubungan Dua Arah</label>
+              <div style="margin-top:0.4rem;"><label class="form-label">Type Hubungan Invert</label><select
+                  class="form-input">
+                  <option></option>
+                </select></div>
             </div>
           </div>
         </div>
         <div class="char-pane" id="pane-catatan">
-          <div class="field-block"><input type="text" class="form-input"><div class="chip-row"><span class="chip">Tag1 x</span><span class="chip">Tag2 x</span><span class="chip">Tag3 x</span></div></div>
-          <div class="field-block"><div class="field-block-title">Catatan Tambahan</div><textarea class="form-input" rows="4"></textarea></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;"><label class="form-label" style="margin:0;">Dokumen Terikat pada karakter ini</label><button class="win-btn" title="Tambah Dokumen"><iconify-icon icon="lucide:plus"></iconify-icon></button></div>
-          <div id="doc-empty" style="text-align:center;padding:3rem 1rem;font-size:0.85rem;color:var(--text-muted);">Tidak Ada Dokumen terikat</div>
+          <div class="field-block"><input type="text" class="form-input">
+            <div class="chip-row"><span class="chip">Tag1 x</span><span class="chip">Tag2 x</span><span
+                class="chip">Tag3 x</span></div>
+          </div>
+          <div class="field-block">
+            <div class="field-block-title">Catatan Tambahan</div><textarea class="form-input" rows="4"></textarea>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;"><label class="form-label"
+              style="margin:0;">Dokumen Terikat pada karakter ini</label><button class="win-btn"
+              title="Tambah Dokumen"><iconify-icon icon="lucide:plus"></iconify-icon></button></div>
+          <div id="doc-empty" style="text-align:center;padding:3rem 1rem;font-size:0.85rem;color:var(--text-muted);">
+            Tidak Ada Dokumen terikat</div>
           <div id="doc-list" style="display:none;flex-direction:column;gap:0.5rem;">
-            <div class="doclink-row"><span class="char-row-thumb"><iconify-icon icon="lucide:file-text" width="14"></iconify-icon></span><span style="flex:1;">Dokumen1</span><button class="win-btn"><iconify-icon icon="lucide:eye"></iconify-icon></button><button class="win-btn"><iconify-icon icon="lucide:pen-line"></iconify-icon></button><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
-            <div class="doclink-row"><span class="char-row-thumb"><iconify-icon icon="lucide:file-text" width="14"></iconify-icon></span><span style="flex:1;">Dokumen2</span><button class="win-btn"><iconify-icon icon="lucide:eye"></iconify-icon></button><button class="win-btn"><iconify-icon icon="lucide:pen-line"></iconify-icon></button><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
+            <div class="doclink-row"><span class="char-row-thumb"><iconify-icon icon="lucide:file-text"
+                  width="14"></iconify-icon></span><span style="flex:1;">Dokumen1</span><button
+                class="win-btn"><iconify-icon icon="lucide:eye"></iconify-icon></button><button
+                class="win-btn"><iconify-icon icon="lucide:pen-line"></iconify-icon></button><button class="win-btn"
+                style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
+            <div class="doclink-row"><span class="char-row-thumb"><iconify-icon icon="lucide:file-text"
+                  width="14"></iconify-icon></span><span style="flex:1;">Dokumen2</span><button
+                class="win-btn"><iconify-icon icon="lucide:eye"></iconify-icon></button><button
+                class="win-btn"><iconify-icon icon="lucide:pen-line"></iconify-icon></button><button class="win-btn"
+                style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
           </div>
         </div>
         <div class="char-pane" id="pane-varian">
           <div><label class="form-label">Manajemen Varian Karakter</label></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:0.6rem;"><span></span><span style="display:flex;gap:0.6rem;align-items:center;"><button class="btn-action" style="padding:0.3rem 0.65rem;font-size:0.78rem;">+ Varian</button><strong style="text-align:center;">2<br><small style="font-weight:400;">Varian</small></strong></span></div>
-          <div class="varian-row">
-            <div style="display:flex;flex-direction:column;gap:2px;align-items:center;color:var(--text-faint);font-size:0.7rem;"><span>v</span></div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:0.82rem;font-weight:700;">Nama Varian</div>
-              <div style="font-size:0.75rem;color:var(--text-muted);">Deskripsi</div>
-              <div style="font-size:0.7rem;color:var(--text-faint);margin-top:0.25rem;">📅 01/09/2026 00:12 &nbsp; 📝 01/09/2026 00:12</div>
-            </div>
-            <div style="display:flex;gap:0.3rem;"><button class="win-btn"><iconify-icon icon="lucide:pen-line"></iconify-icon></button><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
+          <div
+            style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:0.6rem;">
+            <span></span><span style="display:flex;gap:0.6rem;align-items:center;"><button class="btn-action"
+                style="padding:0.3rem 0.65rem;font-size:0.78rem;">+ Varian</button><strong
+                style="text-align:center;">2<br><small style="font-weight:400;">Varian</small></strong></span>
           </div>
           <div class="varian-row">
-            <div style="display:flex;flex-direction:column;gap:2px;align-items:center;color:var(--text-faint);font-size:0.7rem;"><span>^</span><span>v</span></div>
+            <div
+              style="display:flex;flex-direction:column;gap:2px;align-items:center;color:var(--text-faint);font-size:0.7rem;">
+              <span>v</span>
+            </div>
             <div style="flex:1;min-width:0;">
               <div style="font-size:0.82rem;font-weight:700;">Nama Varian</div>
               <div style="font-size:0.75rem;color:var(--text-muted);">Deskripsi</div>
-              <div style="font-size:0.7rem;color:var(--text-faint);margin-top:0.25rem;">📅 01/09/2026 00:12 &nbsp; 📝 01/09/2026 00:12</div>
+              <div style="font-size:0.7rem;color:var(--text-faint);margin-top:0.25rem;">📅 01/09/2026 00:12 &nbsp; 📝
+                01/09/2026 00:12</div>
             </div>
-            <div style="display:flex;gap:0.3rem;"><button class="win-btn"><iconify-icon icon="lucide:pen-line"></iconify-icon></button><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
+            <div style="display:flex;gap:0.3rem;"><button class="win-btn"><iconify-icon
+                  icon="lucide:pen-line"></iconify-icon></button><button class="win-btn"
+                style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
+          </div>
+          <div class="varian-row">
+            <div
+              style="display:flex;flex-direction:column;gap:2px;align-items:center;color:var(--text-faint);font-size:0.7rem;">
+              <span>^</span><span>v</span>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.82rem;font-weight:700;">Nama Varian</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);">Deskripsi</div>
+              <div style="font-size:0.7rem;color:var(--text-faint);margin-top:0.25rem;">📅 01/09/2026 00:12 &nbsp; 📝
+                01/09/2026 00:12</div>
+            </div>
+            <div style="display:flex;gap:0.3rem;"><button class="win-btn"><iconify-icon
+                  icon="lucide:pen-line"></iconify-icon></button><button class="win-btn"
+                style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
           </div>
         </div>
-      <div class="modal-footer">
-        <button class="btn-cancel"
-          onclick="document.getElementById('modal-char').classList.remove('open')">Batal</button>
-        <button class="btn-confirm">Simpan</button>
+        <div class="modal-footer">
+          <button class="btn-cancel"
+            onclick="document.getElementById('modal-char').classList.remove('open')">Batal</button>
+          <button class="btn-confirm">Simpan</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script src="/js/awb-sidebar.js"></script>
-  <script>
-    document.querySelectorAll('.char-modal-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
+    <script src="/js/awb-sidebar.js"></script>
+    <script>
+      document.querySelectorAll('.char-modal-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.char-modal-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.char-pane').forEach(p => p.classList.remove('active'));
+          tab.classList.add('active');
+          document.getElementById(tab.dataset.pane).classList.add('active');
+        });
+      });
+
+      function resetCharTabs() {
         document.querySelectorAll('.char-modal-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.char-pane').forEach(p => p.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById(tab.dataset.pane).classList.add('active');
-      });
-    });
+        document.querySelector('[data-pane="pane-identitas"]').classList.add('active');
+        document.getElementById('pane-identitas').classList.add('active');
+      }
 
-    function resetCharTabs() {
-      document.querySelectorAll('.char-modal-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.char-pane').forEach(p => p.classList.remove('active'));
-      document.querySelector('[data-pane="pane-identitas"]').classList.add('active');
-      document.getElementById('pane-identitas').classList.add('active');
-    }
+      function openCharCreate() {
+        document.getElementById('char-modal-title').textContent = 'Buat karakter';
+        document.getElementById('char-modal-sub').textContent = 'Nama Karakter';
+        document.getElementById('tab-varian').style.display = 'none';
+        document.getElementById('base-varian-wrap').style.display = 'none';
+        document.getElementById('doc-empty').style.display = 'block';
+        document.getElementById('doc-list').style.display = 'none';
+        resetCharTabs();
+        document.getElementById('modal-char').classList.add('open');
+      }
 
-    function openCharCreate() {
-      document.getElementById('char-modal-title').textContent = 'Buat karakter';
-      document.getElementById('char-modal-sub').textContent = 'Nama Karakter';
-      document.getElementById('tab-varian').style.display = 'none';
-      document.getElementById('base-varian-wrap').style.display = 'none';
-      document.getElementById('doc-empty').style.display = 'block';
-      document.getElementById('doc-list').style.display = 'none';
-      resetCharTabs();
-      document.getElementById('modal-char').classList.add('open');
-    }
+      function openCharModal(name) {
+        document.getElementById('char-modal-title').textContent = 'Edit karakter';
+        document.getElementById('char-modal-sub').textContent = name || 'Nama Karakter';
+        document.getElementById('tab-varian').style.display = '';
+        document.getElementById('base-varian-wrap').style.display = '';
+        document.getElementById('doc-empty').style.display = 'none';
+        document.getElementById('doc-list').style.display = 'flex';
+        resetCharTabs();
+        document.getElementById('modal-char').classList.add('open');
+      }
 
-    function openCharModal(name) {
-      document.getElementById('char-modal-title').textContent = 'Edit karakter';
-      document.getElementById('char-modal-sub').textContent = name || 'Nama Karakter';
-      document.getElementById('tab-varian').style.display = '';
-      document.getElementById('base-varian-wrap').style.display = '';
-      document.getElementById('doc-empty').style.display = 'none';
-      document.getElementById('doc-list').style.display = 'flex';
-      resetCharTabs();
-      document.getElementById('modal-char').classList.add('open');
-    }
+      function setCharView(mode) {
+        document.getElementById('char-grid').style.display = mode === 'grid' ? '' : 'none';
+        document.getElementById('char-table').style.display = mode === 'list' ? '' : 'none';
+        document.getElementById('view-grid').classList.toggle('active', mode === 'grid');
+        document.getElementById('view-list').classList.toggle('active', mode === 'list');
+      }
 
-    function setCharView(mode) {
-      document.getElementById('char-grid').style.display = mode === 'grid' ? '' : 'none';
-      document.getElementById('char-table').style.display = mode === 'list' ? '' : 'none';
-      document.getElementById('view-grid').classList.toggle('active', mode === 'grid');
-      document.getElementById('view-list').classList.toggle('active', mode === 'list');
-    }
+      function toggleCharSection(head) {
+        var section = head.closest('.char-section');
+        section.classList.toggle('collapsed');
+        var toggle = head.querySelector('.char-section-toggle');
+        toggle.textContent = section.classList.contains('collapsed') ? '>' : 'v';
+      }
 
-    function toggleCharSection(head) {
-      var section = head.closest('.char-section');
-      section.classList.toggle('collapsed');
-      var toggle = head.querySelector('.char-section-toggle');
-      toggle.textContent = section.classList.contains('collapsed') ? '>' : 'v';
-    }
+      function openCharDetail(name) {
+        console.log('openCharDetail called with:', name);
+        var sidebar = document.getElementById('char-detail');
+        if (!sidebar) { console.error('char-detail not found'); return; }
 
-    function openCharDetail(name) {
-      console.log('openCharDetail called with:', name);
-      var sidebar = document.getElementById('char-detail');
-      if (!sidebar) { console.error('char-detail not found'); return; }
-      
-      document.getElementById('detail-name').textContent = name;
-      document.getElementById('detail-sub').textContent = 'nama depan ' + name;
-      
-      var variantRow = document.getElementById('variant-row');
-      variantRow.innerHTML = '<button class="char-variant-btn active">Base Varian</button><button class="char-variant-btn">Varian2</button>';
-      
-      sidebar.classList.add('open');
-      console.log('sidebar opened');
-    }
-  </script>
+        document.getElementById('detail-name').textContent = name;
+        document.getElementById('detail-sub').textContent = 'nama depan ' + name;
+
+        var variantRow = document.getElementById('variant-row');
+        variantRow.innerHTML = '<button class="char-variant-btn active">Base Varian</button><button class="char-variant-btn">Varian2</button>';
+
+        sidebar.classList.add('open');
+        console.log('sidebar opened');
+      }
+    </script>
 </body>
 
 </html>

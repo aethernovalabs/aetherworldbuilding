@@ -260,11 +260,11 @@
           <span class="awb-nav-box"><iconify-icon icon="lucide:calendar-range" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Linimasa</span>
         </a>
-        <a class="awb-nav-link" href="jaringan.page.html" title="Graph">
+        <a class="awb-nav-link" href="graph.page.html" title="Graph">
           <span class="awb-nav-box"><iconify-icon icon="lucide:network" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Graph</span>
         </a>
-        <a class="awb-nav-link active" href="peta-denah.page.html" title="Visual Peta">
+        <a class="awb-nav-link active" title="Visual Peta">
           <span class="awb-nav-box"><iconify-icon icon="lucide:map" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Visual Peta</span>
         </a>
@@ -410,35 +410,35 @@
 
   <!-- Marker click to show info -->
   document.querySelectorAll('.map-marker').forEach(marker => {
-      marker.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const info = document.getElementById('map-info');
-        const title = marker.getAttribute('title') || 'Lokasi';
-        info.querySelector('.map-info-title').innerHTML = `<iconify-icon icon="lucide:map-pin"></iconify-icon> ${title}`;
-      });
-    });
+  marker.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const info = document.getElementById('map-info');
+  const title = marker.getAttribute('title') || 'Lokasi';
+  info.querySelector('.map-info-title').innerHTML = `<iconify-icon icon="lucide:map-pin"></iconify-icon> ${title}`;
+  });
+  });
 
-    // Toggle borders
-    document.getElementById('toggle-borders').addEventListener('change', (e) => {
-      document.querySelectorAll('.map-radius-ring').forEach(ring => {
-        ring.style.display = e.target.checked ? 'flex' : 'none';
-      });
-    });
+  // Toggle borders
+  document.getElementById('toggle-borders').addEventListener('change', (e) => {
+  document.querySelectorAll('.map-radius-ring').forEach(ring => {
+  ring.style.display = e.target.checked ? 'flex' : 'none';
+  });
+  });
 
-    // Toggle paths
-    document.getElementById('toggle-paths').addEventListener('change', (e) => {
-      document.querySelectorAll('.map-path').forEach(path => {
-        path.style.display = e.target.checked ? 'block' : 'none';
-      });
-    });
+  // Toggle paths
+  document.getElementById('toggle-paths').addEventListener('change', (e) => {
+  document.querySelectorAll('.map-path').forEach(path => {
+  path.style.display = e.target.checked ? 'block' : 'none';
+  });
+  });
 
-    // Radius input
-    document.getElementById('radius-input').addEventListener('input', (e) => {
-      const val = parseInt(e.target.value) || 200;
-      document.querySelectorAll('.map-radius-ring.kingdom').forEach(ring => {
-        ring.style.width = ring.style.height = val + 'px';
-      });
-    });
+  // Radius input
+  document.getElementById('radius-input').addEventListener('input', (e) => {
+  const val = parseInt(e.target.value) || 200;
+  document.querySelectorAll('.map-radius-ring.kingdom').forEach(ring => {
+  ring.style.width = ring.style.height = val + 'px';
+  });
+  });
   </script>
 </body>
 

@@ -179,10 +179,25 @@
       gap: 0.35rem;
       justify-content: center;
     }
-    .timeline-content.view-grid .timeline-track { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; padding-left: 0; }
-    .timeline-content.view-grid .timeline-track::before { display: none; }
-    .timeline-content.view-grid .timeline-event { padding: 0; }
-    .timeline-content.view-grid .timeline-event::before { display: none; }
+
+    .timeline-content.view-grid .timeline-track {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      padding-left: 0;
+    }
+
+    .timeline-content.view-grid .timeline-track::before {
+      display: none;
+    }
+
+    .timeline-content.view-grid .timeline-event {
+      padding: 0;
+    }
+
+    .timeline-content.view-grid .timeline-event::before {
+      display: none;
+    }
 
     /* Add Event btn floating */
     .fab-btn {
@@ -248,11 +263,11 @@
           <span class="awb-nav-box"><iconify-icon icon="lucide:gem" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Element Dunia</span>
         </a>
-        <a class="awb-nav-link active" href="linimasa.page.html" title="Linimasa">
+        <a class="awb-nav-link active" title="Linimasa">
           <span class="awb-nav-box"><iconify-icon icon="lucide:calendar-range" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Linimasa</span>
         </a>
-        <a class="awb-nav-link" href="jaringan.page.html" title="Graph">
+        <a class="awb-nav-link" href="graph.page.html" title="Graph">
           <span class="awb-nav-box"><iconify-icon icon="lucide:network" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Graph</span>
         </a>
@@ -286,7 +301,9 @@
           <p>Garis waktu peristiwa dalam dunia Aether Nova</p>
         </div>
         <div class="page-actions">
-          <button class="btn-action primary" onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon icon="lucide:plus"></iconify-icon> Tambah Peristiwa</button>
+          <button class="btn-action primary"
+            onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon
+              icon="lucide:plus"></iconify-icon> Tambah Peristiwa</button>
         </div>
       </div>
       <div class="timeline-toolbar" style="flex-direction:column;align-items:stretch;gap:0.6rem;">
@@ -307,11 +324,14 @@
             <option>Lainnya</option>
           </select>
           <div class="view-toggle" style="margin-left:auto;">
-            <button class="view-btn active" data-view="list" title="Daftar"><iconify-icon icon="lucide:list" width="16"></iconify-icon></button>
-            <button class="view-btn" data-view="grid" title="Grid"><iconify-icon icon="lucide:layout-grid" width="16"></iconify-icon></button>
+            <button class="view-btn active" data-view="list" title="Daftar"><iconify-icon icon="lucide:list"
+                width="16"></iconify-icon></button>
+            <button class="view-btn" data-view="grid" title="Grid"><iconify-icon icon="lucide:layout-grid"
+                width="16"></iconify-icon></button>
           </div>
         </div>
-        <div style="font-size:0.78rem;color:var(--text-muted);">Tag: <span>Tag1</span> <span>Tag2</span> <span>Tag3</span></div>
+        <div style="font-size:0.78rem;color:var(--text-muted);">Tag: <span>Tag1</span> <span>Tag2</span>
+          <span>Tag3</span></div>
       </div>
       <div class="timeline-content" id="timeline-content">
 
@@ -323,7 +343,12 @@
               <div class="event-card">
                 <div class="event-header">
                   <div class="event-name">Perpecahan Besar</div>
-                  <div style="display:flex;gap:0.3rem;align-items:center;"><span class="event-date">Tahun 0 PE</span><button class="win-btn" title="Edit" onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn event-del" title="Hapus" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></div>
+                  <div style="display:flex;gap:0.3rem;align-items:center;"><span class="event-date">Tahun 0
+                      PE</span><button class="win-btn" title="Edit"
+                      onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon
+                        icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn event-del"
+                      title="Hapus" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"
+                        width="14"></iconify-icon></button></div>
                 </div>
                 <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.5rem;">
                   <span class="badge badge-red">Bencana</span>
@@ -334,13 +359,21 @@
                   aetherial yang tak terkendali. Peristiwa ini menandai awal dari Era Baru.</div>
                 <div
                   style="margin-top:0.5rem;font-size:0.78rem;color:var(--text-faint);display:flex;flex-direction:column;gap:0.25rem;">
-                  <div><strong style="color:var(--text-muted);">Type:</strong> Bencana | <strong style="color:var(--text-muted);">Durasi:</strong> 7 hari | <strong style="color:var(--text-muted);">Pengetahuan Publik:</strong> Diketahui Umum</div>
-                  <div><strong style="color:var(--text-muted);">Penyebab:</strong> Ledakan energi aetherial tak terkendali</div>
-                  <div><strong style="color:var(--text-muted);">Konsekuensi:</strong> Pembentukan kepulauan, munculnya kristal aetherial, permulaan Era Baru</div>
-                  <div><strong style="color:var(--text-muted);">Tokoh Kunci:</strong> - | <strong style="color:var(--text-muted);">Peristiwa Terkait:</strong> Pembentukan Kristal Aetherial</div>
-                  <div><strong style="color:var(--text-muted);">Pentingnya Sejarah:</strong> Awal Era Baru, fondasi dunia terapung</div>
-                  <div><strong style="color:var(--text-muted);">Lokasi:</strong> Daratan utama (sekitar 47°L, 112°B)</div>
-                  <div><strong style="color:var(--text-muted);">Orang Terlibat:</strong> Semua peradaban awal | <strong style="color:var(--text-muted);">Faksi/Kelompok:</strong> -</div>
+                  <div><strong style="color:var(--text-muted);">Type:</strong> Bencana | <strong
+                      style="color:var(--text-muted);">Durasi:</strong> 7 hari | <strong
+                      style="color:var(--text-muted);">Pengetahuan Publik:</strong> Diketahui Umum</div>
+                  <div><strong style="color:var(--text-muted);">Penyebab:</strong> Ledakan energi aetherial tak
+                    terkendali</div>
+                  <div><strong style="color:var(--text-muted);">Konsekuensi:</strong> Pembentukan kepulauan, munculnya
+                    kristal aetherial, permulaan Era Baru</div>
+                  <div><strong style="color:var(--text-muted);">Tokoh Kunci:</strong> - | <strong
+                      style="color:var(--text-muted);">Peristiwa Terkait:</strong> Pembentukan Kristal Aetherial</div>
+                  <div><strong style="color:var(--text-muted);">Pentingnya Sejarah:</strong> Awal Era Baru, fondasi
+                    dunia terapung</div>
+                  <div><strong style="color:var(--text-muted);">Lokasi:</strong> Daratan utama (sekitar 47°L, 112°B)
+                  </div>
+                  <div><strong style="color:var(--text-muted);">Orang Terlibat:</strong> Semua peradaban awal | <strong
+                      style="color:var(--text-muted);">Faksi/Kelompok:</strong> -</div>
                 </div>
               </div>
             </div>
@@ -348,7 +381,12 @@
               <div class="event-card">
                 <div class="event-header">
                   <div class="event-name">Pembentukan Pertama Kristal Aetherial</div>
-                  <div style="display:flex;gap:0.3rem;align-items:center;"><span class="event-date">Tahun 23 PE</span><button class="win-btn" title="Edit" onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn event-del" title="Hapus" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></div>
+                  <div style="display:flex;gap:0.3rem;align-items:center;"><span class="event-date">Tahun 23
+                      PE</span><button class="win-btn" title="Edit"
+                      onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon
+                        icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn event-del"
+                      title="Hapus" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"
+                        width="14"></iconify-icon></button></div>
                 </div>
                 <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.5rem;">
                   <span class="badge badge-purple">Penemuan</span>
@@ -358,13 +396,18 @@
                   dan mulai menstabilkan kepulauan terapung.</div>
                 <div
                   style="margin-top:0.5rem;font-size:0.78rem;color:var(--text-faint);display:flex;flex-direction:column;gap:0.25rem;">
-                  <div><strong style="color:var(--text-muted);">Type:</strong> Penemuan | <strong style="color:var(--text-muted);">Durasi:</strong> Bertahun-tahun | <strong style="color:var(--text-muted);">Pengetahuan Publik:</strong> Diketahui Umum</div>
+                  <div><strong style="color:var(--text-muted);">Type:</strong> Penemuan | <strong
+                      style="color:var(--text-muted);">Durasi:</strong> Bertahun-tahun | <strong
+                      style="color:var(--text-muted);">Pengetahuan Publik:</strong> Diketahui Umum</div>
                   <div><strong style="color:var(--text-muted);">Penyebab:</strong> Sisa energi Perpecahan Besar</div>
-                  <div><strong style="color:var(--text-muted);">Konsekuensi:</strong> Stabilisasi awal kepulauan, awal penggunaan energi aetherial</div>
-                  <div><strong style="color:var(--text-muted);">Tokoh Kunci:</strong> - | <strong style="color:var(--text-muted);">Peristiwa Terkait:</strong> Perpecahan Besar</div>
+                  <div><strong style="color:var(--text-muted);">Konsekuensi:</strong> Stabilisasi awal kepulauan, awal
+                    penggunaan energi aetherial</div>
+                  <div><strong style="color:var(--text-muted);">Tokoh Kunci:</strong> - | <strong
+                      style="color:var(--text-muted);">Peristiwa Terkait:</strong> Perpecahan Besar</div>
                   <div><strong style="color:var(--text-muted);">Pentingnya Sejarah:</strong> Fondasi energi dunia</div>
                   <div><strong style="color:var(--text-muted);">Lokasi:</strong> Berbagai lokasi pertambangan</div>
-                  <div><strong style="color:var(--text-muted);">Orang Terlibat:</strong> Para penambang awal | <strong style="color:var(--text-muted);">Faksi/Kelompok:</strong> -</div>
+                  <div><strong style="color:var(--text-muted);">Orang Terlibat:</strong> Para penambang awal | <strong
+                      style="color:var(--text-muted);">Faksi/Kelompok:</strong> -</div>
                 </div>
               </div>
             </div>
@@ -379,7 +422,12 @@
               <div class="event-card">
                 <div class="event-header">
                   <div class="event-name">Pendirian Akademi Kristal</div>
-                  <div style="display:flex;gap:0.3rem;align-items:center;"><span class="event-date">Tahun 147 ER</span><button class="win-btn" title="Edit" onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn event-del" title="Hapus" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></div>
+                  <div style="display:flex;gap:0.3rem;align-items:center;"><span class="event-date">Tahun 147
+                      ER</span><button class="win-btn" title="Edit"
+                      onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon
+                        icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn event-del"
+                      title="Hapus" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"
+                        width="14"></iconify-icon></button></div>
                 </div>
                 <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.5rem;">
                   <span class="badge badge-blue">Institusi</span>
@@ -390,13 +438,19 @@
                   ilmu resonansi aetherial secara formal.</div>
                 <div
                   style="margin-top:0.5rem;font-size:0.78rem;color:var(--text-faint);display:flex;flex-direction:column;gap:0.25rem;">
-                  <div><strong style="color:var(--text-muted);">Type:</strong> Institusi | <strong style="color:var(--text-muted);">Durasi:</strong> 1 tahun | <strong style="color:var(--text-muted);">Pengetahuan Publik:</strong> Diketahui Umum</div>
+                  <div><strong style="color:var(--text-muted);">Type:</strong> Institusi | <strong
+                      style="color:var(--text-muted);">Durasi:</strong> 1 tahun | <strong
+                      style="color:var(--text-muted);">Pengetahuan Publik:</strong> Diketahui Umum</div>
                   <div><strong style="color:var(--text-muted);">Penyebab:</strong> Kebutuhan ilmu resonansi formal</div>
-                  <div><strong style="color:var(--text-muted);">Konsekuensi:</strong> Pusat ilmu sihir terbesar, standarisasi pendidikan resonansi</div>
-                  <div><strong style="color:var(--text-muted);">Tokoh Kunci:</strong> Cendekiawan awal | <strong style="color:var(--text-muted);">Peristiwa Terkait:</strong> Penemuan Portal Aetherial</div>
-                  <div><strong style="color:var(--text-muted);">Pentingnya Sejarah:</strong> Lahirnya pendidikan sihir modern</div>
+                  <div><strong style="color:var(--text-muted);">Konsekuensi:</strong> Pusat ilmu sihir terbesar,
+                    standarisasi pendidikan resonansi</div>
+                  <div><strong style="color:var(--text-muted);">Tokoh Kunci:</strong> Cendekiawan awal | <strong
+                      style="color:var(--text-muted);">Peristiwa Terkait:</strong> Penemuan Portal Aetherial</div>
+                  <div><strong style="color:var(--text-muted);">Pentingnya Sejarah:</strong> Lahirnya pendidikan sihir
+                    modern</div>
                   <div><strong style="color:var(--text-muted);">Lokasi:</strong> Pulau Aethelgard</div>
-                  <div><strong style="color:var(--text-muted);">Orang Terlibat:</strong> Cendekiawan awal, pendiri akademi | <strong style="color:var(--text-muted);">Faksi/Kelompok:</strong> Akademi Kristal</div>
+                  <div><strong style="color:var(--text-muted);">Orang Terlibat:</strong> Cendekiawan awal, pendiri
+                    akademi | <strong style="color:var(--text-muted);">Faksi/Kelompok:</strong> Akademi Kristal</div>
                 </div>
               </div>
             </div>
@@ -404,7 +458,12 @@
               <div class="event-card">
                 <div class="event-header">
                   <div class="event-name">Penemuan Portal Aetherial</div>
-                  <div style="display:flex;gap:0.3rem;align-items:center;"><span class="event-date">Tahun 302 ER</span><button class="win-btn" title="Edit" onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn event-del" title="Hapus" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></div>
+                  <div style="display:flex;gap:0.3rem;align-items:center;"><span class="event-date">Tahun 302
+                      ER</span><button class="win-btn" title="Edit"
+                      onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon
+                        icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn event-del"
+                      title="Hapus" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"
+                        width="14"></iconify-icon></button></div>
                 </div>
                 <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.5rem;">
                   <span class="badge badge-purple">Penemuan</span>
@@ -415,13 +474,19 @@
                   kristal resonansi. Mengubah cara hubungan antar pulau selamanya.</div>
                 <div
                   style="margin-top:0.5rem;font-size:0.78rem;color:var(--text-faint);display:flex;flex-direction:column;gap:0.25rem;">
-                  <div><strong style="color:var(--text-muted);">Type:</strong> Penemuan | <strong style="color:var(--text-muted);">Durasi:</strong> 3 bulan | <strong style="color:var(--text-muted);">Pengetahuan Publik:</strong> Diketahui Umum</div>
+                  <div><strong style="color:var(--text-muted);">Type:</strong> Penemuan | <strong
+                      style="color:var(--text-muted);">Durasi:</strong> 3 bulan | <strong
+                      style="color:var(--text-muted);">Pengetahuan Publik:</strong> Diketahui Umum</div>
                   <div><strong style="color:var(--text-muted);">Penyebab:</strong> Riset kristal resonansi Akademi</div>
-                  <div><strong style="color:var(--text-muted);">Konsekuensi:</strong> Revolusi transportasi, peningkatan perdagangan antar pulau</div>
-                  <div><strong style="color:var(--text-muted);">Tokoh Kunci:</strong> Tim ilmuwan | <strong style="color:var(--text-muted);">Peristiwa Terkait:</strong> Pendirian Akademi Kristal</div>
-                  <div><strong style="color:var(--text-muted);">Pentingnya Sejarah:</strong> Era konektivitas antar pulau</div>
+                  <div><strong style="color:var(--text-muted);">Konsekuensi:</strong> Revolusi transportasi, peningkatan
+                    perdagangan antar pulau</div>
+                  <div><strong style="color:var(--text-muted);">Tokoh Kunci:</strong> Tim ilmuwan | <strong
+                      style="color:var(--text-muted);">Peristiwa Terkait:</strong> Pendirian Akademi Kristal</div>
+                  <div><strong style="color:var(--text-muted);">Pentingnya Sejarah:</strong> Era konektivitas antar
+                    pulau</div>
                   <div><strong style="color:var(--text-muted);">Lokasi:</strong> Menara Penjaga, Pulau Nadir</div>
-                  <div><strong style="color:var(--text-muted);">Orang Terlibat:</strong> Tim ilmuwan Akademi Kristal | <strong style="color:var(--text-muted);">Faksi/Kelompok:</strong> Akademi Kristal</div>
+                  <div><strong style="color:var(--text-muted);">Orang Terlibat:</strong> Tim ilmuwan Akademi Kristal |
+                    <strong style="color:var(--text-muted);">Faksi/Kelompok:</strong> Akademi Kristal</div>
                 </div>
               </div>
             </div>
@@ -429,7 +494,12 @@
               <div class="event-card">
                 <div class="event-header">
                   <div class="event-name">Kelahiran Kael Dawnward</div>
-                  <div style="display:flex;gap:0.3rem;align-items:center;"><span class="event-date">Tahun 890 ER</span><button class="win-btn" title="Edit" onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn event-del" title="Hapus" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></div>
+                  <div style="display:flex;gap:0.3rem;align-items:center;"><span class="event-date">Tahun 890
+                      ER</span><button class="win-btn" title="Edit"
+                      onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon
+                        icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn event-del"
+                      title="Hapus" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"
+                        width="14"></iconify-icon></button></div>
                 </div>
                 <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.5rem;">
                   <span class="badge badge-purple">Kelahiran</span>
@@ -439,13 +509,19 @@
                   kristal paling kuat dalam sejarah tercatat.</div>
                 <div
                   style="margin-top:0.5rem;font-size:0.78rem;color:var(--text-faint);display:flex;flex-direction:column;gap:0.25rem;">
-                  <div><strong style="color:var(--text-muted);">Type:</strong> Kelahiran | <strong style="color:var(--text-muted);">Durasi:</strong> 1 hari | <strong style="color:var(--text-muted);">Pengetahuan Publik:</strong> Legenda</div>
+                  <div><strong style="color:var(--text-muted);">Type:</strong> Kelahiran | <strong
+                      style="color:var(--text-muted);">Durasi:</strong> 1 hari | <strong
+                      style="color:var(--text-muted);">Pengetahuan Publik:</strong> Legenda</div>
                   <div><strong style="color:var(--text-muted);">Penyebab:</strong> -</div>
-                  <div><strong style="color:var(--text-muted);">Konsekuensi:</strong> Kelahiran tokoh kunci yang mengubah nasib dunia</div>
-                  <div><strong style="color:var(--text-muted);">Tokoh Kunci:</strong> Kael Dawnward | <strong style="color:var(--text-muted);">Peristiwa Terkait:</strong> -</div>
-                  <div><strong style="color:var(--text-muted);">Pentingnya Sejarah:</strong> Awal kisah pahlawan utama</div>
+                  <div><strong style="color:var(--text-muted);">Konsekuensi:</strong> Kelahiran tokoh kunci yang
+                    mengubah nasib dunia</div>
+                  <div><strong style="color:var(--text-muted);">Tokoh Kunci:</strong> Kael Dawnward | <strong
+                      style="color:var(--text-muted);">Peristiwa Terkait:</strong> -</div>
+                  <div><strong style="color:var(--text-muted);">Pentingnya Sejarah:</strong> Awal kisah pahlawan utama
+                  </div>
                   <div><strong style="color:var(--text-muted);">Lokasi:</strong> Pulau Nadir, Desa Air Mata</div>
-                  <div><strong style="color:var(--text-muted);">Orang Terlibat:</strong> Kael Dawnward, keluarga Dawnward | <strong style="color:var(--text-muted);">Faksi/Kelompok:</strong> Keluarga Dawnward</div>
+                  <div><strong style="color:var(--text-muted);">Orang Terlibat:</strong> Kael Dawnward, keluarga
+                    Dawnward | <strong style="color:var(--text-muted);">Faksi/Kelompok:</strong> Keluarga Dawnward</div>
                 </div>
               </div>
             </div>
@@ -454,46 +530,119 @@
       </div>
     </div>
   </div>
-  <button class="fab-btn" title="Tambah Peristiwa" onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon icon="lucide:plus"></iconify-icon></button>
+  <button class="fab-btn" title="Tambah Peristiwa"
+    onclick="document.getElementById('modal-peristiwa').classList.add('open')"><iconify-icon
+      icon="lucide:plus"></iconify-icon></button>
   <div class="modal-overlay" id="modal-peristiwa">
     <div class="modal-frame" style="max-width:640px;">
-      <div class="modal-header"><h3 style="display:flex;align-items:center;gap:0.5rem;"><span style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon icon="lucide:image" width="16"></iconify-icon></span>Tambah Peristiwa</h3><div style="display:flex;gap:0.5rem;"><button class="btn-cancel" onclick="document.getElementById('modal-peristiwa').classList.remove('open')">Batal</button><button class="btn-confirm" onclick="document.getElementById('modal-peristiwa').classList.remove('open')">Simpan</button></div></div>
-      <div style="display:flex;border-bottom:1px solid var(--border);"><div style="flex:1;text-align:center;padding:0.6rem;font-size:0.8rem;font-weight:700;border-right:1px solid var(--border);border-bottom:2px solid var(--danger);">Informasi Dasar</div><div style="flex:1;text-align:center;padding:0.6rem;font-size:0.8rem;color:var(--text-muted);">Dokumen</div></div>
+      <div class="modal-header">
+        <h3 style="display:flex;align-items:center;gap:0.5rem;"><span
+            style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
+              icon="lucide:image" width="16"></iconify-icon></span>Tambah Peristiwa</h3>
+        <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
+            onclick="document.getElementById('modal-peristiwa').classList.remove('open')">Batal</button><button
+            class="btn-confirm"
+            onclick="document.getElementById('modal-peristiwa').classList.remove('open')">Simpan</button></div>
+      </div>
+      <div style="display:flex;border-bottom:1px solid var(--border);">
+        <div
+          style="flex:1;text-align:center;padding:0.6rem;font-size:0.8rem;font-weight:700;border-right:1px solid var(--border);border-bottom:2px solid var(--danger);">
+          Informasi Dasar</div>
+        <div style="flex:1;text-align:center;padding:0.6rem;font-size:0.8rem;color:var(--text-muted);">Dokumen</div>
+      </div>
       <div class="modal-body">
-        <div style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
+        <div
+          style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Nama</label><input type="text" class="form-input"></div>
           <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
-          <div><label class="form-label">Tag</label><input type="text" class="form-input"><div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1 x</span><span class="badge">tag2 x</span><span class="badge">tag3 x</span></div></div>
+          <div><label class="form-label">Tag</label><input type="text" class="form-input">
+            <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
+                x</span><span class="badge">tag2 x</span><span class="badge">tag3 x</span></div>
+          </div>
         </div>
-        <div style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
+        <div
+          style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-            <div><label class="form-label">Type Peristiwa</label><select class="form-input"><option></option><option>Perang</option><option>Bencana</option><option>Penemuan</option><option>Politik</option><option>Budaya</option><option>Lainnya</option></select></div>
-            <div><label class="form-label">Tanggal / Era</label><input type="text" class="form-input" placeholder="cth: Tahun 0 PE"></div>
+            <div><label class="form-label">Type Peristiwa</label><select class="form-input">
+                <option></option>
+                <option>Perang</option>
+                <option>Bencana</option>
+                <option>Penemuan</option>
+                <option>Politik</option>
+                <option>Budaya</option>
+                <option>Lainnya</option>
+              </select></div>
+            <div><label class="form-label">Tanggal / Era</label><input type="text" class="form-input"
+                placeholder="cth: Tahun 0 PE"></div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
             <div><label class="form-label">Durasi</label><input type="text" class="form-input"></div>
-            <div><label class="form-label">Pengetahuan Publik</label><select class="form-input"><option></option><option>Diketahui Umum</option><option>Rahasia</option><option>Legenda</option></select></div>
+            <div><label class="form-label">Pengetahuan Publik</label><select class="form-input">
+                <option></option>
+                <option>Diketahui Umum</option>
+                <option>Rahasia</option>
+                <option>Legenda</option>
+              </select></div>
           </div>
           <div><label class="form-label">Penyebab</label><textarea class="form-input" rows="2"></textarea></div>
           <div><label class="form-label">Konsekuensi</label><textarea class="form-input" rows="2"></textarea></div>
-          <div><label class="form-label">Tokoh Kunci</label><input type="text" class="form-input"><div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">Tokoh1 x</span><span class="badge">Tokoh2 x</span></div></div>
-          <div><label class="form-label">Peristiwa Terkait</label><input type="text" class="form-input"><div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">Peristiwa1 x</span><span class="badge">Peristiwa2 x</span></div></div>
-          <div><label class="form-label">Pentingnya Sejarah</label><textarea class="form-input" rows="2"></textarea></div>
-        </div>
-        <div style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
-          <div><label class="form-label">Lokasi</label><input type="text" class="form-input"><div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">Lokasi1 x</span><span class="badge">Lokasi2 x</span><span class="badge">Lokasi3 x</span></div></div>
-          <div><label class="form-label">Orang yang Terlibat</label><input type="text" class="form-input"><div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">Karakter1 x</span><span class="badge">Karakter2 x</span></div></div>
-          <div><label class="form-label">Faksi / Kelompok yang Terlibat</label><input type="text" class="form-input"><div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">Faksi1 x</span><span class="badge">Kelompok1 x</span></div></div>
-        </div>
-        <div class="extra-wrap" style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;"><span style="font-size:0.82rem;font-weight:700;">Bidang Ekstra</span><button type="button" class="win-btn extra-add-top" title="Tambah bidang">+</button></div>
-          <div class="extra-list" style="display:flex;flex-direction:column;gap:0.5rem;">
-            <div class="extra-item" style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);"><div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.5rem;align-items:end;"><div><label class="form-label">Nama</label><input type="text" class="form-input"></div><div><label class="form-label">Type</label><select class="form-input"><option></option><option>Text</option><option>Number</option><option>Boolean</option><option>Linked</option></select></div><div><button type="button" class="win-btn extra-del" style="color:var(--danger);" title="Hapus bidang"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></div></div><div style="margin-top:0.5rem;"><label class="form-label">Isi</label><input type="text" class="form-input"></div></div>
+          <div><label class="form-label">Tokoh Kunci</label><input type="text" class="form-input">
+            <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">Tokoh1
+                x</span><span class="badge">Tokoh2 x</span></div>
           </div>
-          <button type="button" class="elem-cat-btn extra-add" style="width:100%;margin-top:0.5rem;margin-bottom:0;">Tambah Bidang</button>
+          <div><label class="form-label">Peristiwa Terkait</label><input type="text" class="form-input">
+            <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">Peristiwa1
+                x</span><span class="badge">Peristiwa2 x</span></div>
+          </div>
+          <div><label class="form-label">Pentingnya Sejarah</label><textarea class="form-input" rows="2"></textarea>
+          </div>
         </div>
-        <div style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);"><label class="form-label">Catatan</label><textarea class="form-input" rows="3"></textarea></div>
+        <div
+          style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
+          <div><label class="form-label">Lokasi</label><input type="text" class="form-input">
+            <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">Lokasi1
+                x</span><span class="badge">Lokasi2 x</span><span class="badge">Lokasi3 x</span></div>
+          </div>
+          <div><label class="form-label">Orang yang Terlibat</label><input type="text" class="form-input">
+            <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">Karakter1
+                x</span><span class="badge">Karakter2 x</span></div>
+          </div>
+          <div><label class="form-label">Faksi / Kelompok yang Terlibat</label><input type="text" class="form-input">
+            <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">Faksi1
+                x</span><span class="badge">Kelompok1 x</span></div>
+          </div>
+        </div>
+        <div class="extra-wrap"
+          style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;"><span
+              style="font-size:0.82rem;font-weight:700;">Bidang Ekstra</span><button type="button"
+              class="win-btn extra-add-top" title="Tambah bidang">+</button></div>
+          <div class="extra-list" style="display:flex;flex-direction:column;gap:0.5rem;">
+            <div class="extra-item"
+              style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem;background:var(--bg-surface);">
+              <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.5rem;align-items:end;">
+                <div><label class="form-label">Nama</label><input type="text" class="form-input"></div>
+                <div><label class="form-label">Type</label><select class="form-input">
+                    <option></option>
+                    <option>Text</option>
+                    <option>Number</option>
+                    <option>Boolean</option>
+                    <option>Linked</option>
+                  </select></div>
+                <div><button type="button" class="win-btn extra-del" style="color:var(--danger);"
+                    title="Hapus bidang"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></div>
+              </div>
+              <div style="margin-top:0.5rem;"><label class="form-label">Isi</label><input type="text"
+                  class="form-input"></div>
+            </div>
+          </div>
+          <button type="button" class="elem-cat-btn extra-add"
+            style="width:100%;margin-top:0.5rem;margin-bottom:0;">Tambah Bidang</button>
+        </div>
+        <div
+          style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);">
+          <label class="form-label">Catatan</label><textarea class="form-input" rows="3"></textarea></div>
       </div>
     </div>
   </div>
