@@ -606,7 +606,8 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
   transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   user-select: none;
-  height: 100vh;
+  height: 100%;
+  max-height: 100%;
 }
 .awb-sidebar.expanded {
   width: 200px;
@@ -877,4 +878,8 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
   color: #fff;
 }
 .awb-sidebar.expanded .awb-bottom-rail-expand { display: none; }
+
+/* Sidebar ikut tinggi layout agar footer selalu terlihat */
+.workspace-layout > .awb-sidebar { height: auto; max-height: 100%; min-height: 0; align-self: stretch; }
+.workspace-layout > .awb-sidebar .awb-sb-nav { min-height: 0; }
 
