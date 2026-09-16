@@ -14,6 +14,80 @@
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
   <style>
+    .map-topbar {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 0.9rem;
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .map-topbar-title { font-weight: 800; font-size: 1.05rem; color: var(--text-main); }
+    .map-topbar-group {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.3rem 0.5rem;
+      background: var(--bg-dark);
+      flex-wrap: wrap;
+    }
+    .map-pill-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+    .map-pill {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--bg-surface);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      color: var(--text-main);
+      max-width: 340px;
+    }
+    .map-pill-btn {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--bg-surface);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: var(--text-main);
+      white-space: nowrap;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .map-pill-btn:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+    .map-pill-btn.danger { color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1); }
+    .map-options-bar {
+      padding: 0.45rem 0.9rem;
+      background: #0d121f;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      flex-wrap: wrap;
+    }
+    .map-toggle { display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 600; }
+    .map-toggle-btn {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.1rem 0.5rem;
+      cursor: pointer;
+    }
+    .map-toggle-btn.active { background: rgba(139, 92, 246, 0.15); border-color: var(--primary); color: #c4b5fd; }
+    .map-luas { margin-left: auto; display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 700; color: var(--text-main); }
+    .map-luas input[type="range"] { width: 180px; accent-color: var(--primary); }
+    .map-luas-target { font-size: 0.72rem; color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 999px; padding: 0.05rem 0.5rem; }
     .map-toolbar {
       padding: 1rem 1.75rem;
       border-bottom: 1px solid var(--border);
@@ -98,15 +172,82 @@
       flex: 1;
       position: relative;
       background:
-        linear-gradient(rgba(139, 92, 246, 0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(139, 92, 246, 0.06) 1px, transparent 1px),
-        radial-gradient(ellipse at 30% 40%, rgba(56, 189, 248, 0.08), transparent 55%),
-        radial-gradient(ellipse at 70% 60%, rgba(139, 92, 246, 0.1), transparent 55%),
-        #0d121f;
-      background-size: 32px 32px, 32px 32px, 100% 100%, 100% 100%, auto;
+        linear-gradient(rgba(139, 92, 246, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139, 92, 246, 0.07) 1px, transparent 1px),
+        radial-gradient(ellipse at 30% 30%, #182235 0%, #0d121f 60%, #0a0e17 100%);
+      background-size: 28px 28px, 28px 28px, 100% 100%;
       overflow: hidden;
-      min-height: 520px;
+      min-height: 560px;
     }
+    .map-blob {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.25));
+      opacity: 0.9;
+    }
+    .map-node {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      z-index: 5;
+    }
+    .map-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #0d121f;
+      box-shadow: 0 0 10px currentColor;
+    }
+    .map-node-name {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-main);
+      background: rgba(13, 18, 31, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.05rem 0.5rem;
+      white-space: nowrap;
+    }
+    .map-node.active .map-dot { box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.55), 0 0 12px currentColor; }
+    .map-node.active .map-node-name { border-color: var(--primary); color: #c4b5fd; }
+    .map-bar-row2 .win-btn { color: var(--text-muted); }
+    .map-bar-row2 .win-btn:hover { background: var(--bg-surface); color: var(--text-main); }
+    .map-toggle-btn:not(.active) { opacity: 0.55; text-decoration: line-through; }
+    .map-info-card {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+      width: 240px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 0.75rem;
+      z-index: 20;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+    .map-info-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: #0d121f;
+      padding: 0.4rem 0.6rem;
+    }
+    .map-info-pill { border: 1px solid rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.12); color: #c4b5fd; border-radius: 999px; padding: 0 0.5rem; font-size: 0.68rem; font-weight: 700; }
+    .map-info-img { display: flex; justify-content: center; padding: 0.5rem; border-bottom: 1px solid var(--border); background: var(--bg-dark); }
+    .map-info-img svg rect, .map-info-img svg path, .map-info-img svg ellipse, .map-info-img svg circle { stroke: var(--text-faint); }
+    .map-info-rows { padding: 0.45rem 0.6rem; display: flex; flex-direction: column; gap: 0.2rem; border-bottom: 1px solid var(--border); }
+    .map-info-rows > div { display: flex; justify-content: space-between; gap: 0.5rem; }
+    .map-info-rows span { color: var(--text-faint); }
+    .map-info-rows b { font-weight: 700; text-align: right; color: var(--text-main); }
+    .map-info-desc { padding: 0.6rem 0.6rem 0.9rem; text-align: center; color: var(--text-muted); }
 
     .map-stage {
       position: absolute;
@@ -342,123 +483,74 @@
     </div>
 
     <div class="workspace-content" style="padding:0;">
-      <div class="page-header" style="padding:1.25rem 1.75rem;">
-        <div>
-          <h1><iconify-icon icon="lucide:map"></iconify-icon> Peta & Denah</h1>
-          <p>Peta dunia, wilayah, dan rute perjalanan</p>
-        </div>
-        <div class="page-actions">
-          <button class="map-action-btn"><iconify-icon icon="lucide:pen-line"></iconify-icon> Rename</button>
-          <button class="map-action-btn danger"><iconify-icon icon="lucide:trash-2"></iconify-icon> Hapus</button>
-          <button class="map-action-btn"><iconify-icon icon="lucide:map-pin"></iconify-icon> + Wilayah</button>
-          <button class="map-action-btn"><iconify-icon icon="lucide:users"></iconify-icon> + Faksi</button>
-          <button class="map-action-btn"><iconify-icon icon="lucide:image"></iconify-icon> + Gambar Peta</button>
-          <button class="win-btn" title="Zoom Out"><iconify-icon icon="lucide:zoom-out"></iconify-icon></button>
-          <button class="win-btn" title="Zoom In"><iconify-icon icon="lucide:zoom-in"></iconify-icon></button>
-        </div>
-      </div>
-
-      <!-- Options Bar: Radius, Jalan Kaki -->
-      <div class="map-options-bar">
-        <div class="map-option-group">
-          <span>Pilihan Peta:</span>
-          <select class="map-select" id="map-select">
-            <option>Peta Dunia 1</option>
+      <div class="map-topbar">
+        <div class="map-topbar-title">Visual Peta</div>
+        <div class="map-topbar-group">
+          <span class="map-pill-label">Pilih Peta</span>
+          <select class="map-pill" id="map-select">
+            <option>Peta Dimensi Primal (Aethelgar, Aldoria, Mathumis)</option>
             <option>Peta Pulau Nadir</option>
             <option>Peta Pulau Aethelgard</option>
           </select>
+          <button class="map-pill-btn"><iconify-icon icon="lucide:pen-line" width="13"></iconify-icon> Rename</button>
+          <button class="map-pill-btn danger"><iconify-icon icon="lucide:trash-2" width="13"></iconify-icon> Hapus Peta</button>
+          <button class="map-pill-btn"><iconify-icon icon="lucide:image" width="13"></iconify-icon> Gambar Peta</button>
         </div>
-        <div class="map-option-group">
-          <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;">
-            <input type="checkbox" class="map-checkbox" id="toggle-borders" checked> Batas Wilayah: Aktif
-          </label>
-        </div>
-        <div class="map-option-group">
-          <span>Atur luas wilayah:</span>
-          <input type="text" class="map-input" id="radius-input" value="200">
-        </div>
-        <div class="map-option-group">
-          <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;">
-            <input type="checkbox" class="map-checkbox" id="toggle-paths" checked> Jalur: Aktif
-          </label>
-        </div>
-        <div class="map-option-group">
-          <select class="map-select" id="path-speed">
-            <option>Jalan Kaki (25 KM/Hari)</option>
-            <option>Kuda (50 KM/Hari)</option>
-            <option>Kereta Aetherial (200 KM/Hari)</option>
-            <option>Portal (Instan)</option>
-          </select>
-        </div>
-        <div class="map-option-group" style="margin-left:auto;display:flex;gap:0.4rem;">
-          <button class="map-action-btn" style="padding:0.25rem 0.6rem;font-size:0.75rem;"
-            id="btn-add-path"><iconify-icon icon="lucide:plus"></iconify-icon> + Tambah Jalur</button>
-          <button class="map-action-btn danger" style="padding:0.25rem 0.6rem;font-size:0.75rem;"
-            id="btn-del-path"><iconify-icon icon="lucide:trash-2"></iconify-icon> Hapus Jalur</button>
-        </div>
+        <button class="map-pill-btn" style="margin-left:auto;">+ Tambah Peta</button>
       </div>
 
-      <!-- Map Canvas -->
+      <div class="map-options-bar map-bar-row1">
+        <label class="map-toggle">Batas Wilayah: <button type="button" class="map-toggle-btn active" id="toggle-borders">Aktif</button></label>
+        <label class="map-toggle">Batas Faksi: <button type="button" class="map-toggle-btn active" id="toggle-faksi">Aktif</button></label>
+        <label class="map-toggle">Batas Kelompok: <button type="button" class="map-toggle-btn active" id="toggle-kelompok">Aktif</button></label>
+        <button class="map-pill-btn">+ Tambah Lokasi</button>
+        <button class="map-pill-btn">+ Tambah Faksi</button>
+        <button class="map-pill-btn">+ Tambah Kelompok</button>
+        <button class="map-pill-btn danger" id="btn-del-node"><iconify-icon icon="lucide:trash-2" width="13"></iconify-icon> Hapus Node</button>
+        <span class="map-luas">Atur Luas <span class="map-luas-target" id="radius-target">Pilih node</span><input type="range" id="radius-input" min="40" max="200" value="100"><span id="radius-val">100%</span></span>
+      </div>
+      <div class="map-options-bar map-bar-row2">
+        <select class="map-pill" id="path-speed" style="max-width:190px;">
+          <option>Jalan Kaki (25Km/Hari)</option>
+          <option>Kuda (50Km/Hari)</option>
+          <option>Kereta Aetherial (200Km/Hari)</option>
+          <option>Portal (Instan)</option>
+        </select>
+        <label class="map-toggle">Jalur Perjalanan: <button type="button" class="map-toggle-btn active" id="toggle-paths">Aktif</button></label>
+        <button class="map-pill-btn" id="btn-add-path">+ Tambah Jalur</button>
+        <button class="map-pill-btn danger" id="btn-del-path"><iconify-icon icon="lucide:trash-2" width="13"></iconify-icon> Hapus Jalur</button>
+        <span style="margin-left:auto;display:flex;gap:0.3rem;">
+          <button class="win-btn" title="Zoom In"><iconify-icon icon="lucide:zoom-in"></iconify-icon></button>
+          <button class="win-btn" title="Zoom Out"><iconify-icon icon="lucide:zoom-out"></iconify-icon></button>
+          <button class="win-btn" title="Fullscreen"><iconify-icon icon="lucide:maximize-2"></iconify-icon></button>
+          <button class="win-btn" title="Pan"><iconify-icon icon="lucide:move"></iconify-icon></button>
+          <button class="win-btn" title="Download"><iconify-icon icon="lucide:download"></iconify-icon></button>
+        </span>
+      </div>
+
       <div class="map-canvas-area" id="map-canvas">
         <div class="map-stage" id="map-stage">
           <svg class="map-svg" id="map-svg"></svg>
+          <svg class="map-blob" data-layer="wilayah" data-blob="aldoria" style="top:24%;left:32%;width:300px;height:220px;" viewBox="0 0 300 220"><path d="M60,40 C90,10 170,5 210,30 C250,55 260,110 235,150 C210,190 150,205 100,195 C50,185 15,150 20,105 C25,70 35,60 60,40 Z" fill="none" stroke="#3333ff" stroke-width="2"/></svg>
+          <svg class="map-blob" data-layer="wilayah" data-blob="aethelgard" style="top:52%;left:52%;width:460px;height:340px;" viewBox="0 0 460 340"><path d="M120,60 C170,40 220,90 260,70 C320,45 400,60 410,120 C420,190 430,260 360,290 C280,320 180,300 110,290 C50,280 20,220 45,160 C60,120 80,75 120,60 Z" fill="none" stroke="#3333ff" stroke-width="2"/></svg>
+          <svg class="map-blob" data-layer="wilayah" data-blob="mathumis" style="top:30%;left:79%;width:340px;height:320px;" viewBox="0 0 340 320"><path d="M70,30 C140,10 230,20 270,60 C310,100 315,190 270,240 C225,290 130,300 80,260 C30,220 25,130 70,30 Z" fill="none" stroke="#e11d1d" stroke-width="2"/></svg>
+          <svg class="map-blob" data-layer="wilayah" data-blob="lembah" style="top:74%;left:23%;width:280px;height:180px;" viewBox="0 0 280 180"><path d="M40,60 C80,20 180,15 220,45 C260,75 250,140 200,160 C140,182 60,170 35,130 C20,105 25,80 40,60 Z" fill="none" stroke="#cddc00" stroke-width="2"/></svg>
+          <svg class="map-blob" data-layer="faksi" data-blob="akademi" style="top:68%;left:45%;width:170px;height:120px;" viewBox="0 0 170 120"><path d="M30,30 C60,10 120,10 145,40 C165,65 150,100 110,110 C70,118 25,105 20,75 C17,55 20,40 30,30 Z" fill="none" stroke="#22b8e6" stroke-width="2"/></svg>
+          <svg class="map-blob" data-layer="kelompok" data-blob="fenguard" style="top:68%;left:63%;width:190px;height:130px;" viewBox="0 0 190 130"><path d="M50,20 C90,10 140,20 160,55 C178,85 160,115 115,120 C75,125 30,110 25,80 C22,55 30,30 50,20 Z" fill="none" stroke="#35c835" stroke-width="2"/></svg>
 
-          <!-- Radius Rings (dashed circles) -->
-          <div class="map-radius-ring kingdom" data-ring="aethelgard" style="width:340px;height:340px;top:34%;left:26%;">
-            <span>Kerajaan: Aethelgard</span>
-          </div>
-          <div class="map-radius-ring faction" data-ring="akademi" style="width:260px;height:260px;top:52%;left:52%;">
-            <span>Faksi: Akademi Kristal</span>
-          </div>
-          <div class="map-radius-ring nation" data-ring="valerius" style="width:340px;height:340px;top:32%;left:76%;">
-            <span>Negara: Valerius Dominion</span>
-          </div>
-
-          <!-- Markers -->
-          <div class="map-marker kingdom" data-x="26" data-y="34" style="top:34%;left:26%;" data-id="aethelgard" data-type="kingdom"
-            title="Kerajaan Aethelgard">
-            <iconify-icon icon="lucide:crown" style="color:#c4b5fd;"></iconify-icon>
-            <span class="map-marker-label">Aethelgard</span>
-          </div>
-          <div class="map-marker faction" data-x="52" data-y="52" style="top:52%;left:52%;" data-id="akademi" data-type="faksi"
-            title="Akademi Kristal">
-            <iconify-icon icon="lucide:building-2" style="color:#38bdf8;"></iconify-icon>
-            <span class="map-marker-label">Akademi Kristal</span>
-          </div>
-          <div class="map-marker nation" data-x="76" data-y="32" style="top:32%;left:76%;" data-id="valerius" data-type="nation"
-            title="Valerius Dominion">
-            <iconify-icon icon="lucide:flag" style="color:#f87171;"></iconify-icon>
-            <span class="map-marker-label">Valerius Dominion</span>
-          </div>
-          <div class="map-marker location" data-x="14" data-y="62" style="top:62%;left:14%;" data-id="nadir" data-type="location"
-            title="Pulau Nadir">
-            <iconify-icon icon="lucide:map-pin" style="color:#7dd3fc;"></iconify-icon>
-            <span class="map-marker-label">Pulau Nadir</span>
-          </div>
-          <div class="map-marker location" data-x="40" data-y="78" style="top:78%;left:40%;" data-id="rift" data-type="location"
-            title="Lembah Rift">
-            <iconify-icon icon="lucide:mountain" style="color:#fcd34d;"></iconify-icon>
-            <span class="map-marker-label">Lembah Rift</span>
-          </div>
-          <div class="map-marker location" data-x="62" data-y="80" style="top:80%;left:62%;" data-id="tower" data-type="location"
-            title="Menara Penjaga">
-            <iconify-icon icon="lucide:castle" style="color:#6ee7b7;"></iconify-icon>
-            <span class="map-marker-label">Menara Penjaga</span>
-          </div>
+          <div class="map-node" data-x="32" data-y="30" data-id="aldoria" style="top:30%;left:32%;"><span class="map-dot" style="background:#3333cc;"></span><span class="map-node-name">Aldoria</span></div>
+          <div class="map-node" data-x="52" data-y="56" data-id="aethelgard" style="top:56%;left:52%;"><span class="map-dot" style="background:#0026ff;"></span><span class="map-node-name">Aethelgard</span></div>
+          <div class="map-node" data-x="79" data-y="33" data-id="mathumis" style="top:33%;left:79%;"><span class="map-dot" style="background:#e11d1d;"></span><span class="map-node-name">Mathumis</span></div>
+          <div class="map-node" data-x="45" data-y="68" data-id="akademi" style="top:68%;left:45%;"><span class="map-dot" style="background:#22b8e6;"></span><span class="map-node-name">Akademi Kristral</span></div>
+          <div class="map-node" data-x="63" data-y="68" data-id="fenguard" style="top:68%;left:63%;"><span class="map-dot" style="background:#35c835;"></span><span class="map-node-name">Fenguard</span></div>
+          <div class="map-node" data-x="23" data-y="74" data-id="lembah" style="top:74%;left:23%;"><span class="map-dot" style="background:#e6f000;"></span><span class="map-node-name">Lembah Mujart</span></div>
         </div>
 
-        <!-- Info Panel -->
-        <div class="map-info-panel" id="map-info">
-          <div class="map-info-title"><iconify-icon icon="lucide:map-pin"></iconify-icon> <span id="map-info-name">Pulau Nadir</span></div>
-          <div class="map-info-row"><span class="map-info-label">Tipe</span><span class="map-info-value" id="map-info-type">Lokasi
-              Utama</span></div>
-          <div class="map-info-row"><span class="map-info-label">Koordinat</span><span class="map-info-value" id="map-info-coord">12°S,
-              45°E</span></div>
-          <div class="map-info-row"><span class="map-info-label">Populasi</span><span
-              class="map-info-value" id="map-info-pop">~12.000</span></div>
-          <div class="map-info-row"><span class="map-info-label">Faksi Dominan</span><span class="map-info-value"><span
-                class="badge badge-blue" id="map-info-faction">Akademi Kristal</span></span></div>
-          <div class="map-info-row"><span class="map-info-label">Jalur</span><span class="map-info-value" id="map-info-path">1 hari (Jalan Kaki)</span></div>
+        <div class="map-info-card" id="map-info">
+          <div class="map-info-card-head"><span style="display:inline-flex;align-items:center;gap:0.35rem;"><iconify-icon icon="lucide:map-pin" width="14"></iconify-icon><b id="map-info-name">Aethelgard</b></span><span class="map-info-pill">Lokasi</span></div>
+          <div class="map-info-img"><svg width="90" height="52" viewBox="0 0 90 52"><rect x="1" y="1" width="88" height="50" fill="none" stroke="#555"/><path d="M5,42 L30,18 L48,34 L65,12" fill="none" stroke="#333"/><ellipse cx="68" cy="12" rx="9" ry="5" fill="none" stroke="#333"/><circle cx="28" cy="10" r="3" fill="none" stroke="#333"/></svg></div>
+          <div class="map-info-rows"><div><span>Tipe:</span><b id="map-info-type">Kerajaan</b></div><div><span>Koordinat:</span><b id="map-info-coord">55°L, 124°B</b></div><div><span>Mencangkup:</span><b id="map-info-cover">Akademi Kristral, Fenguard</b></div></div>
+          <div class="map-info-desc" id="map-info-desc">Isi Deskripsi</div>
         </div>
       </div>
     </div>
@@ -468,21 +560,18 @@
 
   <script>
   const MAP_DATA = {
-    aethelgard: { name: 'Kerajaan Aethelgard', type: 'Kerajaan', coord: '47°L, 112°B', pop: '~85.000', faction: 'Mahkota Aethelgard' },
-    akademi: { name: 'Akademi Kristal', type: 'Faksi', coord: '51°L, 118°B', pop: '~3.200', faction: 'Akademi Kristal' },
-    valerius: { name: 'Valerius Dominion', type: 'Negara', coord: '55°L, 124°B', pop: '~120.000', faction: 'Dominion Valerius' },
-    nadir: { name: 'Pulau Nadir', type: 'Lokasi Utama', coord: '12°S, 45°E', pop: '~12.000', faction: 'Akademi Kristal' },
-    rift: { name: 'Lembah Rift', type: 'Lokasi', coord: '18°S, 52°E', pop: '~800', faction: '-' },
-    tower: { name: 'Menara Penjaga', type: 'Lokasi', coord: '21°S, 58°E', pop: '~150', faction: 'Akademi Kristal' },
+    aldoria: { name: 'Aldoria', type: 'Wilayah', coord: '48°L, 110°B', cover: '-', desc: 'Isi Deskripsi' },
+    aethelgard: { name: 'Aethelgard', type: 'Kerajaan', coord: '55°L, 124°B', cover: 'Akademi Kristral, Fenguard', desc: 'Isi Deskripsi' },
+    mathumis: { name: 'Mathumis', type: 'Wilayah', coord: '60°L, 132°B', cover: '-', desc: 'Isi Deskripsi' },
+    akademi: { name: 'Akademi Kristral', type: 'Faksi', coord: '53°L, 120°B', cover: '-', desc: 'Isi Deskripsi' },
+    fenguard: { name: 'Fenguard', type: 'Kelompok', coord: '54°L, 126°B', cover: '-', desc: 'Isi Deskripsi' },
+    lembah: { name: 'Lembah Mujart', type: 'Wilayah', coord: '40°L, 100°B', cover: '-', desc: 'Isi Deskripsi' },
   };
-  const MAP_PATHS = [
-    ['nadir', 'aethelgard'], ['aethelgard', 'akademi'], ['akademi', 'valerius'],
-    ['nadir', 'rift'], ['rift', 'tower'], ['akademi', 'tower'],
-  ];
+  const MAP_PATHS = [['aethelgard', 'lembah', 0.25]];
   const SPEEDS = [25, 50, 200, 0];
   let mapZoom = 1;
 
-  function markerPos(el, rect) {
+  function nodePos(el, rect) {
     return { x: parseFloat(el.dataset.x) / 100 * rect.width, y: parseFloat(el.dataset.y) / 100 * rect.height };
   }
   function drawMapPaths() {
@@ -491,49 +580,111 @@
     if (!canvas || !svg) return;
     const rect = canvas.getBoundingClientRect();
     const els = {};
-    document.querySelectorAll('.map-marker').forEach(m => { els[m.dataset.id] = m; });
+    document.querySelectorAll('.map-node').forEach(m => { els[m.dataset.id] = m; });
     const speed = SPEEDS[document.getElementById('path-speed')?.selectedIndex || 0];
     svg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
-    svg.innerHTML = MAP_PATHS.filter(([a, b]) => els[a] && els[b]).map(([a, b]) => {
-      const p1 = markerPos(els[a], rect), p2 = markerPos(els[b], rect);
-      const dx = (p1.x - p2.x) / rect.width * 100, dy = (p1.y - p2.y) / rect.height * 100;
-      const km = Math.round(Math.hypot(dx, dy) * 12);
-      const label = speed === 0 ? 'instan' : Math.max(1, Math.round(km / speed)) + ' hari';
-      const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
-      return `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#38bdf8" stroke-width="2" stroke-dasharray="7,5" opacity="0.7"/>`
-        + `<circle cx="${p1.x}" cy="${p1.y}" r="3" fill="#38bdf8"/>`
-        + `<circle cx="${p2.x}" cy="${p2.y}" r="3" fill="#38bdf8"/>`
-        + `<text x="${mx}" y="${my - 7}" text-anchor="middle" font-size="10" font-weight="700" fill="#7dd3fc" stroke="#0d121f" stroke-width="3" paint-order="stroke">${km} km</text>`
-        + `<text x="${mx}" y="${my + 7}" text-anchor="middle" font-size="9" fill="#94a3b8" stroke="#0d121f" stroke-width="3" paint-order="stroke">${label}</text>`;
+    svg.innerHTML = MAP_PATHS.filter(([a, b]) => els[a] && els[b]).map(([a, b, bend]) => {
+      const p1 = nodePos(els[a], rect), p2 = nodePos(els[b], rect);
+      const dx = p2.x - p1.x, dy = p2.y - p1.y;
+      const cx = (p1.x + p2.x) / 2 + (bend || 0) * -dy, cy = (p1.y + p2.y) / 2 + (bend || 0) * dx;
+      const len = Math.hypot(2 * (cx - p1.x), 2 * (cy - p1.y));
+      const km = Math.round(357 + len / 10);
+      const days = speed === 0 ? 0 : Math.max(1, Math.round(km / speed));
+      const mode = document.getElementById('path-speed')?.value || '';
+      const jalan = mode.indexOf('Jalan') !== -1 ? 'Berkuda' : mode.split(' ')[0];
+      return `<path d="M${p1.x},${p1.y} Q${cx},${cy} ${p2.x},${p2.y}" fill="none" stroke="#7dd3fc" stroke-width="2.5" stroke-dasharray="7,5" opacity="0.85"/>`
+        + `<text x="${cx}" y="${cy}" text-anchor="middle" font-size="11" font-weight="700" fill="#e2e8f0" stroke="#0d121f" stroke-width="4" paint-order="stroke" transform="rotate(-18 ${cx} ${cy})">${km}Km</text>`
+        + `<text x="${cx}" y="${cy + 13}" text-anchor="middle" font-size="10" fill="#94a3b8" stroke="#0d121f" stroke-width="4" paint-order="stroke" transform="rotate(-18 ${cx} ${cy + 13})">${jalan}</text>`
+        + `<text x="${cx}" y="${cy + 25}" text-anchor="middle" font-size="10" fill="#94a3b8" stroke="#0d121f" stroke-width="4" paint-order="stroke" transform="rotate(-18 ${cx} ${cy + 25})">${days} Hari</text>`;
     }).join('');
   }
-  function selectMarker(el) {
-    document.querySelectorAll('.map-marker').forEach(m => m.classList.remove('active'));
+  let activeNodeId = null;
+  function nodeBlob(id) {
+    const map = { aldoria: 'aldoria', aethelgard: 'aethelgard', mathumis: 'mathumis', lembah: 'lembah', akademi: 'akademi', fenguard: 'fenguard' };
+    const key = map[id];
+    return key ? document.querySelector(`.map-blob[data-blob="${key}"]`) : null;
+  }
+  function syncLuasUI() {
+    const slider = document.getElementById('radius-input');
+    const target = document.getElementById('radius-target');
+    const val = document.getElementById('radius-val');
+    if (!slider) return;
+    if (!activeNodeId || !nodeBlob(activeNodeId)) {
+      slider.disabled = true;
+      if (target) target.textContent = 'Pilih node';
+      if (val) val.textContent = '100%';
+      return;
+    }
+    const b = nodeBlob(activeNodeId);
+    const pct = Math.round((parseFloat(b.dataset.scale || '1')) * 100);
+    slider.disabled = false;
+    slider.value = Math.max(40, Math.min(200, pct));
+    if (target) target.textContent = (MAP_DATA[activeNodeId] || {}).name || activeNodeId;
+    if (val) val.textContent = pct + '%';
+  }
+  function selectNode(el) {
+    document.querySelectorAll('.map-node').forEach(m => m.classList.remove('active'));
     el.classList.add('active');
-    const d = MAP_DATA[el.dataset.id] || { name: el.title, type: '-', coord: '-', pop: '-', faction: '-' };
+    activeNodeId = el.dataset.id;
+    const d = MAP_DATA[activeNodeId] || { name: '-', type: '-', coord: '-', cover: '-', desc: '-' };
     document.getElementById('map-info-name').textContent = d.name;
     document.getElementById('map-info-type').textContent = d.type;
     document.getElementById('map-info-coord').textContent = d.coord;
-    document.getElementById('map-info-pop').textContent = d.pop;
-    document.getElementById('map-info-faction').textContent = d.faction;
+    document.getElementById('map-info-cover').textContent = d.cover;
+    document.getElementById('map-info-desc').textContent = d.desc;
+    syncLuasUI();
   }
-  document.querySelectorAll('.map-marker').forEach(m => m.addEventListener('click', e => { e.stopPropagation(); selectMarker(m); }));
-  document.getElementById('toggle-borders')?.addEventListener('change', e => {
-    document.querySelectorAll('.map-radius-ring').forEach(r => { r.style.display = e.target.checked ? 'flex' : 'none'; });
-  });
-  document.getElementById('toggle-paths')?.addEventListener('change', e => {
+  document.querySelectorAll('.map-node').forEach(m => m.addEventListener('click', e => { e.stopPropagation(); selectNode(m); }));
+  function bindLayerToggle(id, layer) {
+    const b = document.getElementById(id);
+    if (!b) return;
+    b.addEventListener('click', () => {
+      const on = b.textContent.trim() === 'Aktif';
+      b.textContent = on ? 'Mati' : 'Aktif';
+      b.classList.toggle('active', !on);
+      document.querySelectorAll(`.map-blob[data-layer="${layer}"]`).forEach(r => { r.style.display = on ? 'none' : 'block'; });
+    });
+  }
+  bindLayerToggle('toggle-borders', 'wilayah');
+  bindLayerToggle('toggle-faksi', 'faksi');
+  bindLayerToggle('toggle-kelompok', 'kelompok');
+  const tp = document.getElementById('toggle-paths');
+  tp?.addEventListener('click', () => {
+    const on = tp.textContent.trim() === 'Aktif';
+    tp.textContent = on ? 'Mati' : 'Aktif';
+    tp.classList.toggle('active', !on);
     const svg = document.getElementById('map-svg');
-    if (svg) svg.style.display = e.target.checked ? 'block' : 'none';
+    if (svg) svg.style.display = on ? 'none' : 'block';
   });
   document.getElementById('radius-input')?.addEventListener('input', e => {
-    const v = parseInt(e.target.value) || 200;
-    const ring = document.querySelector('.map-radius-ring.kingdom');
-    if (ring) { const base = document.getElementById('map-canvas').getBoundingClientRect().width; const px = Math.max(120, Math.min(520, v / 400 * base * 0.5)); ring.style.width = ring.style.height = px + 'px'; }
+    const v = Math.max(40, Math.min(200, parseInt(e.target.value) || 100));
+    document.getElementById('radius-val').textContent = v + '%';
+    const b = activeNodeId ? nodeBlob(activeNodeId) : null;
+    if (!b) return;
+    if (!b.dataset.baseW) { b.dataset.baseW = parseFloat(b.style.width) || 200; b.dataset.baseH = parseFloat(b.style.height) || 150; }
+    b.dataset.scale = String(v / 100);
+    b.style.width = Math.round(parseFloat(b.dataset.baseW) * v / 100) + 'px';
+    b.style.height = Math.round(parseFloat(b.dataset.baseH) * v / 100) + 'px';
   });
   document.getElementById('path-speed')?.addEventListener('change', drawMapPaths);
   document.querySelector('[title="Zoom In"]')?.addEventListener('click', () => { mapZoom = Math.min(2, mapZoom + 0.2); document.getElementById('map-stage').style.transform = `scale(${mapZoom})`; setTimeout(drawMapPaths, 60); });
   document.querySelector('[title="Zoom Out"]')?.addEventListener('click', () => { mapZoom = Math.max(0.6, mapZoom - 0.2); document.getElementById('map-stage').style.transform = `scale(${mapZoom})`; setTimeout(drawMapPaths, 60); });
+  document.querySelector('[title="Fullscreen"]')?.addEventListener('click', () => { const c = document.getElementById('map-canvas'); if (document.fullscreenElement) document.exitFullscreen(); else c?.requestFullscreen?.(); setTimeout(drawMapPaths, 300); });
+  document.querySelector('[title="Download"]')?.addEventListener('click', () => {
+    const svg = document.getElementById('map-svg');
+    const blob = new Blob([`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">${svg.innerHTML}</svg>`], { type: 'image/svg+xml' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'peta.svg';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  });
+  document.getElementById('btn-del-node')?.addEventListener('click', () => {
+    const a = document.querySelector('.map-node.active');
+    if (a) { a.remove(); drawMapPaths(); }
+  });
   document.getElementById('map-select')?.addEventListener('change', drawMapPaths);
+  syncLuasUI();
   setTimeout(drawMapPaths, 200);
   setTimeout(drawMapPaths, 800);
   window.addEventListener('resize', drawMapPaths);

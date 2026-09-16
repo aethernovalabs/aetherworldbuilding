@@ -10,6 +10,7 @@ const app = new Hono<{ Bindings: Env }>();
 const PAGE_STATE_SCRIPTS = [
 	'<script src="/js/dexie.min.js"></script>',
 	'<script src="/js/aether-state.js"></script>',
+	'<script src="/js/awb-search.js"></script>',
 	"<script>AetherState.trackCurrentPage();</script>",
 ].join("");
 
