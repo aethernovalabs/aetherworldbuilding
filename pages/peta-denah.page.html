@@ -97,8 +97,30 @@
     .map-canvas-area {
       flex: 1;
       position: relative;
-      background: #0d121f;
+      background:
+        linear-gradient(rgba(139, 92, 246, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139, 92, 246, 0.06) 1px, transparent 1px),
+        radial-gradient(ellipse at 30% 40%, rgba(56, 189, 248, 0.08), transparent 55%),
+        radial-gradient(ellipse at 70% 60%, rgba(139, 92, 246, 0.1), transparent 55%),
+        #0d121f;
+      background-size: 32px 32px, 32px 32px, 100% 100%, 100% 100%, auto;
       overflow: hidden;
+      min-height: 520px;
+    }
+
+    .map-stage {
+      position: absolute;
+      inset: 0;
+      transform-origin: center center;
+      transition: transform 0.2s;
+    }
+
+    .map-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
     }
 
     .map-radius-ring {
@@ -106,11 +128,22 @@
       border-radius: 50%;
       border: 2px dashed;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 600;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
       pointer-events: none;
+      transform: translate(-50%, -50%);
+    }
+
+    .map-radius-ring > span {
+      margin-top: 10px;
+      background: rgba(13, 18, 31, 0.85);
+      padding: 0.1rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid currentColor;
+      white-space: nowrap;
     }
 
     .map-radius-ring.kingdom {
@@ -130,24 +163,44 @@
 
     .map-marker {
       position: absolute;
-      width: 28px;
-      height: 28px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: transform 0.15s;
       border: 2px solid;
       background: var(--bg-card);
-      font-size: 0.65rem;
-      font-weight: 700;
       text-align: center;
+      transform: translate(-50%, -50%);
+      z-index: 5;
     }
 
     .map-marker:hover {
-      transform: scale(1.2);
+      transform: translate(-50%, -50%) scale(1.2);
       z-index: 10;
+    }
+
+    .map-marker.active {
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.45);
+    }
+
+    .map-marker-label {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text-main);
+      background: rgba(13, 18, 31, 0.9);
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      pointer-events: none;
     }
 
     .map-marker iconify-icon {
@@ -264,7 +317,7 @@
           <span class="awb-nav-box"><iconify-icon icon="lucide:network" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Graph</span>
         </a>
-        <a class="awb-nav-link active" title="Visual Peta">
+        <a class="awb-nav-link active" href="peta-denah.page.html" title="Visual Peta">
           <span class="awb-nav-box"><iconify-icon icon="lucide:map" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Visual Peta</span>
         </a>
@@ -347,60 +400,65 @@
 
       <!-- Map Canvas -->
       <div class="map-canvas-area" id="map-canvas">
-        <!-- Radius Rings (dashed circles) -->
-        <div class="map-radius-ring kingdom" style="width:360px;height:360px;top:12%;left:10%;">
-          Kerajaan: Aethelgard
-        </div>
-        <div class="map-radius-ring faction" style="width:280px;height:280px;top:35%;left:38%;">
-          Faksi: Akademi Kristal
-        </div>
-        <div class="map-radius-ring nation" style="width:380px;height:380px;top:10%;left:55%;">
-          Negara: Valerius Dominion
-        </div>
+        <div class="map-stage" id="map-stage">
+          <svg class="map-svg" id="map-svg"></svg>
 
-        <!-- Paths (lines between locations) -->
-        <div class="map-path" id="path-kael-lyra" style="width:280px;top:25%;left:22%;transform:rotate(25deg);"></div>
-        <div class="map-path" id="path-kael-valdris" style="width:320px;top:45%;left:30%;transform:rotate(-15deg);">
-        </div>
-        <div class="map-path" id="path-lyra-nadir" style="width:220px;top:50%;left:12%;transform:rotate(40deg);"></div>
+          <!-- Radius Rings (dashed circles) -->
+          <div class="map-radius-ring kingdom" data-ring="aethelgard" style="width:340px;height:340px;top:34%;left:26%;">
+            <span>Kerajaan: Aethelgard</span>
+          </div>
+          <div class="map-radius-ring faction" data-ring="akademi" style="width:260px;height:260px;top:52%;left:52%;">
+            <span>Faksi: Akademi Kristal</span>
+          </div>
+          <div class="map-radius-ring nation" data-ring="valerius" style="width:340px;height:340px;top:32%;left:76%;">
+            <span>Negara: Valerius Dominion</span>
+          </div>
 
-        <!-- Markers -->
-        <div class="map-marker kingdom" style="top:22%;left:18%;" data-id="aethelgard" data-type="kingdom"
-          title="Kerajaan Aethelgard">
-          <iconify-icon icon="lucide:crown" style="color:#c4b5fd;"></iconify-icon>
-        </div>
-        <div class="map-marker faction" style="top:20%;left:52%;" data-id="akademi" data-type="faksi"
-          title="Akademi Kristal">
-          <iconify-icon icon="lucide:building-2" style="color:#38bdf8;"></iconify-icon>
-        </div>
-        <div class="map-marker nation" style="top:25%;left:72%;" data-id="valerius" data-type="nation"
-          title="Valerius Dominion">
-          <iconify-icon icon="lucide:flag" style="color:#f87171;"></iconify-icon>
-        </div>
-        <div class="map-marker location" style="top:42%;left:12%;" data-id="nadir" data-type="location"
-          title="Pulau Nadir">
-          <iconify-icon icon="lucide:map-pin" style="color:#7dd3fc;"></iconify-icon>
-        </div>
-        <div class="map-marker location" style="top:68%;left:38%;" data-id="rift" data-type="location"
-          title="Lembah Rift">
-          <iconify-icon icon="lucide:mountain" style="color:#fcd34d;"></iconify-icon>
-        </div>
-        <div class="map-marker location" style="top:72%;left:58%;" data-id="tower" data-type="location"
-          title="Menara Penjaga">
-          <iconify-icon icon="lucide:castle" style="color:#6ee7b7;"></iconify-icon>
+          <!-- Markers -->
+          <div class="map-marker kingdom" data-x="26" data-y="34" style="top:34%;left:26%;" data-id="aethelgard" data-type="kingdom"
+            title="Kerajaan Aethelgard">
+            <iconify-icon icon="lucide:crown" style="color:#c4b5fd;"></iconify-icon>
+            <span class="map-marker-label">Aethelgard</span>
+          </div>
+          <div class="map-marker faction" data-x="52" data-y="52" style="top:52%;left:52%;" data-id="akademi" data-type="faksi"
+            title="Akademi Kristal">
+            <iconify-icon icon="lucide:building-2" style="color:#38bdf8;"></iconify-icon>
+            <span class="map-marker-label">Akademi Kristal</span>
+          </div>
+          <div class="map-marker nation" data-x="76" data-y="32" style="top:32%;left:76%;" data-id="valerius" data-type="nation"
+            title="Valerius Dominion">
+            <iconify-icon icon="lucide:flag" style="color:#f87171;"></iconify-icon>
+            <span class="map-marker-label">Valerius Dominion</span>
+          </div>
+          <div class="map-marker location" data-x="14" data-y="62" style="top:62%;left:14%;" data-id="nadir" data-type="location"
+            title="Pulau Nadir">
+            <iconify-icon icon="lucide:map-pin" style="color:#7dd3fc;"></iconify-icon>
+            <span class="map-marker-label">Pulau Nadir</span>
+          </div>
+          <div class="map-marker location" data-x="40" data-y="78" style="top:78%;left:40%;" data-id="rift" data-type="location"
+            title="Lembah Rift">
+            <iconify-icon icon="lucide:mountain" style="color:#fcd34d;"></iconify-icon>
+            <span class="map-marker-label">Lembah Rift</span>
+          </div>
+          <div class="map-marker location" data-x="62" data-y="80" style="top:80%;left:62%;" data-id="tower" data-type="location"
+            title="Menara Penjaga">
+            <iconify-icon icon="lucide:castle" style="color:#6ee7b7;"></iconify-icon>
+            <span class="map-marker-label">Menara Penjaga</span>
+          </div>
         </div>
 
         <!-- Info Panel -->
         <div class="map-info-panel" id="map-info">
-          <div class="map-info-title"><iconify-icon icon="lucide:map-pin"></iconify-icon> Pulau Nadir</div>
-          <div class="map-info-row"><span class="map-info-label">Tipe</span><span class="map-info-value">Lokasi
+          <div class="map-info-title"><iconify-icon icon="lucide:map-pin"></iconify-icon> <span id="map-info-name">Pulau Nadir</span></div>
+          <div class="map-info-row"><span class="map-info-label">Tipe</span><span class="map-info-value" id="map-info-type">Lokasi
               Utama</span></div>
-          <div class="map-info-row"><span class="map-info-label">Koordinat</span><span class="map-info-value">12°S,
+          <div class="map-info-row"><span class="map-info-label">Koordinat</span><span class="map-info-value" id="map-info-coord">12°S,
               45°E</span></div>
           <div class="map-info-row"><span class="map-info-label">Populasi</span><span
-              class="map-info-value">~12.000</span></div>
+              class="map-info-value" id="map-info-pop">~12.000</span></div>
           <div class="map-info-row"><span class="map-info-label">Faksi Dominan</span><span class="map-info-value"><span
-                class="badge badge-blue">Akademi Kristal</span></span></div>
+                class="badge badge-blue" id="map-info-faction">Akademi Kristal</span></span></div>
+          <div class="map-info-row"><span class="map-info-label">Jalur</span><span class="map-info-value" id="map-info-path">1 hari (Jalan Kaki)</span></div>
         </div>
       </div>
     </div>
@@ -408,37 +466,78 @@
 
   <script src="/js/awb-sidebar.js"></script>
 
-  <!-- Marker click to show info -->
-  document.querySelectorAll('.map-marker').forEach(marker => {
-  marker.addEventListener('click', (e) => {
-  e.stopPropagation();
-  const info = document.getElementById('map-info');
-  const title = marker.getAttribute('title') || 'Lokasi';
-  info.querySelector('.map-info-title').innerHTML = `<iconify-icon icon="lucide:map-pin"></iconify-icon> ${title}`;
-  });
-  });
+  <script>
+  const MAP_DATA = {
+    aethelgard: { name: 'Kerajaan Aethelgard', type: 'Kerajaan', coord: '47°L, 112°B', pop: '~85.000', faction: 'Mahkota Aethelgard' },
+    akademi: { name: 'Akademi Kristal', type: 'Faksi', coord: '51°L, 118°B', pop: '~3.200', faction: 'Akademi Kristal' },
+    valerius: { name: 'Valerius Dominion', type: 'Negara', coord: '55°L, 124°B', pop: '~120.000', faction: 'Dominion Valerius' },
+    nadir: { name: 'Pulau Nadir', type: 'Lokasi Utama', coord: '12°S, 45°E', pop: '~12.000', faction: 'Akademi Kristal' },
+    rift: { name: 'Lembah Rift', type: 'Lokasi', coord: '18°S, 52°E', pop: '~800', faction: '-' },
+    tower: { name: 'Menara Penjaga', type: 'Lokasi', coord: '21°S, 58°E', pop: '~150', faction: 'Akademi Kristal' },
+  };
+  const MAP_PATHS = [
+    ['nadir', 'aethelgard'], ['aethelgard', 'akademi'], ['akademi', 'valerius'],
+    ['nadir', 'rift'], ['rift', 'tower'], ['akademi', 'tower'],
+  ];
+  const SPEEDS = [25, 50, 200, 0];
+  let mapZoom = 1;
 
-  // Toggle borders
-  document.getElementById('toggle-borders').addEventListener('change', (e) => {
-  document.querySelectorAll('.map-radius-ring').forEach(ring => {
-  ring.style.display = e.target.checked ? 'flex' : 'none';
+  function markerPos(el, rect) {
+    return { x: parseFloat(el.dataset.x) / 100 * rect.width, y: parseFloat(el.dataset.y) / 100 * rect.height };
+  }
+  function drawMapPaths() {
+    const canvas = document.getElementById('map-canvas');
+    const svg = document.getElementById('map-svg');
+    if (!canvas || !svg) return;
+    const rect = canvas.getBoundingClientRect();
+    const els = {};
+    document.querySelectorAll('.map-marker').forEach(m => { els[m.dataset.id] = m; });
+    const speed = SPEEDS[document.getElementById('path-speed')?.selectedIndex || 0];
+    svg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+    svg.innerHTML = MAP_PATHS.filter(([a, b]) => els[a] && els[b]).map(([a, b]) => {
+      const p1 = markerPos(els[a], rect), p2 = markerPos(els[b], rect);
+      const dx = (p1.x - p2.x) / rect.width * 100, dy = (p1.y - p2.y) / rect.height * 100;
+      const km = Math.round(Math.hypot(dx, dy) * 12);
+      const label = speed === 0 ? 'instan' : Math.max(1, Math.round(km / speed)) + ' hari';
+      const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+      return `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#38bdf8" stroke-width="2" stroke-dasharray="7,5" opacity="0.7"/>`
+        + `<circle cx="${p1.x}" cy="${p1.y}" r="3" fill="#38bdf8"/>`
+        + `<circle cx="${p2.x}" cy="${p2.y}" r="3" fill="#38bdf8"/>`
+        + `<text x="${mx}" y="${my - 7}" text-anchor="middle" font-size="10" font-weight="700" fill="#7dd3fc" stroke="#0d121f" stroke-width="3" paint-order="stroke">${km} km</text>`
+        + `<text x="${mx}" y="${my + 7}" text-anchor="middle" font-size="9" fill="#94a3b8" stroke="#0d121f" stroke-width="3" paint-order="stroke">${label}</text>`;
+    }).join('');
+  }
+  function selectMarker(el) {
+    document.querySelectorAll('.map-marker').forEach(m => m.classList.remove('active'));
+    el.classList.add('active');
+    const d = MAP_DATA[el.dataset.id] || { name: el.title, type: '-', coord: '-', pop: '-', faction: '-' };
+    document.getElementById('map-info-name').textContent = d.name;
+    document.getElementById('map-info-type').textContent = d.type;
+    document.getElementById('map-info-coord').textContent = d.coord;
+    document.getElementById('map-info-pop').textContent = d.pop;
+    document.getElementById('map-info-faction').textContent = d.faction;
+  }
+  document.querySelectorAll('.map-marker').forEach(m => m.addEventListener('click', e => { e.stopPropagation(); selectMarker(m); }));
+  document.getElementById('toggle-borders')?.addEventListener('change', e => {
+    document.querySelectorAll('.map-radius-ring').forEach(r => { r.style.display = e.target.checked ? 'flex' : 'none'; });
   });
+  document.getElementById('toggle-paths')?.addEventListener('change', e => {
+    const svg = document.getElementById('map-svg');
+    if (svg) svg.style.display = e.target.checked ? 'block' : 'none';
   });
-
-  // Toggle paths
-  document.getElementById('toggle-paths').addEventListener('change', (e) => {
-  document.querySelectorAll('.map-path').forEach(path => {
-  path.style.display = e.target.checked ? 'block' : 'none';
+  document.getElementById('radius-input')?.addEventListener('input', e => {
+    const v = parseInt(e.target.value) || 200;
+    const ring = document.querySelector('.map-radius-ring.kingdom');
+    if (ring) { const base = document.getElementById('map-canvas').getBoundingClientRect().width; const px = Math.max(120, Math.min(520, v / 400 * base * 0.5)); ring.style.width = ring.style.height = px + 'px'; }
   });
-  });
-
-  // Radius input
-  document.getElementById('radius-input').addEventListener('input', (e) => {
-  const val = parseInt(e.target.value) || 200;
-  document.querySelectorAll('.map-radius-ring.kingdom').forEach(ring => {
-  ring.style.width = ring.style.height = val + 'px';
-  });
-  });
+  document.getElementById('path-speed')?.addEventListener('change', drawMapPaths);
+  document.querySelector('[title="Zoom In"]')?.addEventListener('click', () => { mapZoom = Math.min(2, mapZoom + 0.2); document.getElementById('map-stage').style.transform = `scale(${mapZoom})`; setTimeout(drawMapPaths, 60); });
+  document.querySelector('[title="Zoom Out"]')?.addEventListener('click', () => { mapZoom = Math.max(0.6, mapZoom - 0.2); document.getElementById('map-stage').style.transform = `scale(${mapZoom})`; setTimeout(drawMapPaths, 60); });
+  document.getElementById('map-select')?.addEventListener('change', drawMapPaths);
+  setTimeout(drawMapPaths, 200);
+  setTimeout(drawMapPaths, 800);
+  window.addEventListener('resize', drawMapPaths);
+  window.addEventListener('load', drawMapPaths);
   </script>
 </body>
 
