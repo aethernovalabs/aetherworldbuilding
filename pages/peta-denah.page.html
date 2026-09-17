@@ -24,7 +24,13 @@
       border-bottom: 1px solid var(--border);
       flex-wrap: wrap;
     }
-    .map-topbar-title { font-weight: 800; font-size: 1.05rem; color: var(--text-main); }
+
+    .map-topbar-title {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--text-main);
+    }
+
     .map-topbar-group {
       display: flex;
       align-items: center;
@@ -35,7 +41,13 @@
       background: var(--bg-dark);
       flex-wrap: wrap;
     }
-    .map-pill-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+
+    .map-pill-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
     .map-pill {
       border: 1px solid var(--border);
       border-radius: 999px;
@@ -45,6 +57,7 @@
       color: var(--text-main);
       max-width: 340px;
     }
+
     .map-pill-btn {
       border: 1px solid var(--border);
       border-radius: 999px;
@@ -60,9 +73,22 @@
       white-space: nowrap;
       transition: border-color 0.15s, background 0.15s;
     }
-    .map-pill-btn[hidden] { display: none !important; }
-    .map-pill-btn:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
-    .map-pill-btn.danger { color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1); }
+
+    .map-pill-btn[hidden] {
+      display: none !important;
+    }
+
+    .map-pill-btn:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    .map-pill-btn.danger {
+      color: #fca5a5;
+      border-color: rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
     .map-options-bar {
       padding: 0.45rem 0.9rem;
       background: #0d121f;
@@ -74,7 +100,14 @@
       font-size: 0.78rem;
       flex-wrap: wrap;
     }
-    .map-toggle { display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 600; }
+
+    .map-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+
     .map-toggle-btn {
       border: 1px solid var(--border);
       border-radius: 999px;
@@ -85,10 +118,35 @@
       padding: 0.1rem 0.5rem;
       cursor: pointer;
     }
-    .map-toggle-btn.active { background: rgba(139, 92, 246, 0.15); border-color: var(--primary); color: #c4b5fd; }
-    .map-luas { margin-left: auto; display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 700; color: var(--text-main); }
-    .map-luas input[type="range"] { width: 180px; accent-color: var(--primary); }
-    .map-luas-target { font-size: 0.72rem; color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 999px; padding: 0.05rem 0.5rem; }
+
+    .map-toggle-btn.active {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: var(--primary);
+      color: #c4b5fd;
+    }
+
+    .map-luas {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .map-luas input[type="range"] {
+      width: 180px;
+      accent-color: var(--primary);
+    }
+
+    .map-luas-target {
+      font-size: 0.72rem;
+      color: #c4b5fd;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      border-radius: 999px;
+      padding: 0.05rem 0.5rem;
+    }
+
     .map-toolbar {
       padding: 1rem 1.75rem;
       border-bottom: 1px solid var(--border);
@@ -180,6 +238,32 @@
       overflow: hidden;
       min-height: 560px;
     }
+    
+    .map-stage {
+      position: absolute;
+      inset: 0;
+      transform-origin: center center;
+      transition: transform 0.2s;
+    }
+    
+    .map-stage-bg {
+      position: absolute;
+      inset: 0;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: 0;
+    }
+    
+    .map-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
     .map-blob {
       position: absolute;
       transform: translate(-50%, -50%);
@@ -187,22 +271,49 @@
       filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.25));
       opacity: 0.9;
       transition: transform 0.3s ease-out;
+      z-index: 2;
     }
-    .map-blob.dragging { animation: slowRotate 8s linear infinite; }
+
+    .map-blob.dragging {
+      animation: slowRotate 8s linear infinite;
+    }
+
     .map-blob path {
       stroke-dasharray: 8, 6;
       fill: rgba(51, 51, 255, 0.08);
       stroke-width: 2;
     }
-    .map-blob[data-layer="wilayah"] path { stroke: #3333ff; }
-    .map-blob[data-layer="faksi"] path { stroke: #22b8e6; }
-    .map-blob[data-layer="kelompok"] path { stroke: #35c835; }
-    .map-blob[data-layer="wilayah"][data-blob="mathumis"] path { stroke: #e11d1d; }
-    .map-blob[data-layer="wilayah"][data-blob="lembah"] path { stroke: #cddc00; }
-    @keyframes slowRotate {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to { transform: translate(-50%, -50%) rotate(360deg); }
+
+    .map-blob[data-layer="wilayah"] path {
+      stroke: #3333ff;
     }
+
+    .map-blob[data-layer="faksi"] path {
+      stroke: #22b8e6;
+    }
+
+    .map-blob[data-layer="kelompok"] path {
+      stroke: #35c835;
+    }
+
+    .map-blob[data-layer="wilayah"][data-blob="mathumis"] path {
+      stroke: #e11d1d;
+    }
+
+    .map-blob[data-layer="wilayah"][data-blob="lembah"] path {
+      stroke: #cddc00;
+    }
+
+    @keyframes slowRotate {
+      from {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+
+      to {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
     .map-node {
       position: absolute;
       transform: translate(-50%, -50%);
@@ -214,8 +325,16 @@
       z-index: 5;
       touch-action: none;
     }
-    .map-node:active, .map-node.dragging { cursor: grabbing; }
-    .map-node.dragging { z-index: 15; }
+
+    .map-node:active,
+    .map-node.dragging {
+      cursor: grabbing;
+    }
+
+    .map-node.dragging {
+      z-index: 15;
+    }
+
     .map-dot {
       width: 18px;
       height: 18px;
@@ -223,6 +342,7 @@
       border: 2px solid #0d121f;
       box-shadow: 0 0 10px currentColor;
     }
+
     .map-node-name {
       font-size: 0.72rem;
       font-weight: 700;
@@ -233,11 +353,30 @@
       padding: 0.05rem 0.5rem;
       white-space: nowrap;
     }
-    .map-node.active .map-dot { box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.55), 0 0 12px currentColor; }
-    .map-node.active .map-node-name { border-color: var(--primary); color: #c4b5fd; }
-    .map-bar-row2 .win-btn { color: var(--text-muted); }
-    .map-bar-row2 .win-btn:hover { background: var(--bg-surface); color: var(--text-main); }
-    .map-toggle-btn:not(.active) { opacity: 0.55; text-decoration: line-through; }
+
+    .map-node.active .map-dot {
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.55), 0 0 12px currentColor;
+    }
+
+    .map-node.active .map-node-name {
+      border-color: var(--primary);
+      color: #c4b5fd;
+    }
+
+    .map-bar-row2 .win-btn {
+      color: var(--text-muted);
+    }
+
+    .map-bar-row2 .win-btn:hover {
+      background: var(--bg-surface);
+      color: var(--text-main);
+    }
+
+    .map-toggle-btn:not(.active) {
+      opacity: 0.55;
+      text-decoration: line-through;
+    }
+
     .map-info-card {
       position: absolute;
       right: 1rem;
@@ -253,7 +392,11 @@
       overflow: hidden;
       display: none;
     }
-    .map-info-card.show { display: block; }
+
+    .map-info-card.show {
+      display: block;
+    }
+
     .map-info-card-head {
       display: flex;
       align-items: center;
@@ -262,14 +405,61 @@
       background: #0d121f;
       padding: 0.4rem 0.6rem;
     }
-    .map-info-pill { border: 1px solid rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.12); color: #c4b5fd; border-radius: 999px; padding: 0 0.5rem; font-size: 0.68rem; font-weight: 700; }
-    .map-info-img { display: flex; justify-content: center; padding: 0.5rem; border-bottom: 1px solid var(--border); background: var(--bg-dark); }
-    .map-info-img svg rect, .map-info-img svg path, .map-info-img svg ellipse, .map-info-img svg circle { stroke: var(--text-faint); }
-    .map-info-rows { padding: 0.45rem 0.6rem; display: flex; flex-direction: column; gap: 0.2rem; border-bottom: 1px solid var(--border); }
-    .map-info-rows > div { display: flex; justify-content: space-between; gap: 0.5rem; }
-    .map-info-rows span { color: var(--text-faint); }
-    .map-info-rows b { font-weight: 700; text-align: right; color: var(--text-main); }
-    .map-info-desc { padding: 0.6rem 0.6rem 0.9rem; text-align: center; color: var(--text-muted); }
+
+    .map-info-pill {
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      background: rgba(139, 92, 246, 0.12);
+      color: #c4b5fd;
+      border-radius: 999px;
+      padding: 0 0.5rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .map-info-img {
+      display: flex;
+      justify-content: center;
+      padding: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-dark);
+    }
+
+    .map-info-img svg rect,
+    .map-info-img svg path,
+    .map-info-img svg ellipse,
+    .map-info-img svg circle {
+      stroke: var(--text-faint);
+    }
+
+    .map-info-rows {
+      padding: 0.45rem 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .map-info-rows>div {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .map-info-rows span {
+      color: var(--text-faint);
+    }
+
+    .map-info-rows b {
+      font-weight: 700;
+      text-align: right;
+      color: var(--text-main);
+    }
+
+    .map-info-desc {
+      padding: 0.6rem 0.6rem 0.9rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
 
     .map-stage {
       position: absolute;
@@ -277,7 +467,7 @@
       transform-origin: center center;
       transition: transform 0.2s;
     }
-
+    
     .map-svg {
       position: absolute;
       inset: 0;
@@ -300,7 +490,7 @@
       transform: translate(-50%, -50%);
     }
 
-    .map-radius-ring > span {
+    .map-radius-ring>span {
       margin-top: 10px;
       background: rgba(13, 18, 31, 0.85);
       padding: 0.1rem 0.5rem;
@@ -432,6 +622,141 @@
       color: var(--text-main);
       font-weight: 600;
     }
+
+    .map-image-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .map-image-modal.show {
+      display: flex;
+    }
+
+    .map-image-frame {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 90%;
+      max-width: 700px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .map-image-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0d121f;
+    }
+
+    .map-image-header h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    .map-image-body {
+      padding: 1.25rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .map-image-preview {
+      width: 100%;
+      height: 300px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+
+    .map-image-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .map-image-preview-empty {
+      color: var(--text-faint);
+      font-size: 0.85rem;
+    }
+
+    .map-image-input-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .map-image-input {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-size: 0.85rem;
+    }
+
+    .map-image-btn {
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      transition: all 0.15s;
+    }
+
+    .map-image-btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+    }
+
+    .map-image-btn.primary {
+      background: rgba(139, 92, 246, 0.12);
+      border-color: rgba(139, 92, 246, 0.3);
+      color: #c4b5fd;
+    }
+
+    .map-image-btn.primary:hover {
+      background: rgba(139, 92, 246, 0.2);
+    }
+
+    .map-image-btn.danger {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    .map-image-btn.danger:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    .map-image-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      background: #0d121f;
+    }
   </style>
 </head>
 
@@ -514,38 +839,113 @@
             <option>Peta Pulau Nadir</option>
             <option>Peta Pulau Aethelgard</option>
           </select>
-          <button class="map-pill-btn"><iconify-icon icon="lucide:pen-line" width="13"></iconify-icon> Rename</button>
-          <button class="map-pill-btn danger"><iconify-icon icon="lucide:trash-2" width="13"></iconify-icon> Hapus Peta</button>
-          <button class="map-pill-btn"><iconify-icon icon="lucide:image" width="13"></iconify-icon> Gambar Peta</button>
+          <button class="map-pill-btn" id="btn-rename-map"><iconify-icon icon="lucide:pen-line" width="13"></iconify-icon> Rename</button>
+          <button class="map-pill-btn danger" id="btn-delete-map"><iconify-icon icon="lucide:trash-2" width="13"></iconify-icon> Hapus
+            Peta</button>
+          <button class="map-pill-btn" id="btn-open-image-modal"><iconify-icon icon="lucide:image" width="13"></iconify-icon> Gambar Peta</button>
         </div>
-        <button class="map-pill-btn" style="margin-left:auto;">+ Tambah Peta</button>
+        <button class="map-pill-btn" style="margin-left:auto;" id="btn-add-map">+ Tambah Peta</button>
       </div>
 
       <div class="map-options-bar map-bar-row1">
-        <label class="map-toggle">Batas Wilayah: <button type="button" class="map-toggle-btn active" id="toggle-borders">Aktif</button></label>
-        <label class="map-toggle">Batas Faksi: <button type="button" class="map-toggle-btn active" id="toggle-faksi">Aktif</button></label>
-        <label class="map-toggle">Batas Kelompok: <button type="button" class="map-toggle-btn active" id="toggle-kelompok">Aktif</button></label>
+        <label class="map-toggle">Batas Wilayah: <button type="button" class="map-toggle-btn active"
+            id="toggle-borders">Aktif</button></label>
+        <label class="map-toggle">Batas Faksi: <button type="button" class="map-toggle-btn active"
+            id="toggle-faksi">Aktif</button></label>
+        <label class="map-toggle">Batas Kelompok: <button type="button" class="map-toggle-btn active"
+            id="toggle-kelompok">Aktif</button></label>
         <button class="map-pill-btn" id="btn-add-lokasi">+ Tambah Lokasi</button>
         <button class="map-pill-btn" id="btn-add-faksi">+ Tambah Faksi</button>
         <button class="map-pill-btn" id="btn-add-kelompok">+ Tambah Kelompok</button>
-        <button class="map-pill-btn danger" id="btn-del-node" hidden><iconify-icon icon="lucide:trash-2" width="13"></iconify-icon> Hapus Node</button>
+        <button class="map-pill-btn danger" id="btn-del-node" hidden><iconify-icon icon="lucide:trash-2"
+            width="13"></iconify-icon> Hapus Node</button>
         <span class="map-luas">Atur Luas <span class="map-luas-target" id="radius-target">Pilih node</span>
           <div class="map-luas-control" style="display:flex;align-items:center;gap:0.5rem;">
             <div class="map-slider-wrap" style="position:relative;width:200px;height:28px;">
-              <input type="range" id="radius-input" min="0" max="100" value="50" style="width:100%;height:6px;-webkit-appearance:none;appearance:none;background:var(--border);border-radius:3px;outline:none;cursor:pointer;accent-color:var(--primary);">
+              <input type="range" id="radius-input" min="0" max="100" value="50"
+                style="width:100%;height:6px;-webkit-appearance:none;appearance:none;background:var(--border);border-radius:3px;outline:none;cursor:pointer;accent-color:var(--primary);">
             </div>
-            <input type="number" id="radius-number" min="0" value="0" style="width:80px;padding:0.25rem 0.5rem;border:1px solid var(--border);border-radius:4px;background:var(--bg-dark);color:var(--text-main);text-align:center;">
+            <input type="number" id="radius-number" min="0" value="0"
+              style="width:80px;padding:0.25rem 0.5rem;border:1px solid var(--border);border-radius:4px;background:var(--bg-dark);color:var(--text-main);text-align:center;">
           </div>
         </span>
         <style>
-          .map-luas-control { display:flex;align-items:center;gap:0.4rem; }
-          .map-luas-btn { width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-main);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s; }
-          .map-luas-btn:hover { background:var(--primary);color:#fff;border-color:var(--primary); }
-          .map-slider-wrap { position:relative;width:180px;height:28px; }
-          .map-slider-wrap input[type="range"] { width:100%;height:6px;-webkit-appearance:none;appearance:none;background:var(--border);border-radius:3px;outline:none;cursor:pointer;accent-color:var(--primary); }
-          .map-slider-wrap input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--primary);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);cursor:grab;transition:transform 0.15s; }
-          .map-slider-wrap input[type="range"]:active::-webkit-slider-thumb { transform:scale(1.15); }
-          .slider-knob { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:var(--primary);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);pointer-events:none;transition:left 0.15s ease-out;z-index:1; }
+          .map-luas-control {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+          }
+
+          .map-luas-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-surface);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+          }
+
+          .map-luas-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+          }
+
+          .map-slider-wrap {
+            position: relative;
+            width: 180px;
+            height: 28px;
+          }
+
+          .map-slider-wrap input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+            accent-color: var(--primary);
+          }
+
+          .map-slider-wrap input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid #fff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            cursor: grab;
+            transition: transform 0.15s;
+          }
+
+          .map-slider-wrap input[type="range"]:active::-webkit-slider-thumb {
+            transform: scale(1.15);
+          }
+
+          .slider-knob {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid #fff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            transition: left 0.15s ease-out;
+            z-index: 1;
+          }
         </style>
       </div>
       <div class="map-options-bar map-bar-row2">
@@ -555,9 +955,11 @@
           <option>Kereta Aetherial (200Km/Hari)</option>
           <option>Portal (Instan)</option>
         </select>
-        <label class="map-toggle">Jalur Perjalanan: <button type="button" class="map-toggle-btn active" id="toggle-paths">Aktif</button></label>
+        <label class="map-toggle">Jalur Perjalanan: <button type="button" class="map-toggle-btn active"
+            id="toggle-paths">Aktif</button></label>
         <button class="map-pill-btn" id="btn-add-path">+ Tambah Jalur</button>
-        <button class="map-pill-btn danger" id="btn-del-path" hidden><iconify-icon icon="lucide:trash-2" width="13"></iconify-icon> Hapus Jalur</button>
+        <button class="map-pill-btn danger" id="btn-del-path" hidden><iconify-icon icon="lucide:trash-2"
+            width="13"></iconify-icon> Hapus Jalur</button>
         <span style="margin-left:auto;display:flex;gap:0.3rem;">
           <button class="win-btn" title="Zoom In"><iconify-icon icon="lucide:zoom-in"></iconify-icon></button>
           <button class="win-btn" title="Zoom Out"><iconify-icon icon="lucide:zoom-out"></iconify-icon></button>
@@ -569,28 +971,99 @@
 
       <div class="map-canvas-area" id="map-canvas">
         <div class="map-stage" id="map-stage">
+          <div class="map-stage-bg" id="map-stage-bg"></div>
           <svg class="map-svg" id="map-svg"></svg>
-          <svg class="map-blob" data-layer="wilayah" data-blob="aldoria" data-node="aldoria" data-seed="112233" style="top:24%;left:32%;width:300px;height:220px;" preserveAspectRatio="none"><path d="M60,40 C90,10 170,5 210,30 C250,55 260,110 235,150 C210,190 150,205 100,195 C50,185 15,150 20,105 C25,70 35,60 60,40 Z" fill="none" stroke="#3333ff" stroke-width="2"/></svg>
-          <svg class="map-blob" data-layer="wilayah" data-blob="aethelgard" data-node="aethelgard" data-seed="445566" style="top:52%;left:52%;width:460px;height:340px;" preserveAspectRatio="none"><path d="M120,60 C170,40 220,90 260,70 C320,45 400,60 410,120 C420,190 430,260 360,290 C280,320 180,300 110,290 C50,280 20,220 45,160 C60,120 80,75 120,60 Z" fill="none" stroke="#3333ff" stroke-width="2"/></svg>
-          <svg class="map-blob" data-layer="wilayah" data-blob="mathumis" data-node="mathumis" data-seed="778899" style="top:30%;left:79%;width:340px;height:320px;" preserveAspectRatio="none"><path d="M70,30 C140,10 230,20 270,60 C310,100 315,190 270,240 C225,290 130,300 80,260 C30,220 25,130 70,30 Z" fill="none" stroke="#e11d1d" stroke-width="2"/></svg>
-          <svg class="map-blob" data-layer="wilayah" data-blob="lembah" data-node="lembah" data-seed="11223344" style="top:74%;left:23%;width:280px;height:180px;" preserveAspectRatio="none"><path d="M40,60 C80,20 180,15 220,45 C260,75 250,140 200,160 C140,182 60,170 35,130 C20,105 25,80 40,60 Z" fill="none" stroke="#cddc00" stroke-width="2"/></svg>
-          <svg class="map-blob" data-layer="faksi" data-blob="akademi" data-node="akademi" data-seed="556677" style="top:68%;left:45%;width:170px;height:120px;" preserveAspectRatio="none"><path d="M30,30 C60,10 120,10 145,40 C165,65 150,100 110,110 C70,118 25,105 20,75 C17,55 20,40 30,30 Z" fill="none" stroke="#22b8e6" stroke-width="2"/></svg>
-          <svg class="map-blob" data-layer="kelompok" data-blob="fenguard" data-node="fenguard" data-seed="889900" style="top:68%;left:63%;width:190px;height:130px;" preserveAspectRatio="none"><path d="M50,20 C90,10 140,20 160,55 C178,85 160,115 115,120 C75,125 30,110 25,80 C22,55 30,30 50,20 Z" fill="none" stroke="#35c835" stroke-width="2"/></svg>
+          <svg class="map-svg" id="map-svg"></svg>
+          <svg class="map-blob" data-layer="wilayah" data-blob="aldoria" data-node="aldoria" data-seed="112233"
+            style="top:24%;left:32%;width:300px;height:220px;" preserveAspectRatio="none">
+            <path
+              d="M60,40 C90,10 170,5 210,30 C250,55 260,110 235,150 C210,190 150,205 100,195 C50,185 15,150 20,105 C25,70 35,60 60,40 Z"
+              fill="none" stroke="#3333ff" stroke-width="2" />
+          </svg>
+          <svg class="map-blob" data-layer="wilayah" data-blob="aethelgard" data-node="aethelgard" data-seed="445566"
+            style="top:52%;left:52%;width:460px;height:340px;" preserveAspectRatio="none">
+            <path
+              d="M120,60 C170,40 220,90 260,70 C320,45 400,60 410,120 C420,190 430,260 360,290 C280,320 180,300 110,290 C50,280 20,220 45,160 C60,120 80,75 120,60 Z"
+              fill="none" stroke="#3333ff" stroke-width="2" />
+          </svg>
+          <svg class="map-blob" data-layer="wilayah" data-blob="mathumis" data-node="mathumis" data-seed="778899"
+            style="top:30%;left:79%;width:340px;height:320px;" preserveAspectRatio="none">
+            <path
+              d="M70,30 C140,10 230,20 270,60 C310,100 315,190 270,240 C225,290 130,300 80,260 C30,220 25,130 70,30 Z"
+              fill="none" stroke="#e11d1d" stroke-width="2" />
+          </svg>
+          <svg class="map-blob" data-layer="wilayah" data-blob="lembah" data-node="lembah" data-seed="11223344"
+            style="top:74%;left:23%;width:280px;height:180px;" preserveAspectRatio="none">
+            <path d="M40,60 C80,20 180,15 220,45 C260,75 250,140 200,160 C140,182 60,170 35,130 C20,105 25,80 40,60 Z"
+              fill="none" stroke="#cddc00" stroke-width="2" />
+          </svg>
+          <svg class="map-blob" data-layer="faksi" data-blob="akademi" data-node="akademi" data-seed="556677"
+            style="top:68%;left:45%;width:170px;height:120px;" preserveAspectRatio="none">
+            <path d="M30,30 C60,10 120,10 145,40 C165,65 150,100 110,110 C70,118 25,105 20,75 C17,55 20,40 30,30 Z"
+              fill="none" stroke="#22b8e6" stroke-width="2" />
+          </svg>
+          <svg class="map-blob" data-layer="kelompok" data-blob="fenguard" data-node="fenguard" data-seed="889900"
+            style="top:68%;left:63%;width:190px;height:130px;" preserveAspectRatio="none">
+            <path d="M50,20 C90,10 140,20 160,55 C178,85 160,115 115,120 C75,125 30,110 25,80 C22,55 30,30 50,20 Z"
+              fill="none" stroke="#35c835" stroke-width="2" />
+          </svg>
 
-          <div class="map-node" data-x="32" data-y="30" data-id="aldoria" style="top:30%;left:32%;"><span class="map-dot" style="background:#3333cc;"></span><span class="map-node-name">Aldoria</span></div>
-          <div class="map-node" data-x="52" data-y="56" data-id="aethelgard" style="top:56%;left:52%;"><span class="map-dot" style="background:#0026ff;"></span><span class="map-node-name">Aethelgard</span></div>
-          <div class="map-node" data-x="79" data-y="33" data-id="mathumis" style="top:33%;left:79%;"><span class="map-dot" style="background:#e11d1d;"></span><span class="map-node-name">Mathumis</span></div>
-          <div class="map-node" data-x="45" data-y="68" data-id="akademi" style="top:68%;left:45%;"><span class="map-dot" style="background:#22b8e6;"></span><span class="map-node-name">Akademi Kristral</span></div>
-          <div class="map-node" data-x="63" data-y="68" data-id="fenguard" style="top:68%;left:63%;"><span class="map-dot" style="background:#35c835;"></span><span class="map-node-name">Fenguard</span></div>
-          <div class="map-node" data-x="23" data-y="74" data-id="lembah" style="top:74%;left:23%;"><span class="map-dot" style="background:#e6f000;"></span><span class="map-node-name">Lembah Mujart</span></div>
+          <div class="map-node" data-x="32" data-y="30" data-id="aldoria" style="top:30%;left:32%;"><span
+              class="map-dot" style="background:#3333cc;"></span><span class="map-node-name">Aldoria</span></div>
+          <div class="map-node" data-x="52" data-y="56" data-id="aethelgard" style="top:56%;left:52%;"><span
+              class="map-dot" style="background:#0026ff;"></span><span class="map-node-name">Aethelgard</span></div>
+          <div class="map-node" data-x="79" data-y="33" data-id="mathumis" style="top:33%;left:79%;"><span
+              class="map-dot" style="background:#e11d1d;"></span><span class="map-node-name">Mathumis</span></div>
+          <div class="map-node" data-x="45" data-y="68" data-id="akademi" style="top:68%;left:45%;"><span
+              class="map-dot" style="background:#22b8e6;"></span><span class="map-node-name">Akademi Kristral</span>
+          </div>
+          <div class="map-node" data-x="63" data-y="68" data-id="fenguard" style="top:68%;left:63%;"><span
+              class="map-dot" style="background:#35c835;"></span><span class="map-node-name">Fenguard</span></div>
+          <div class="map-node" data-x="23" data-y="74" data-id="lembah" style="top:74%;left:23%;"><span class="map-dot"
+              style="background:#e6f000;"></span><span class="map-node-name">Lembah Mujart</span></div>
         </div>
 
         <div class="map-info-card" id="map-info">
-          <div class="map-info-card-head"><span style="display:inline-flex;align-items:center;gap:0.35rem;"><iconify-icon icon="lucide:map-pin" width="14"></iconify-icon><b id="map-info-name">Aethelgard</b></span><span class="map-info-pill">Lokasi</span></div>
-          <div class="map-info-img"><svg width="90" height="52" viewBox="0 0 90 52"><rect x="1" y="1" width="88" height="50" fill="none" stroke="#555"/><path d="M5,42 L30,18 L48,34 L65,12" fill="none" stroke="#333"/><ellipse cx="68" cy="12" rx="9" ry="5" fill="none" stroke="#333"/><circle cx="28" cy="10" r="3" fill="none" stroke="#333"/></svg></div>
-          <div class="map-info-rows"><div><span>Tipe:</span><b id="map-info-type">Kerajaan</b></div><div><span>Koordinat:</span><b id="map-info-coord">55°L, 124°B</b></div><div><span>Mencangkup:</span><b id="map-info-cover">Akademi Kristral, Fenguard</b></div></div>
+          <div class="map-info-card-head"><span
+              style="display:inline-flex;align-items:center;gap:0.35rem;"><iconify-icon icon="lucide:map-pin"
+                width="14"></iconify-icon><b id="map-info-name">Aethelgard</b></span><span
+              class="map-info-pill">Lokasi</span></div>
+          <div class="map-info-img"><svg width="90" height="52" viewBox="0 0 90 52">
+              <rect x="1" y="1" width="88" height="50" fill="none" stroke="#555" />
+              <path d="M5,42 L30,18 L48,34 L65,12" fill="none" stroke="#333" />
+              <ellipse cx="68" cy="12" rx="9" ry="5" fill="none" stroke="#333" />
+              <circle cx="28" cy="10" r="3" fill="none" stroke="#333" />
+            </svg></div>
+          <div class="map-info-rows">
+            <div><span>Tipe:</span><b id="map-info-type">Kerajaan</b></div>
+            <div><span>Koordinat:</span><b id="map-info-coord">55°L, 124°B</b></div>
+            <div><span>Mencangkup:</span><b id="map-info-cover">Akademi Kristral, Fenguard</b></div>
+          </div>
           <div class="map-info-desc" id="map-info-desc">Isi Deskripsi</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="map-image-modal" id="map-image-modal">
+    <div class="map-image-frame">
+      <div class="map-image-header">
+        <h3>Gambar Peta</h3>
+        <button class="win-btn" id="btn-close-image-modal" title="Tutup">&times;</button>
+      </div>
+      <div class="map-image-body">
+        <div class="map-image-preview" id="image-preview">
+          <span class="map-image-preview-empty">Preview gambar akan muncul di sini</span>
+        </div>
+        <div class="map-image-input-group">
+          <input type="text" class="map-image-input" id="image-url-input" placeholder="Masukkan URL gambar...">
+          <button class="map-image-btn primary" id="btn-check-image">Cek</button>
+        </div>
+        <button class="map-image-btn danger" id="btn-remove-image" style="width:100%;">Hapus Gambar (Kembali ke Default)</button>
+      </div>
+      <div class="map-image-footer">
+        <button class="map-image-btn" id="btn-cancel-image">Batal</button>
+        <button class="map-image-btn primary" id="btn-save-image">Save</button>
       </div>
     </div>
   </div>
@@ -598,608 +1071,830 @@
   <script src="/js/awb-sidebar.js"></script>
 
   <script>
-  const MAP_DATA = {
-    aldoria: { name: 'Aldoria', type: 'Wilayah', coord: '48°L, 110°B', cover: '-', desc: 'Isi Deskripsi' },
-    aethelgard: { name: 'Aethelgard', type: 'Kerajaan', coord: '55°L, 124°B', cover: 'Akademi Kristral, Fenguard', desc: 'Isi Deskripsi' },
-    mathumis: { name: 'Mathumis', type: 'Wilayah', coord: '60°L, 132°B', cover: '-', desc: 'Isi Deskripsi' },
-    akademi: { name: 'Akademi Kristral', type: 'Faksi', coord: '53°L, 120°B', cover: '-', desc: 'Isi Deskripsi' },
-    fenguard: { name: 'Fenguard', type: 'Kelompok', coord: '54°L, 126°B', cover: '-', desc: 'Isi Deskripsi' },
-    lembah: { name: 'Lembah Mujart', type: 'Wilayah', coord: '40°L, 100°B', cover: '-', desc: 'Isi Deskripsi' },
-  };
+    const MAPS = {
+      map1: {
+        name: 'Peta Dimensi Primal (Aethelgar, Aldoria, Mathumis)',
+        nodes: {},
+        blobs: {},
+        customPaths: [],
+        backgroundImage: null
+      },
+      map2: {
+        name: 'Peta Pulau Nadir',
+        nodes: {},
+        blobs: {},
+        customPaths: [],
+        backgroundImage: null
+      },
+      map3: {
+        name: 'Peta Pulau Aethelgard',
+        nodes: {},
+        blobs: {},
+        customPaths: [],
+        backgroundImage: null
+      }
+    };
+    let currentMapId = 'map1';
+    let tempImageUrl = null;
+    
+    const MAP_DATA = {
+      aldoria: { name: 'Aldoria', type: 'Wilayah', coord: '48°L, 110°B', cover: '-', desc: 'Isi Deskripsi' },
+      aethelgard: { name: 'Aethelgard', type: 'Kerajaan', coord: '55°L, 124°B', cover: 'Akademi Kristral, Fenguard', desc: 'Isi Deskripsi' },
+      mathumis: { name: 'Mathumis', type: 'Wilayah', coord: '60°L, 132°B', cover: '-', desc: 'Isi Deskripsi' },
+      akademi: { name: 'Akademi Kristral', type: 'Faksi', coord: '53°L, 120°B', cover: '-', desc: 'Isi Deskripsi' },
+      fenguard: { name: 'Fenguard', type: 'Kelompok', coord: '54°L, 126°B', cover: '-', desc: 'Isi Deskripsi' },
+      lembah: { name: 'Lembah Mujart', type: 'Wilayah', coord: '40°L, 100°B', cover: '-', desc: 'Isi Deskripsi' },
+    };
   const MAP_PATHS = [];
   const CUSTOM_PATHS = []; // [{points: [{x, y}], id}]
   const SPEEDS = [25, 50, 200, 0];
   let mapZoom = 1;
+  let mapPanX = 0;
+  let mapPanY = 0;
+  let isPanning = false;
   let pathMode = false;
   let currentPathPoints = [];
 
-  function nodePos(el, rect) {
-    return { x: parseFloat(el.dataset.x) / 100 * rect.width, y: parseFloat(el.dataset.y) / 100 * rect.height };
-  }
-  function drawMapPaths() {
-    const canvas = document.getElementById('map-canvas');
-    const svg = document.getElementById('map-svg');
-    if (!canvas || !svg) return;
-    const rect = canvas.getBoundingClientRect();
-    const els = {};
-    document.querySelectorAll('.map-node').forEach(m => { els[m.dataset.id] = m; });
-    const speed = SPEEDS[document.getElementById('path-speed')?.selectedIndex || 0];
-    svg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
-    
-    let html = '';
-    
-    // Node-to-node paths
-    html += MAP_PATHS.filter(([a, b]) => els[a] && els[b]).map(([a, b, bend], i) => {
-      const p1 = nodePos(els[a], rect), p2 = nodePos(els[b], rect);
-      const dx = p2.x - p1.x, dy = p2.y - p1.y;
-      const cx = (p1.x + p2.x) / 2 + (bend || 0) * -dy, cy = (p1.y + p2.y) / 2 + (bend || 0) * dx;
-      const len = Math.hypot(2 * (cx - p1.x), 2 * (cy - p1.y));
-      const km = Math.round(357 + len / 10);
-      const days = speed === 0 ? 0 : Math.max(1, Math.round(km / speed));
-      const mode = document.getElementById('path-speed')?.value || '';
-      const jalan = mode.indexOf('Jalan') !== -1 ? 'Berkuda' : mode.split(' ')[0];
-      const cls = activePathIdx === i && activePathType === 'node' ? 'map-path-hit active' : 'map-path-hit';
-      return `<path class="${cls}" data-path="${i}" data-pathtype="node" d="M${p1.x},${p1.y} Q${cx},${cy} ${p2.x},${p2.y}" fill="none" stroke="#7dd3fc" stroke-width="${activePathIdx === i && activePathType === 'node' ? 5 : 2.5}" stroke-dasharray="7,5" opacity="${activePathIdx === i && activePathType === 'node' ? 1 : 0.85}" style="cursor:pointer;pointer-events:stroke;"/>`
-        + `<text x="${cx}" y="${cy}" text-anchor="middle" font-size="11" font-weight="700" fill="#e2e8f0" stroke="#0d121f" stroke-width="4" paint-order="stroke" transform="rotate(-18 ${cx} ${cy})">${km}Km</text>`
-        + `<text x="${cx}" y="${cy + 13}" text-anchor="middle" font-size="10" fill="#94a3b8" stroke="#0d121f" stroke-width="4" paint-order="stroke" transform="rotate(-18 ${cx} ${cy + 13})">${jalan}</text>`
-        + `<text x="${cx}" y="${cy + 25}" text-anchor="middle" font-size="10" fill="#94a3b8" stroke="#0d121f" stroke-width="4" paint-order="stroke" transform="rotate(-18 ${cx} ${cy + 25})">${days} Hari</text>`;
-    }).join('');
-    
-    // Custom paths
-    CUSTOM_PATHS.forEach((pathObj, idx) => {
-      const pts = pathObj.points;
-      if (pts.length < 2) return;
-      const isActive = activePathIdx === idx && activePathType === 'custom';
-      const pathStr = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
-      html += `<path class="map-path-hit" data-path="${idx}" data-pathtype="custom" d="${pathStr}" fill="none" stroke="#7dd3fc" stroke-width="${isActive ? 5 : 2.5}" stroke-dasharray="7,5" opacity="${isActive ? 1 : 0.85}" style="cursor:pointer;pointer-events:stroke;"/>`;
-      pts.forEach((p, i) => {
-        html += `<circle cx="${p.x}" cy="${p.y}" r="4" fill="#38bdf8" stroke="#0d121f" stroke-width="2"/>`;
+    function nodePos(el, rect) {
+      return { x: parseFloat(el.dataset.x) / 100 * rect.width, y: parseFloat(el.dataset.y) / 100 * rect.height };
+    }
+    function drawMapPaths() {
+      const canvas = document.getElementById('map-canvas');
+      const svg = document.getElementById('map-svg');
+      if (!canvas || !svg) return;
+      const rect = canvas.getBoundingClientRect();
+      const els = {};
+      document.querySelectorAll('.map-node').forEach(m => { els[m.dataset.id] = m; });
+      const speed = SPEEDS[document.getElementById('path-speed')?.selectedIndex || 0];
+      svg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+
+      let html = '';
+
+      // Node-to-node paths
+      html += MAP_PATHS.filter(([a, b]) => els[a] && els[b]).map(([a, b, bend], i) => {
+        const p1 = nodePos(els[a], rect), p2 = nodePos(els[b], rect);
+        const dx = p2.x - p1.x, dy = p2.y - p1.y;
+        const cx = (p1.x + p2.x) / 2 + (bend || 0) * -dy, cy = (p1.y + p2.y) / 2 + (bend || 0) * dx;
+        const len = Math.hypot(2 * (cx - p1.x), 2 * (cy - p1.y));
+        const km = Math.round(357 + len / 10);
+        const days = speed === 0 ? 0 : Math.max(1, Math.round(km / speed));
+        const mode = document.getElementById('path-speed')?.value || '';
+        const jalan = mode.indexOf('Jalan') !== -1 ? 'Berkuda' : mode.split(' ')[0];
+        const cls = activePathIdx === i && activePathType === 'node' ? 'map-path-hit active' : 'map-path-hit';
+        return `<path class="${cls}" data-path="${i}" data-pathtype="node" d="M${p1.x},${p1.y} Q${cx},${cy} ${p2.x},${p2.y}" fill="none" stroke="#7dd3fc" stroke-width="${activePathIdx === i && activePathType === 'node' ? 5 : 2.5}" stroke-dasharray="7,5" opacity="${activePathIdx === i && activePathType === 'node' ? 1 : 0.85}" style="cursor:pointer;pointer-events:stroke;"/>`
+          + `<text x="${cx}" y="${cy}" text-anchor="middle" font-size="11" font-weight="700" fill="#e2e8f0" stroke="#0d121f" stroke-width="4" paint-order="stroke" transform="rotate(-18 ${cx} ${cy})">${km}Km</text>`
+          + `<text x="${cx}" y="${cy + 13}" text-anchor="middle" font-size="10" fill="#94a3b8" stroke="#0d121f" stroke-width="4" paint-order="stroke" transform="rotate(-18 ${cx} ${cy + 13})">${jalan}</text>`
+          + `<text x="${cx}" y="${cy + 25}" text-anchor="middle" font-size="10" fill="#94a3b8" stroke="#0d121f" stroke-width="4" paint-order="stroke" transform="rotate(-18 ${cx} ${cy + 25})">${days} Hari</text>`;
+      }).join('');
+
+      // Custom paths
+      CUSTOM_PATHS.forEach((pathObj, idx) => {
+        const pts = pathObj.points;
+        if (pts.length < 2) return;
+        const isActive = activePathIdx === idx && activePathType === 'custom';
+        const pathStr = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+        html += `<path class="map-path-hit" data-path="${idx}" data-pathtype="custom" d="${pathStr}" fill="none" stroke="#7dd3fc" stroke-width="${isActive ? 5 : 2.5}" stroke-dasharray="7,5" opacity="${isActive ? 1 : 0.85}" style="cursor:pointer;pointer-events:stroke;"/>`;
+        pts.forEach((p, i) => {
+          html += `<circle cx="${p.x}" cy="${p.y}" r="4" fill="#38bdf8" stroke="#0d121f" stroke-width="2"/>`;
+        });
       });
-    });
-    
-    // Current drawing path
-    if (pathMode && currentPathPoints.length > 0) {
-      const pts = currentPathPoints;
-      const pathStr = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
-      html += `<path d="${pathStr}" fill="none" stroke="#c4b5fd" stroke-width="3" stroke-dasharray="7,5" opacity="0.8"/>`;
-      pts.forEach(p => {
-        html += `<circle cx="${p.x}" cy="${p.y}" r="5" fill="#c4b5fd" stroke="#0d121f" stroke-width="2"/>`;
-      });
-    }
-    
-    svg.innerHTML = html;
-  }
-  let activeNodeId = null;
-  let activePathIdx = -1;
-  let activePathType = null;
-  function syncBlobs() {
-    document.querySelectorAll('.map-node').forEach(n => {
-      const id = n.dataset.id;
-      const x = n.dataset.x, y = n.dataset.y;
-      document.querySelectorAll(`.map-blob[data-node="${id}"]`).forEach(b => {
-        b.style.left = x + '%';
-        b.style.top = y + '%';
-      });
-    });
-  }
-  function clearSelection() {
-    document.querySelectorAll('.map-node').forEach(m => m.classList.remove('active'));
-    activeNodeId = null;
-    activePathIdx = -1;
-    activePathType = null;
-    document.getElementById('btn-del-node').hidden = true;
-    document.getElementById('btn-del-path').hidden = true;
-    document.getElementById('map-info').classList.remove('show');
-    syncLuasUI();
-    drawMapPaths();
-  }
-  function nodeBlob(id) {
-    return document.querySelector(`.map-blob[data-node="${id}"]`);
-  }
-  function seededRandom(seed) { let x = Math.sin(seed) * 10000; return x - Math.floor(x); }
-  function noise2D(x, y, seed = 0) { const n = Math.sin(x * 12.9898 + y * 78.233 + seed * 43758.5453); return (n * 43758.5453) - Math.floor(n * 43758.5453); }
-  function smoothNoise(angle, baseRadius, seed, octaves = 3) {
-    let value = 0, amp = 1, freq = 1, maxAmp = 0;
-    for (let i = 0; i < 3; i++) {
-      value += amp * (function(x,y,s){ const n=Math.sin(x*12.9898+y*78.233+s*43758.5453); return (n*43758.5453)-Math.floor(n*43758.5453); })(Math.cos(angle)*freq, Math.sin(angle)*freq, seed+i*100);
-      amp *= 0.5; freq *= 2;
-    }
-    return 0.7 + 0.3 * (value / 3);
-  }
-  function catmullRomToBezier(points, tension = 0.2) {
-    if (points.length < 4) return '';
-    let d = '';
-    for (let i = 0; i < points.length; i++) {
-      const p0 = points[(i-1+points.length)%points.length], p1 = points[i], p2 = points[(i+1)%points.length], p3 = points[(i+2)%points.length];
-      const cp1x = p1.x + (p2.x - p0.x) * 0.2 / 6;
-      const cp1y = p1.y + (p0.y - p2.y) * 0.2 / 6;
-      const cp2x = p2.x + (p1.x - points[(i+3)%points.length].x) * 0.2 / 6;
-      const cp2y = p2.y + (points[(i+3)%points.length].y - p1.y) * 0.2 / 6;
-      if (i === 0) d = `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} `;
-      else d += `L${p1.x.toFixed(1)},${p1.y.toFixed(1)} `;
-      d += `C${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${(p1.x + (p2.x-p1.x)*0.5).toFixed(1)},${(p1.y + (p2.y-p1.y)*0.5).toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)} `;
-    }
-    return d + 'Z';
-  }
-  function seededNoise(angle, seed) {
-    let v=0, a=1, f=1, m=0;
-    for(let i=0;i<3;i++){
-      v+=noise2D(Math.cos(angle)*f, Math.sin(angle)*f, seed+i*100)*a;
-      m+=a; a*=0.5; f*=2;
-    }
-    return 0.7 + 0.3 * (v/3);
-  }
-  function seededNoise(angle, seed) {
-    let v=0, a=1, f=1, m=0;
-    for(let i=0;i<3;i++){
-      v+=noise2D(Math.cos(angle)*f, Math.sin(angle)*f, seed+i*100)*a;
-      m+=a; a*=0.5; f*=2;
-    }
-    return 0.7 + 0.3 * (v/3);
-  }
-  function noise2D(x,y,s){ const n=Math.sin(x*12.9898+y*78.233+s*43758.5453); return (n*43758.5453)-Math.floor(n*43758.5453); }
-  function organicBlobPath(w, h, seed = Date.now()) {
-    const cx = w / 2, cy = h / 2;
-    const baseRx = w / 2 * 0.9, baseRy = h / 2 * 0.9;
-    const pts = 24;
-    const points = [];
-    for (let i = 0; i < pts; i++) {
-      const angle = (i / pts) * Math.PI * 2;
-      const r = seededNoise(angle, seed);
-      const rx = baseRx * r, ry = baseRy * r;
-      points.push({ x: cx + Math.cos(angle) * rx, y: cy + Math.sin(angle) * ry });
-    }
-    if (points.length < 4) return '';
-    let d = '';
-    for (let i = 0; i < points.length; i++) {
-      const p0 = points[(i-1+pts)%pts], p1 = points[i], p2 = points[(i+1)%pts], p3 = points[(i+2)%pts];
-      const cp1x = p1.x + (p2.x - points[(i-1+pts)%pts].x) * 0.2 / 6;
-      const cp1y = p1.y + (points[(i-1+pts)%pts].y - p2.y) * 0.2 / 6;
-      const cp2x = p2.x + (p1.x - points[(i+3)%pts].x) * 0.2 / 6;
-      const cp2y = p2.y + (points[(i+3)%pts].y - p1.y) * 0.2 / 6;
-      if (i === 0) d = `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} `;
-      else d += `L${p1.x.toFixed(1)},${p1.y.toFixed(1)} `;
-      d += `C${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${(p1.x + (points[(i+1)%pts].x-p1.x)*0.5).toFixed(1)},${(p1.y + (points[(i+1)%pts].y-p1.y)*0.5).toFixed(1)} ${points[(i+1)%pts].x.toFixed(1)},${points[(i+1)%pts].y.toFixed(1)} `;
-    }
-    return d + 'Z';
-  }
-  function noise2D(x,y,s){ const n=Math.sin(x*12.9898+y*78.233+s*43758.5453); return (n*43758.5453)-Math.floor(n*43758.5453); }
-  function detectCoverage(nodeId) {
-    const blob = nodeBlob(nodeId);
-    const node = document.querySelector(`.map-node[data-id="${nodeId}"]`);
-    if (!blob || !node) return [];
-    
-    const canvas = document.getElementById('map-canvas');
-    const rect = canvas.getBoundingClientRect();
-    
-    // Blob position and size (note: blob has transform: translate(-50%, -50%))
-    const blobW = parseFloat(blob.style.width) || 0;
-    const blobH = parseFloat(blob.style.height) || 0;
-    const blobCenterX = parseFloat(node.dataset.x) / 100 * rect.width;
-    const blobCenterY = parseFloat(node.dataset.y) / 100 * rect.height;
-    
-    // Blob uses organic shape, approximate as ellipse with 90% of stated dimensions (due to organic irregularity)
-    const blobRadiusX = (blobW / 2) * 0.45; // Much stricter - only ~45% of visual width
-    const blobRadiusY = (blobH / 2) * 0.45;
-    
-    const covered = [];
-    document.querySelectorAll('.map-node').forEach(n => {
-      if (n.dataset.id === nodeId) return;
-      const nx = parseFloat(n.dataset.x) / 100 * rect.width;
-      const ny = parseFloat(n.dataset.y) / 100 * rect.height;
-      
-      // Check if the node CENTER point is inside the blob ellipse
-      const dx = nx - blobCenterX;
-      const dy = ny - blobCenterY;
-      const normalizedDist = (dx * dx) / (blobRadiusX * blobRadiusX) + (dy * dy) / (blobRadiusY * blobRadiusY);
-      
-      // Only add if node center is strictly inside
-      if (normalizedDist < 1) {
-        const name = (MAP_DATA[n.dataset.id] || {}).name || n.dataset.id;
-        covered.push(name);
+
+      // Current drawing path
+      if (pathMode && currentPathPoints.length > 0) {
+        const pts = currentPathPoints;
+        const pathStr = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+        html += `<path d="${pathStr}" fill="none" stroke="#c4b5fd" stroke-width="3" stroke-dasharray="7,5" opacity="0.8"/>`;
+        pts.forEach(p => {
+          html += `<circle cx="${p.x}" cy="${p.y}" r="5" fill="#c4b5fd" stroke="#0d121f" stroke-width="2"/>`;
+        });
       }
-    });
-    
-    return covered;
-  }
-  
-  function updateCoverageInfo() {
-    if (!activeNodeId) return;
-    const covered = detectCoverage(activeNodeId);
-    const coverText = covered.length > 0 ? covered.join(', ') : '-';
-    document.getElementById('map-info-cover').textContent = coverText;
-    
-    // Update MAP_DATA
-    if (MAP_DATA[activeNodeId]) {
-      MAP_DATA[activeNodeId].cover = coverText;
+
+      svg.innerHTML = html;
     }
-  }
-  
-  function blobSize(b) {
-    return parseInt(b.dataset.size, 10) || parseFloat(b.style.width) || 0;
-  }
-  function applyBlobSize(b, size) {
-    if (!b.dataset.baseW) { b.dataset.baseW = parseFloat(b.style.width) || 200; b.dataset.baseH = parseFloat(b.style.height) || 150; }
-    const ratio = parseFloat(b.dataset.baseH) / parseFloat(b.dataset.baseW);
-    if (size <= 0) { b.style.display = 'none'; b.dataset.size = '0'; return; }
-    b.style.display = '';
-    b.dataset.size = String(size);
-    b.style.width = size + 'px';
-    b.style.height = Math.round(size * ratio) + 'px';
-    const path = b.querySelector('path');
-    if (path) path.setAttribute('d', organicBlobPath(size, size * ratio, parseInt(b.dataset.seed, 10) || Date.now()));
-    updateCoverageInfo();
-  }
-  function syncLuasUI() {
-    const slider = document.getElementById('radius-input');
-    const numberInput = document.getElementById('radius-number');
-    const target = document.getElementById('radius-target');
-    if (!slider) return;
-    const b = activeNodeId ? nodeBlob(activeNodeId) : null;
-    if (!activeNodeId || !b) {
-      slider.disabled = true;
-      if (numberInput) numberInput.disabled = true;
-      if (target) target.textContent = 'Pilih node';
-      if (numberInput) numberInput.value = '0';
-      return;
+    let activeNodeId = null;
+    let activePathIdx = -1;
+    let activePathType = null;
+    function syncBlobs() {
+      document.querySelectorAll('.map-node').forEach(n => {
+        const id = n.dataset.id;
+        const x = n.dataset.x, y = n.dataset.y;
+        document.querySelectorAll(`.map-blob[data-node="${id}"]`).forEach(b => {
+          b.style.left = x + '%';
+          b.style.top = y + '%';
+        });
+      });
     }
-    slider.disabled = false;
-    if (numberInput) numberInput.disabled = false;
-    if (target) target.textContent = (MAP_DATA[activeNodeId] || {}).name || activeNodeId;
-    const size = blobSize(b);
-    if (numberInput) numberInput.value = String(size);
-  }
-  function selectNode(el) {
-    activePathIdx = -1;
-    activePathType = null;
-    document.getElementById('btn-del-path').hidden = true;
-    document.querySelectorAll('.map-node').forEach(m => m.classList.remove('active'));
-    el.classList.add('active');
-    activeNodeId = el.dataset.id;
-    document.getElementById('btn-del-node').hidden = false;
-    document.getElementById('map-info').classList.add('show');
-    const d = MAP_DATA[activeNodeId] || { name: '-', type: '-', coord: '-', cover: '-', desc: '-' };
-    document.getElementById('map-info-name').textContent = d.name;
-    document.getElementById('map-info-type').textContent = d.type;
-    document.getElementById('map-info-coord').textContent = d.coord;
-    const covered = detectCoverage(activeNodeId);
-    const coverText = covered.length > 0 ? covered.join(', ') : '-';
-    document.getElementById('map-info-cover').textContent = coverText;
-    document.getElementById('map-info-desc').textContent = d.desc;
-    syncLuasUI();
-  }
-  document.querySelectorAll('.map-node').forEach(m => {
-    m.addEventListener('click', e => { e.stopPropagation(); selectNode(m); });
-    m.addEventListener('pointerdown', e => {
-      if (e.button !== 0) return;
-      e.preventDefault();
-      e.stopPropagation();
-      selectNode(m);
+    function clearSelection() {
+      document.querySelectorAll('.map-node').forEach(m => m.classList.remove('active'));
+      activeNodeId = null;
+      activePathIdx = -1;
+      activePathType = null;
+      document.getElementById('btn-del-node').hidden = true;
+      document.getElementById('btn-del-path').hidden = true;
+      document.getElementById('map-info').classList.remove('show');
+      syncLuasUI();
+      drawMapPaths();
+    }
+    function nodeBlob(id) {
+      return document.querySelector(`.map-blob[data-node="${id}"]`);
+    }
+    function seededRandom(seed) { let x = Math.sin(seed) * 10000; return x - Math.floor(x); }
+    function noise2D(x, y, seed = 0) { const n = Math.sin(x * 12.9898 + y * 78.233 + seed * 43758.5453); return (n * 43758.5453) - Math.floor(n * 43758.5453); }
+    function smoothNoise(angle, baseRadius, seed, octaves = 3) {
+      let value = 0, amp = 1, freq = 1, maxAmp = 0;
+      for (let i = 0; i < 3; i++) {
+        value += amp * (function (x, y, s) { const n = Math.sin(x * 12.9898 + y * 78.233 + s * 43758.5453); return (n * 43758.5453) - Math.floor(n * 43758.5453); })(Math.cos(angle) * freq, Math.sin(angle) * freq, seed + i * 100);
+        amp *= 0.5; freq *= 2;
+      }
+      return 0.7 + 0.3 * (value / 3);
+    }
+    function catmullRomToBezier(points, tension = 0.2) {
+      if (points.length < 4) return '';
+      let d = '';
+      for (let i = 0; i < points.length; i++) {
+        const p0 = points[(i - 1 + points.length) % points.length], p1 = points[i], p2 = points[(i + 1) % points.length], p3 = points[(i + 2) % points.length];
+        const cp1x = p1.x + (p2.x - p0.x) * 0.2 / 6;
+        const cp1y = p1.y + (p0.y - p2.y) * 0.2 / 6;
+        const cp2x = p2.x + (p1.x - points[(i + 3) % points.length].x) * 0.2 / 6;
+        const cp2y = p2.y + (points[(i + 3) % points.length].y - p1.y) * 0.2 / 6;
+        if (i === 0) d = `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} `;
+        else d += `L${p1.x.toFixed(1)},${p1.y.toFixed(1)} `;
+        d += `C${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${(p1.x + (p2.x - p1.x) * 0.5).toFixed(1)},${(p1.y + (p2.y - p1.y) * 0.5).toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)} `;
+      }
+      return d + 'Z';
+    }
+    function seededNoise(angle, seed) {
+      let v = 0, a = 1, f = 1, m = 0;
+      for (let i = 0; i < 3; i++) {
+        v += noise2D(Math.cos(angle) * f, Math.sin(angle) * f, seed + i * 100) * a;
+        m += a; a *= 0.5; f *= 2;
+      }
+      return 0.7 + 0.3 * (v / 3);
+    }
+    function seededNoise(angle, seed) {
+      let v = 0, a = 1, f = 1, m = 0;
+      for (let i = 0; i < 3; i++) {
+        v += noise2D(Math.cos(angle) * f, Math.sin(angle) * f, seed + i * 100) * a;
+        m += a; a *= 0.5; f *= 2;
+      }
+      return 0.7 + 0.3 * (v / 3);
+    }
+    function noise2D(x, y, s) { const n = Math.sin(x * 12.9898 + y * 78.233 + s * 43758.5453); return (n * 43758.5453) - Math.floor(n * 43758.5453); }
+    function organicBlobPath(w, h, seed = Date.now()) {
+      const cx = w / 2, cy = h / 2;
+      const baseRx = w / 2 * 0.9, baseRy = h / 2 * 0.9;
+      const pts = 24;
+      const points = [];
+      for (let i = 0; i < pts; i++) {
+        const angle = (i / pts) * Math.PI * 2;
+        const r = seededNoise(angle, seed);
+        const rx = baseRx * r, ry = baseRy * r;
+        points.push({ x: cx + Math.cos(angle) * rx, y: cy + Math.sin(angle) * ry });
+      }
+      if (points.length < 4) return '';
+      let d = '';
+      for (let i = 0; i < points.length; i++) {
+        const p0 = points[(i - 1 + pts) % pts], p1 = points[i], p2 = points[(i + 1) % pts], p3 = points[(i + 2) % pts];
+        const cp1x = p1.x + (p2.x - points[(i - 1 + pts) % pts].x) * 0.2 / 6;
+        const cp1y = p1.y + (points[(i - 1 + pts) % pts].y - p2.y) * 0.2 / 6;
+        const cp2x = p2.x + (p1.x - points[(i + 3) % pts].x) * 0.2 / 6;
+        const cp2y = p2.y + (points[(i + 3) % pts].y - p1.y) * 0.2 / 6;
+        if (i === 0) d = `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} `;
+        else d += `L${p1.x.toFixed(1)},${p1.y.toFixed(1)} `;
+        d += `C${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${(p1.x + (points[(i + 1) % pts].x - p1.x) * 0.5).toFixed(1)},${(p1.y + (points[(i + 1) % pts].y - p1.y) * 0.5).toFixed(1)} ${points[(i + 1) % pts].x.toFixed(1)},${points[(i + 1) % pts].y.toFixed(1)} `;
+      }
+      return d + 'Z';
+    }
+    function noise2D(x, y, s) { const n = Math.sin(x * 12.9898 + y * 78.233 + s * 43758.5453); return (n * 43758.5453) - Math.floor(n * 43758.5453); }
+    function detectCoverage(nodeId) {
+      const blob = nodeBlob(nodeId);
+      const node = document.querySelector(`.map-node[data-id="${nodeId}"]`);
+      if (!blob || !node) return [];
+
       const canvas = document.getElementById('map-canvas');
       const rect = canvas.getBoundingClientRect();
-      const startX = e.clientX, startY = e.clientY;
-      const origX = parseFloat(m.dataset.x), origY = parseFloat(m.dataset.y);
-      m.classList.add('dragging');
-      function move(ev) {
-        const nx = Math.max(0, Math.min(100, origX + (ev.clientX - startX) / rect.width * 100));
-        const ny = Math.max(0, Math.min(100, origY + (ev.clientY - startY) / rect.height * 100));
-        m.dataset.x = nx.toFixed(2);
-        m.dataset.y = ny.toFixed(2);
-        m.style.left = nx + '%';
-        m.style.top = ny + '%';
-        syncBlobs();
-        updateCoverageInfo();
-        if (activePathIdx >= 0) { activePathIdx = -1; document.getElementById('btn-del-path').hidden = true; }
-        drawMapPaths();
-      }
-      function up(ev) {
-        m.classList.remove('dragging');
-        document.removeEventListener('pointermove', move);
-        document.removeEventListener('pointerup', up);
-        document.removeEventListener('pointercancel', up);
-      }
-      document.addEventListener('pointermove', move);
-      document.addEventListener('pointerup', up);
-      document.addEventListener('pointercancel', up);
-    });
-  });
-  document.getElementById('map-svg').addEventListener('click', e => {
-    const p = e.target.closest('[data-path]');
-    if (!p) return;
-    e.stopPropagation();
-    activePathIdx = parseInt(p.dataset.path, 10);
-    activePathType = p.dataset.pathtype;
-    activeNodeId = null;
-    document.querySelectorAll('.map-node').forEach(m => m.classList.remove('active'));
-    document.getElementById('btn-del-node').hidden = true;
-    document.getElementById('btn-del-path').hidden = false;
-    
-    if (activePathType === 'node') {
-      const [pa, pb] = MAP_PATHS[activePathIdx] || [];
-      const da = MAP_DATA[pa] || { name: '-' }, db = MAP_DATA[pb] || { name: '-' };
-      document.getElementById('map-info-name').textContent = da.name + ' ↔ ' + db.name;
-    } else {
-      document.getElementById('map-info-name').textContent = 'Jalur Custom';
+
+      // Blob position and size (note: blob has transform: translate(-50%, -50%))
+      const blobW = parseFloat(blob.style.width) || 0;
+      const blobH = parseFloat(blob.style.height) || 0;
+      const blobCenterX = parseFloat(node.dataset.x) / 100 * rect.width;
+      const blobCenterY = parseFloat(node.dataset.y) / 100 * rect.height;
+
+      // Blob uses organic shape, approximate as ellipse with 90% of stated dimensions (due to organic irregularity)
+      const blobRadiusX = (blobW / 2) * 0.72; // Much stricter - only ~45% of visual width
+      const blobRadiusY = (blobH / 2) * 0.72;
+
+      const covered = [];
+      document.querySelectorAll('.map-node').forEach(n => {
+        if (n.dataset.id === nodeId) return;
+        const nx = parseFloat(n.dataset.x) / 100 * rect.width;
+        const ny = parseFloat(n.dataset.y) / 100 * rect.height;
+
+        // Check if the node CENTER point is inside the blob ellipse
+        const dx = nx - blobCenterX;
+        const dy = ny - blobCenterY;
+        const normalizedDist = (dx * dx) / (blobRadiusX * blobRadiusX) + (dy * dy) / (blobRadiusY * blobRadiusY);
+
+        // Only add if node center is strictly inside
+        if (normalizedDist < 1) {
+          const name = (MAP_DATA[n.dataset.id] || {}).name || n.dataset.id;
+          covered.push(name);
+        }
+      });
+
+      return covered;
     }
-    document.getElementById('map-info-type').textContent = 'Jalur';
-    document.getElementById('map-info-coord').textContent = '-';
-    document.getElementById('map-info-cover').textContent = '-';
-    document.getElementById('map-info-desc').textContent = 'Klik Hapus Jalur untuk menghapus';
-    document.getElementById('map-info').classList.add('show');
-    drawMapPaths();
-  });
+
+    function updateCoverageInfo() {
+      if (!activeNodeId) return;
+      const covered = detectCoverage(activeNodeId);
+      const coverText = covered.length > 0 ? covered.join(', ') : '-';
+      document.getElementById('map-info-cover').textContent = coverText;
+
+      // Update MAP_DATA
+      if (MAP_DATA[activeNodeId]) {
+        MAP_DATA[activeNodeId].cover = coverText;
+      }
+    }
+
+    function blobSize(b) {
+      return parseInt(b.dataset.size, 10) || parseFloat(b.style.width) || 0;
+    }
+    function applyBlobSize(b, size) {
+      if (!b.dataset.baseW) { b.dataset.baseW = parseFloat(b.style.width) || 200; b.dataset.baseH = parseFloat(b.style.height) || 150; }
+      const ratio = parseFloat(b.dataset.baseH) / parseFloat(b.dataset.baseW);
+      if (size <= 0) { b.style.display = 'none'; b.dataset.size = '0'; return; }
+      b.style.display = '';
+      b.dataset.size = String(size);
+      b.style.width = size + 'px';
+      b.style.height = Math.round(size * ratio) + 'px';
+      const path = b.querySelector('path');
+      if (path) path.setAttribute('d', organicBlobPath(size, size * ratio, parseInt(b.dataset.seed, 10) || Date.now()));
+      updateCoverageInfo();
+    }
+    function syncLuasUI() {
+      const slider = document.getElementById('radius-input');
+      const numberInput = document.getElementById('radius-number');
+      const target = document.getElementById('radius-target');
+      if (!slider) return;
+      const b = activeNodeId ? nodeBlob(activeNodeId) : null;
+      if (!activeNodeId || !b) {
+        slider.disabled = true;
+        if (numberInput) numberInput.disabled = true;
+        if (target) target.textContent = 'Pilih node';
+        if (numberInput) numberInput.value = '0';
+        return;
+      }
+      slider.disabled = false;
+      if (numberInput) numberInput.disabled = false;
+      if (target) target.textContent = (MAP_DATA[activeNodeId] || {}).name || activeNodeId;
+      const size = blobSize(b);
+      if (numberInput) numberInput.value = String(size);
+    }
+    function selectNode(el) {
+      activePathIdx = -1;
+      activePathType = null;
+      document.getElementById('btn-del-path').hidden = true;
+      document.querySelectorAll('.map-node').forEach(m => m.classList.remove('active'));
+      el.classList.add('active');
+      activeNodeId = el.dataset.id;
+      document.getElementById('btn-del-node').hidden = false;
+      document.getElementById('map-info').classList.add('show');
+      const d = MAP_DATA[activeNodeId] || { name: '-', type: '-', coord: '-', cover: '-', desc: '-' };
+      document.getElementById('map-info-name').textContent = d.name;
+      document.getElementById('map-info-type').textContent = d.type;
+      document.getElementById('map-info-coord').textContent = d.coord;
+      const covered = detectCoverage(activeNodeId);
+      const coverText = covered.length > 0 ? covered.join(', ') : '-';
+      document.getElementById('map-info-cover').textContent = coverText;
+      document.getElementById('map-info-desc').textContent = d.desc;
+      syncLuasUI();
+    }
+    document.querySelectorAll('.map-node').forEach(m => {
+      m.addEventListener('click', e => { e.stopPropagation(); selectNode(m); });
+      m.addEventListener('pointerdown', e => {
+        if (e.button !== 0) return;
+        e.preventDefault();
+        e.stopPropagation();
+        selectNode(m);
+        const canvas = document.getElementById('map-canvas');
+        const rect = canvas.getBoundingClientRect();
+        const startX = e.clientX, startY = e.clientY;
+        const origX = parseFloat(m.dataset.x), origY = parseFloat(m.dataset.y);
+        m.classList.add('dragging');
+        function move(ev) {
+          const nx = Math.max(0, Math.min(100, origX + (ev.clientX - startX) / rect.width * 100));
+          const ny = Math.max(0, Math.min(100, origY + (ev.clientY - startY) / rect.height * 100));
+          m.dataset.x = nx.toFixed(2);
+          m.dataset.y = ny.toFixed(2);
+          m.style.left = nx + '%';
+          m.style.top = ny + '%';
+          syncBlobs();
+          updateCoverageInfo();
+          if (activePathIdx >= 0) { activePathIdx = -1; document.getElementById('btn-del-path').hidden = true; }
+          drawMapPaths();
+        }
+        function up(ev) {
+          m.classList.remove('dragging');
+          document.removeEventListener('pointermove', move);
+          document.removeEventListener('pointerup', up);
+          document.removeEventListener('pointercancel', up);
+        }
+        document.addEventListener('pointermove', move);
+        document.addEventListener('pointerup', up);
+        document.addEventListener('pointercancel', up);
+      });
+    });
+    document.getElementById('map-svg').addEventListener('click', e => {
+      const p = e.target.closest('[data-path]');
+      if (!p) return;
+      e.stopPropagation();
+      activePathIdx = parseInt(p.dataset.path, 10);
+      activePathType = p.dataset.pathtype;
+      activeNodeId = null;
+      document.querySelectorAll('.map-node').forEach(m => m.classList.remove('active'));
+      document.getElementById('btn-del-node').hidden = true;
+      document.getElementById('btn-del-path').hidden = false;
+
+      if (activePathType === 'node') {
+        const [pa, pb] = MAP_PATHS[activePathIdx] || [];
+        const da = MAP_DATA[pa] || { name: '-' }, db = MAP_DATA[pb] || { name: '-' };
+        document.getElementById('map-info-name').textContent = da.name + ' ↔ ' + db.name;
+      } else {
+        document.getElementById('map-info-name').textContent = 'Jalur Custom';
+      }
+      document.getElementById('map-info-type').textContent = 'Jalur';
+      document.getElementById('map-info-coord').textContent = '-';
+      document.getElementById('map-info-cover').textContent = '-';
+      document.getElementById('map-info-desc').textContent = 'Klik Hapus Jalur untuk menghapus';
+      document.getElementById('map-info').classList.add('show');
+      drawMapPaths();
+    });
   document.getElementById('map-canvas').addEventListener('click', e => {
     if (e.target.closest('.map-node') || e.target.closest('[data-path]') || e.target.closest('.map-info-card')) return;
     
-    // Path mode - add point
-    if (pathMode) {
-      const canvas = document.getElementById('map-canvas');
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      currentPathPoints.push({ x, y });
-      drawMapPaths();
-      return;
-    }
+    // Path mode - handled in pointerdown now
+    if (pathMode) return;
     
     clearSelection();
   });
-  function bindLayerToggle(id, layer) {
-    const b = document.getElementById(id);
-    if (!b) return;
-    b.addEventListener('click', () => {
-      const on = b.textContent.trim() === 'Aktif';
-      b.textContent = on ? 'Mati' : 'Aktif';
-      b.classList.toggle('active', !on);
-      document.querySelectorAll(`.map-blob[data-layer="${layer}"]`).forEach(r => { r.style.display = on ? 'none' : 'block'; });
-    });
-  }
-  bindLayerToggle('toggle-borders', 'wilayah');
-  bindLayerToggle('toggle-faksi', 'faksi');
-  bindLayerToggle('toggle-kelompok', 'kelompok');
-  const tp = document.getElementById('toggle-paths');
-  tp?.addEventListener('click', () => {
-    const on = tp.textContent.trim() === 'Aktif';
-    tp.textContent = on ? 'Mati' : 'Aktif';
-    tp.classList.toggle('active', !on);
-    const svg = document.getElementById('map-svg');
-    if (svg) svg.style.display = on ? 'none' : 'block';
-  });
- (function () {
-    const slider = document.getElementById('radius-input');
-    const numberInput = document.getElementById('radius-number');
-    if (!slider || !numberInput) return;
-    
-    function getActiveBlob() {
-      return activeNodeId ? nodeBlob(activeNodeId) : null;
-    }
-    
-    function applySize(size) {
-      const b = getActiveBlob();
+    function bindLayerToggle(id, layer) {
+      const b = document.getElementById(id);
       if (!b) return;
-      applyBlobSize(b, size);
-      if (numberInput) numberInput.value = String(size);
+      b.addEventListener('click', () => {
+        const on = b.textContent.trim() === 'Aktif';
+        b.textContent = on ? 'Mati' : 'Aktif';
+        b.classList.toggle('active', !on);
+        document.querySelectorAll(`.map-blob[data-layer="${layer}"]`).forEach(r => { r.style.display = on ? 'none' : 'block'; });
+      });
     }
-    
-    // Number input - absolute size control
-    numberInput.addEventListener('input', () => {
-      const size = Math.max(0, parseInt(numberInput.value, 10) || 0);
-      slider.value = 50; // reset slider to center
-      applySize(size);
+    bindLayerToggle('toggle-borders', 'wilayah');
+    bindLayerToggle('toggle-faksi', 'faksi');
+    bindLayerToggle('toggle-kelompok', 'kelompok');
+    const tp = document.getElementById('toggle-paths');
+    tp?.addEventListener('click', () => {
+      const on = tp.textContent.trim() === 'Aktif';
+      tp.textContent = on ? 'Mati' : 'Aktif';
+      tp.classList.toggle('active', !on);
+      const svg = document.getElementById('map-svg');
+      if (svg) svg.style.display = on ? 'none' : 'block';
     });
-    
-    // Slider - relative scale from base size
-    slider.addEventListener('pointerdown', () => {
-      const b = getActiveBlob();
-      if (b) b._baseSize = blobSize(b);
-    });
-    
-    slider.addEventListener('input', () => {
-      const b = getActiveBlob();
-      if (!b || !b._baseSize) return;
-      const val = parseInt(slider.value, 10);
-      // 0-49: shrink (0x to 0.98x), 50: 1x, 51-100: grow (1.02x to 5x)
-      const scale = val <= 50 ? val / 50 : 1 + (val - 50) * 0.08;
-      const next = Math.max(0, Math.round(b._baseSize * scale));
-      applySize(next);
-    });
-    
-    slider.addEventListener('pointerup', () => { 
-      slider.value = 50; 
-      const b = getActiveBlob();
-      if (b) delete b._baseSize;
-    });
-    slider.addEventListener('pointercancel', () => { 
-      slider.value = 50; 
-      const b = getActiveBlob();
-      if (b) delete b._baseSize;
-    });
-  })();
-  document.getElementById('path-speed')?.addEventListener('change', drawMapPaths);
-  document.querySelector('[title="Zoom In"]')?.addEventListener('click', () => { mapZoom = Math.min(2, mapZoom + 0.2); document.getElementById('map-stage').style.transform = `scale(${mapZoom})`; setTimeout(drawMapPaths, 60); });
-  document.querySelector('[title="Zoom Out"]')?.addEventListener('click', () => { mapZoom = Math.max(0.6, mapZoom - 0.2); document.getElementById('map-stage').style.transform = `scale(${mapZoom})`; setTimeout(drawMapPaths, 60); });
-  document.querySelector('[title="Fullscreen"]')?.addEventListener('click', () => { const c = document.getElementById('map-canvas'); if (document.fullscreenElement) document.exitFullscreen(); else c?.requestFullscreen?.(); setTimeout(drawMapPaths, 300); });
-  document.querySelector('[title="Download"]')?.addEventListener('click', () => {
-    const svg = document.getElementById('map-svg');
-    const blob = new Blob([`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">${svg.innerHTML}</svg>`], { type: 'image/svg+xml' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'peta.svg';
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-  });
-  document.getElementById('btn-del-node')?.addEventListener('click', () => {
-    const a = document.querySelector('.map-node.active');
-    if (a) {
-      const id = a.dataset.id;
-      // Hapus node
-      a.remove();
-      // Hapus blob yang terhubung
-      document.querySelectorAll(`.map-blob[data-node="${id}"]`).forEach(b => b.remove());
-      clearSelection();
-      drawMapPaths();
-    }
-  });
-  document.getElementById('btn-del-path')?.addEventListener('click', () => {
-    if (activePathIdx >= 0) {
-      if (activePathType === 'node') {
-        MAP_PATHS.splice(activePathIdx, 1);
-      } else if (activePathType === 'custom') {
-        CUSTOM_PATHS.splice(activePathIdx, 1);
+    (function () {
+      const slider = document.getElementById('radius-input');
+      const numberInput = document.getElementById('radius-number');
+      if (!slider || !numberInput) return;
+
+      function getActiveBlob() {
+        return activeNodeId ? nodeBlob(activeNodeId) : null;
       }
-      clearSelection();
-      drawMapPaths();
-    }
-  });
-  
-  document.getElementById('btn-add-path')?.addEventListener('click', () => {
-    pathMode = !pathMode;
-    const btn = document.getElementById('btn-add-path');
-    if (pathMode) {
-      btn.textContent = 'Tambah Jalur Aktif';
-      btn.style.background = 'rgba(139, 92, 246, 0.25)';
-      btn.style.borderColor = 'var(--primary)';
-      currentPathPoints = [];
-    } else {
-      btn.textContent = '+ Tambah Jalur';
-      btn.style.background = '';
-      btn.style.borderColor = '';
-      // Save current path if has points
-      if (currentPathPoints.length >= 2) {
-        CUSTOM_PATHS.push({ points: [...currentPathPoints], id: Date.now() });
+
+      function applySize(size) {
+        const b = getActiveBlob();
+        if (!b) return;
+        applyBlobSize(b, size);
+        if (numberInput) numberInput.value = String(size);
       }
-      currentPathPoints = [];
-      drawMapPaths();
-    }
-  });
-  
-  let nodeCounter = 0;
-  function createNode(type, layer) {
-    const stage = document.getElementById('map-stage');
-    const id = `${type}_${Date.now()}_${nodeCounter++}`;
-    const x = 50 + Math.random() * 20 - 10;
-    const y = 50 + Math.random() * 20 - 10;
-    
-    const colors = {
-      lokasi: '#3333cc',
-      faksi: '#22b8e6',
-      kelompok: '#35c835'
-    };
-    const layerMap = {
-      lokasi: 'wilayah',
-      faksi: 'faksi',
-      kelompok: 'kelompok'
-    };
-    const strokes = {
-      lokasi: '#3333ff',
-      faksi: '#22b8e6',
-      kelompok: '#35c835'
-    };
-    
-    // Buat blob
-    const blob = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    blob.classList.add('map-blob');
-    blob.setAttribute('data-layer', layerMap[type]);
-    blob.setAttribute('data-blob', id);
-    blob.setAttribute('data-node', id);
-    const seed = Math.floor(Math.random() * 999999);
-    blob.setAttribute('data-seed', seed);
-    blob.style.top = y + '%';
-    blob.style.left = x + '%';
-    blob.style.width = '250px';
-    blob.style.height = '180px';
-    blob.setAttribute('preserveAspectRatio', 'none');
-    
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', organicBlobPath(250, 180, seed));
-    path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', strokes[type]);
-    path.setAttribute('stroke-width', '2');
-    blob.appendChild(path);
-    blob.dataset.baseW = '250';
-    blob.dataset.baseH = '180';
-    blob.dataset.size = '250';
-    stage.appendChild(blob);
-    
-    // Buat node
-    const node = document.createElement('div');
-    node.classList.add('map-node');
-    node.dataset.x = x.toFixed(2);
-    node.dataset.y = y.toFixed(2);
-    node.dataset.id = id;
-    node.style.top = y + '%';
-    node.style.left = x + '%';
-    
-    const dot = document.createElement('span');
-    dot.classList.add('map-dot');
-    dot.style.background = colors[type];
-    
-    const name = document.createElement('span');
-    name.classList.add('map-node-name');
-    name.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Baru`;
-    
-    node.appendChild(dot);
-    node.appendChild(name);
-    stage.appendChild(node);
-    
-    // Tambah ke data
-    MAP_DATA[id] = {
-      name: `${type.charAt(0).toUpperCase() + type.slice(1)} Baru`,
-      type: type.charAt(0).toUpperCase() + type.slice(1),
-      coord: `${Math.floor(Math.random() * 90)}°L, ${Math.floor(Math.random() * 180)}°B`,
-      cover: '-',
-      desc: 'Deskripsi baru'
-    };
-    
-    // Setup event listener
-    node.addEventListener('click', e => { e.stopPropagation(); selectNode(node); });
-    node.addEventListener('pointerdown', e => {
-      if (e.button !== 0) return;
-      e.preventDefault();
-      e.stopPropagation();
-      selectNode(node);
-      const canvas = document.getElementById('map-canvas');
-      const rect = canvas.getBoundingClientRect();
-      const startX = e.clientX, startY = e.clientY;
-      const origX = parseFloat(node.dataset.x), origY = parseFloat(node.dataset.y);
-      node.classList.add('dragging');
-      function move(ev) {
-        const nx = Math.max(0, Math.min(100, origX + (ev.clientX - startX) / rect.width * 100));
-        const ny = Math.max(0, Math.min(100, origY + (ev.clientY - startY) / rect.height * 100));
-        node.dataset.x = nx.toFixed(2);
-        node.dataset.y = ny.toFixed(2);
-        node.style.left = nx + '%';
-        node.style.top = ny + '%';
-        syncBlobs();
-        updateCoverageInfo();
-        if (activePathIdx >= 0) { activePathIdx = -1; document.getElementById('btn-del-path').hidden = true; }
+
+      // Number input - absolute size control
+      numberInput.addEventListener('input', () => {
+        const size = Math.max(0, parseInt(numberInput.value, 10) || 0);
+        slider.value = 50; // reset slider to center
+        applySize(size);
+      });
+
+      // Slider - relative scale from base size
+      slider.addEventListener('pointerdown', () => {
+        const b = getActiveBlob();
+        if (b) b._baseSize = blobSize(b);
+      });
+
+      slider.addEventListener('input', () => {
+        const b = getActiveBlob();
+        if (!b || !b._baseSize) return;
+        const val = parseInt(slider.value, 10);
+        // 0-49: shrink (0x to 0.98x), 50: 1x, 51-100: grow (1.02x to 5x)
+        const scale = val <= 50 ? val / 50 : 1 + (val - 50) * 0.08;
+        const next = Math.max(0, Math.round(b._baseSize * scale));
+        applySize(next);
+      });
+
+      slider.addEventListener('pointerup', () => {
+        slider.value = 50;
+        const b = getActiveBlob();
+        if (b) delete b._baseSize;
+      });
+      slider.addEventListener('pointercancel', () => {
+        slider.value = 50;
+        const b = getActiveBlob();
+        if (b) delete b._baseSize;
+      });
+    })();
+    document.getElementById('path-speed')?.addEventListener('change', drawMapPaths);
+    document.querySelector('[title="Zoom In"]')?.addEventListener('click', () => { 
+      mapZoom = Math.min(2, mapZoom + 0.2); 
+      updateStageTransform();
+      setTimeout(drawMapPaths, 60); 
+    });
+    document.querySelector('[title="Zoom Out"]')?.addEventListener('click', () => { 
+      mapZoom = Math.max(0.6, mapZoom - 0.2); 
+      updateStageTransform();
+      setTimeout(drawMapPaths, 60); 
+    });
+    document.querySelector('[title="Fullscreen"]')?.addEventListener('click', () => { const c = document.getElementById('map-canvas'); if (document.fullscreenElement) document.exitFullscreen(); else c?.requestFullscreen?.(); setTimeout(drawMapPaths, 300); });
+    document.querySelector('[title="Download"]')?.addEventListener('click', () => {
+      const svg = document.getElementById('map-svg');
+      const blob = new Blob([`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">${svg.innerHTML}</svg>`], { type: 'image/svg+xml' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'peta.svg';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    });
+    document.getElementById('btn-del-node')?.addEventListener('click', () => {
+      const a = document.querySelector('.map-node.active');
+      if (a) {
+        const id = a.dataset.id;
+        // Hapus node
+        a.remove();
+        // Hapus blob yang terhubung
+        document.querySelectorAll(`.map-blob[data-node="${id}"]`).forEach(b => b.remove());
+        clearSelection();
         drawMapPaths();
       }
-      function up(ev) {
-        node.classList.remove('dragging');
-        document.removeEventListener('pointermove', move);
-        document.removeEventListener('pointerup', up);
-        document.removeEventListener('pointercancel', up);
-      }
-      document.addEventListener('pointermove', move);
-      document.addEventListener('pointerup', up);
-      document.addEventListener('pointercancel', up);
     });
-    
-    selectNode(node);
-  }
-  
-  document.getElementById('btn-add-lokasi')?.addEventListener('click', () => createNode('lokasi', 'wilayah'));
-  document.getElementById('btn-add-faksi')?.addEventListener('click', () => createNode('faksi', 'faksi'));
-  document.getElementById('btn-add-kelompok')?.addEventListener('click', () => createNode('kelompok', 'kelompok'));
-  
-  document.getElementById('map-select')?.addEventListener('change', drawMapPaths);
-  clearSelection();
-  syncBlobs();
-  setTimeout(drawMapPaths, 200);
-  setTimeout(drawMapPaths, 800);
-  window.addEventListener('resize', drawMapPaths);
-  window.addEventListener('load', drawMapPaths);
+    document.getElementById('btn-del-path')?.addEventListener('click', () => {
+      if (activePathIdx >= 0) {
+        if (activePathType === 'node') {
+          MAP_PATHS.splice(activePathIdx, 1);
+        } else if (activePathType === 'custom') {
+          CUSTOM_PATHS.splice(activePathIdx, 1);
+        }
+        clearSelection();
+        drawMapPaths();
+      }
+    });
+
+    document.getElementById('btn-add-path')?.addEventListener('click', () => {
+      pathMode = !pathMode;
+      const btn = document.getElementById('btn-add-path');
+      if (pathMode) {
+        btn.textContent = 'Tambah Jalur Aktif';
+        btn.style.background = 'rgba(139, 92, 246, 0.25)';
+        btn.style.borderColor = 'var(--primary)';
+        currentPathPoints = [];
+      } else {
+        btn.textContent = '+ Tambah Jalur';
+        btn.style.background = '';
+        btn.style.borderColor = '';
+        // Save current path if has points
+        if (currentPathPoints.length >= 2) {
+          CUSTOM_PATHS.push({ points: [...currentPathPoints], id: Date.now() });
+        }
+        currentPathPoints = [];
+        drawMapPaths();
+      }
+    });
+
+    let nodeCounter = 0;
+    function createNode(type, layer) {
+      const stage = document.getElementById('map-stage');
+      const id = `${type}_${Date.now()}_${nodeCounter++}`;
+      const x = 50 + Math.random() * 20 - 10;
+      const y = 50 + Math.random() * 20 - 10;
+
+      const colors = {
+        lokasi: '#3333cc',
+        faksi: '#22b8e6',
+        kelompok: '#35c835'
+      };
+      const layerMap = {
+        lokasi: 'wilayah',
+        faksi: 'faksi',
+        kelompok: 'kelompok'
+      };
+      const strokes = {
+        lokasi: '#3333ff',
+        faksi: '#22b8e6',
+        kelompok: '#35c835'
+      };
+
+      // Buat blob
+      const blob = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      blob.classList.add('map-blob');
+      blob.setAttribute('data-layer', layerMap[type]);
+      blob.setAttribute('data-blob', id);
+      blob.setAttribute('data-node', id);
+      const seed = Math.floor(Math.random() * 999999);
+      blob.setAttribute('data-seed', seed);
+      blob.style.top = y + '%';
+      blob.style.left = x + '%';
+      blob.style.width = '250px';
+      blob.style.height = '180px';
+      blob.setAttribute('preserveAspectRatio', 'none');
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', organicBlobPath(250, 180, seed));
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', strokes[type]);
+      path.setAttribute('stroke-width', '2');
+      blob.appendChild(path);
+      blob.dataset.baseW = '250';
+      blob.dataset.baseH = '180';
+      blob.dataset.size = '250';
+      stage.appendChild(blob);
+
+      // Buat node
+      const node = document.createElement('div');
+      node.classList.add('map-node');
+      node.dataset.x = x.toFixed(2);
+      node.dataset.y = y.toFixed(2);
+      node.dataset.id = id;
+      node.style.top = y + '%';
+      node.style.left = x + '%';
+
+      const dot = document.createElement('span');
+      dot.classList.add('map-dot');
+      dot.style.background = colors[type];
+
+      const name = document.createElement('span');
+      name.classList.add('map-node-name');
+      name.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Baru`;
+
+      node.appendChild(dot);
+      node.appendChild(name);
+      stage.appendChild(node);
+
+      // Tambah ke data
+      MAP_DATA[id] = {
+        name: `${type.charAt(0).toUpperCase() + type.slice(1)} Baru`,
+        type: type.charAt(0).toUpperCase() + type.slice(1),
+        coord: `${Math.floor(Math.random() * 90)}°L, ${Math.floor(Math.random() * 180)}°B`,
+        cover: '-',
+        desc: 'Deskripsi baru'
+      };
+
+      // Setup event listener
+      node.addEventListener('click', e => { e.stopPropagation(); selectNode(node); });
+      node.addEventListener('pointerdown', e => {
+        if (e.button !== 0) return;
+        e.preventDefault();
+        e.stopPropagation();
+        selectNode(node);
+        const canvas = document.getElementById('map-canvas');
+        const rect = canvas.getBoundingClientRect();
+        const startX = e.clientX, startY = e.clientY;
+        const origX = parseFloat(node.dataset.x), origY = parseFloat(node.dataset.y);
+        node.classList.add('dragging');
+        function move(ev) {
+          const nx = Math.max(0, Math.min(100, origX + (ev.clientX - startX) / rect.width * 100));
+          const ny = Math.max(0, Math.min(100, origY + (ev.clientY - startY) / rect.height * 100));
+          node.dataset.x = nx.toFixed(2);
+          node.dataset.y = ny.toFixed(2);
+          node.style.left = nx + '%';
+          node.style.top = ny + '%';
+          syncBlobs();
+          updateCoverageInfo();
+          if (activePathIdx >= 0) { activePathIdx = -1; document.getElementById('btn-del-path').hidden = true; }
+          drawMapPaths();
+        }
+        function up(ev) {
+          node.classList.remove('dragging');
+          document.removeEventListener('pointermove', move);
+          document.removeEventListener('pointerup', up);
+          document.removeEventListener('pointercancel', up);
+        }
+        document.addEventListener('pointermove', move);
+        document.addEventListener('pointerup', up);
+        document.addEventListener('pointercancel', up);
+      });
+
+      selectNode(node);
+    }
+
+    document.getElementById('btn-add-lokasi')?.addEventListener('click', () => createNode('lokasi', 'wilayah'));
+    document.getElementById('btn-add-faksi')?.addEventListener('click', () => createNode('faksi', 'faksi'));
+    document.getElementById('btn-add-kelompok')?.addEventListener('click', () => createNode('kelompok', 'kelompok'));
+
+    // Pan and Zoom
+    function updateStageTransform() {
+      const stage = document.getElementById('map-stage');
+      if (!stage) return;
+      stage.style.transform = `translate(${mapPanX}px, ${mapPanY}px) scale(${mapZoom})`;
+    }
+
+    document.getElementById('map-canvas')?.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('.map-node') || e.target.closest('[data-path]') || e.target.closest('.map-info-card')) return;
+      
+      // Path mode - add point
+      if (pathMode) {
+        const canvas = document.getElementById('map-canvas');
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        currentPathPoints.push({ x, y });
+        drawMapPaths();
+        return;
+      }
+      
+      // Pan mode - left button drag on empty canvas
+      if (e.button === 0) {
+        e.preventDefault();
+        isPanning = true;
+        const startX = e.clientX - mapPanX;
+        const startY = e.clientY - mapPanY;
+        
+        function panMove(ev) {
+          if (!isPanning) return;
+          mapPanX = ev.clientX - startX;
+          mapPanY = ev.clientY - startY;
+          updateStageTransform();
+        }
+        
+        function panUp() {
+          isPanning = false;
+          document.removeEventListener('pointermove', panMove);
+          document.removeEventListener('pointerup', panUp);
+          document.removeEventListener('pointercancel', panUp);
+        }
+        
+        document.addEventListener('pointermove', panMove);
+        document.addEventListener('pointerup', panUp);
+        document.addEventListener('pointercancel', panUp);
+        return;
+      }
+      
+      clearSelection();
+    });
+
+    // Map management
+    function updateMapSelect() {
+      const select = document.getElementById('map-select');
+      if (!select) return;
+      select.innerHTML = '';
+      Object.keys(MAPS).forEach(id => {
+        const opt = document.createElement('option');
+        opt.value = id;
+        opt.textContent = MAPS[id].name;
+        if (id === currentMapId) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    document.getElementById('btn-add-map')?.addEventListener('click', () => {
+      const name = prompt('Nama peta baru:');
+      if (!name || !name.trim()) return;
+      const id = 'map_' + Date.now();
+      MAPS[id] = { name: name.trim(), nodes: {}, blobs: {}, customPaths: [] };
+      currentMapId = id;
+      updateMapSelect();
+      // Clear canvas
+      document.querySelectorAll('.map-node').forEach(n => n.remove());
+      document.querySelectorAll('.map-blob').forEach(b => b.remove());
+      CUSTOM_PATHS.length = 0;
+      clearSelection();
+      drawMapPaths();
+    });
+
+    document.getElementById('btn-rename-map')?.addEventListener('click', () => {
+      const newName = prompt('Rename peta:', MAPS[currentMapId]?.name || '');
+      if (!newName || !newName.trim()) return;
+      MAPS[currentMapId].name = newName.trim();
+      updateMapSelect();
+    });
+
+    document.getElementById('btn-delete-map')?.addEventListener('click', () => {
+      if (Object.keys(MAPS).length <= 1) {
+        alert('Tidak bisa menghapus peta terakhir');
+        return;
+      }
+      if (!confirm(`Hapus peta "${MAPS[currentMapId]?.name}"?`)) return;
+      delete MAPS[currentMapId];
+      currentMapId = Object.keys(MAPS)[0];
+      updateMapSelect();
+      // Clear canvas
+      document.querySelectorAll('.map-node').forEach(n => n.remove());
+      document.querySelectorAll('.map-blob').forEach(b => b.remove());
+      CUSTOM_PATHS.length = 0;
+      clearSelection();
+      drawMapPaths();
+    });
+
+    document.getElementById('map-select')?.addEventListener('change', (e) => {
+      currentMapId = e.target.value;
+      // Clear current canvas
+      document.querySelectorAll('.map-node').forEach(n => n.remove());
+      document.querySelectorAll('.map-blob').forEach(b => b.remove());
+      CUSTOM_PATHS.length = 0;
+      clearSelection();
+      drawMapPaths();
+    });
+
+    updateMapSelect();
+    clearSelection();
+    syncBlobs();
+    setTimeout(drawMapPaths, 200);
+    setTimeout(drawMapPaths, 800);
+    window.addEventListener('resize', drawMapPaths);
+    window.addEventListener('load', drawMapPaths);
+
+    // Map Image Modal
+    function applyBackgroundImage(url) {
+      const bgLayer = document.getElementById('map-stage-bg');
+      if (!bgLayer) return;
+      if (url) {
+        bgLayer.style.backgroundImage = `url("${url}")`;
+      } else {
+        bgLayer.style.backgroundImage = '';
+      }
+    }
+
+    document.getElementById('btn-open-image-modal')?.addEventListener('click', () => {
+      const modal = document.getElementById('map-image-modal');
+      const input = document.getElementById('image-url-input');
+      const preview = document.getElementById('image-preview');
+      
+      modal.classList.add('show');
+      const currentBg = MAPS[currentMapId]?.backgroundImage || '';
+      input.value = currentBg;
+      tempImageUrl = currentBg;
+      
+      if (currentBg) {
+        preview.innerHTML = `<img src="${currentBg}" alt="Preview">`;
+      } else {
+        preview.innerHTML = '<span class="map-image-preview-empty">Preview gambar akan muncul di sini</span>';
+      }
+    });
+
+    document.getElementById('btn-close-image-modal')?.addEventListener('click', () => {
+      document.getElementById('map-image-modal').classList.remove('show');
+      tempImageUrl = null;
+    });
+
+    document.getElementById('btn-cancel-image')?.addEventListener('click', () => {
+      document.getElementById('map-image-modal').classList.remove('show');
+      tempImageUrl = null;
+    });
+
+    document.getElementById('btn-check-image')?.addEventListener('click', () => {
+      const input = document.getElementById('image-url-input');
+      const url = input.value.trim();
+      const preview = document.getElementById('image-preview');
+      
+      if (!url) {
+        preview.innerHTML = '<span class="map-image-preview-empty">Preview gambar akan muncul di sini</span>';
+        tempImageUrl = null;
+        return;
+      }
+      
+      const img = new Image();
+      img.onload = () => {
+        preview.innerHTML = `<img src="${url}" alt="Preview">`;
+        tempImageUrl = url;
+      };
+      img.onerror = () => {
+        preview.innerHTML = '<span class="map-image-preview-empty" style="color:#fca5a5;">URL gambar tidak valid</span>';
+        tempImageUrl = null;
+      };
+      img.src = url;
+    });
+
+    document.getElementById('btn-remove-image')?.addEventListener('click', () => {
+      const preview = document.getElementById('image-preview');
+      const input = document.getElementById('image-url-input');
+      preview.innerHTML = '<span class="map-image-preview-empty">Preview gambar akan muncul di sini</span>';
+      input.value = '';
+      tempImageUrl = null;
+    });
+
+    document.getElementById('btn-save-image')?.addEventListener('click', () => {
+      MAPS[currentMapId].backgroundImage = tempImageUrl;
+      applyBackgroundImage(tempImageUrl);
+      document.getElementById('map-image-modal').classList.remove('show');
+      tempImageUrl = null;
+    });
+
+    // Apply initial background
+    applyBackgroundImage(MAPS[currentMapId]?.backgroundImage);
   </script>
 </body>
 
