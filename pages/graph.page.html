@@ -81,10 +81,20 @@
       flex: 1;
       position: relative;
       background: #0d121f;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       overflow: hidden;
+      isolation: isolate;
+      cursor: grab;
+      z-index: 0;
+    }
+
+    .net-canvas-area.panning {
+      cursor: grabbing;
+    }
+
+    #viewport {
+      position: absolute;
+      inset: 0;
+      transform-origin: 0 0;
     }
 
     .net-svg {
@@ -102,7 +112,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
+      cursor: grab;
       transition: all 0.2s;
       border: 2px solid var(--border);
       background: var(--bg-card);
@@ -113,11 +123,27 @@
       padding: 0.25rem;
     }
 
+    .net-node:active,
+    .net-node.dragging {
+      cursor: grabbing;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.45);
+    }
+
+    .net-node.dragging {
+      z-index: 10;
+      transition: none;
+    }
+
     .net-node:hover {
       transform: scale(1.1);
       border-color: var(--primary);
       z-index: 10;
       box-shadow: 0 0 16px var(--primary-glow);
+    }
+
+    .net-node.dragging,
+    .net-node.dragging:hover {
+      transform: none;
     }
 
     .net-node iconify-icon {
@@ -410,10 +436,11 @@
 
       <!-- Canvas Area -->
       <div class="net-canvas-area" id="view-graph">
-        <svg class="net-svg" id="net-svg"></svg>
+        <div id="viewport">
+          <svg class="net-svg" id="net-svg"></svg>
 
         <!-- Nodes will be rendered by JS -->
-        <div class="net-node net-node-main" style="left:50%;top:35%;transform:translate(-50%,-50%);" data-id="kael"
+        <div class="net-node net-node-main" style="left:calc(50% - 40px);top:calc(35% - 40px);" data-id="kael"
           data-type="karakter">
           <iconify-icon icon="lucide:user"></iconify-icon>
           <span>Kael<br>Dawnward</span>
@@ -426,7 +453,7 @@
           <span class="net-node-label">Sekunder</span>
         </div>
 
-        <div class="net-node net-node-antagonist" style="right:25%;top:55%;" data-id="valdris" data-type="karakter">
+        <div class="net-node net-node-antagonist" style="left:calc(75% - 80px);top:55%;" data-id="valdris" data-type="karakter">
           <iconify-icon icon="lucide:user"></iconify-icon>
           <span>Valdris<br>Aetheron</span>
           <span class="net-node-label">Antagonis</span>
@@ -438,17 +465,18 @@
           <span class="net-node-label">Lokasi</span>
         </div>
 
-        <div class="net-node net-node-faction" style="right:15%;top:20%;" data-id="akademi" data-type="faksi">
+        <div class="net-node net-node-faction" style="left:calc(85% - 80px);top:20%;" data-id="akademi" data-type="faksi">
           <iconify-icon icon="lucide:building-2"></iconify-icon>
           <span>Akademi<br>Kristal</span>
           <span class="net-node-label">Faksi</span>
         </div>
 
-        <div class="net-node net-node-location" style="left:50%;top:75%;transform:translateX(-50%);"
+        <div class="net-node net-node-location" style="left:calc(50% - 40px);top:75%;"
           data-id="aethelgard" data-type="lokasi">
           <iconify-icon icon="lucide:landmark"></iconify-icon>
           <span>Benteng<br>Aethelgard</span>
           <span class="net-node-label">Lokasi</span>
+        </div>
         </div>
 
         <!-- Legend -->
@@ -586,6 +614,36 @@
       });
     });
 
+    // Drag nodes (graph mode)
+    let dragNode = null, dragOffsetX = 0, dragOffsetY = 0;
+    document.querySelectorAll('.net-node').forEach(node => {
+      node.addEventListener('pointerdown', e => {
+        if (document.querySelector('.net-mode-btn.active').dataset.mode !== 'graph') return;
+        dragNode = node;
+        const rect = node.getBoundingClientRect();
+        dragOffsetX = e.clientX - rect.left;
+        dragOffsetY = e.clientY - rect.top;
+        node.classList.add('dragging');
+      });
+    });
+    document.addEventListener('pointermove', e => {
+      if (!dragNode) return;
+      const canvas = document.getElementById('view-graph');
+      const cRect = canvas.getBoundingClientRect();
+      // Adjust for pan & zoom
+      const x = (e.clientX - cRect.left - panX) / scale - dragOffsetX;
+      const y = (e.clientY - cRect.top - panY) / scale - dragOffsetY;
+      dragNode.style.left = `${x}px`;
+      dragNode.style.top = `${y}px`;
+      drawLines();
+    });
+    document.addEventListener('pointerup', () => {
+      if (dragNode) {
+        dragNode.classList.remove('dragging');
+        dragNode = null;
+      }
+    });
+
     // Draw connection lines with SVG
     function drawLines() {
       const canvas = document.getElementById('view-graph');
@@ -603,8 +661,10 @@
       const centers = {};
       for (const [k, el] of Object.entries(nodes)) {
         if (el) {
-          const r = el.getBoundingClientRect();
-          centers[k] = { x: r.left - cRect.left + r.width / 2, y: r.top - cRect.top + r.height / 2 };
+          // Use offset positions (unscaled) within viewport
+          const x = el.offsetLeft + el.offsetWidth / 2;
+          const y = el.offsetTop + el.offsetHeight / 2;
+          centers[k] = { x, y };
         }
       }
       const lines = [
@@ -635,6 +695,30 @@
     setTimeout(drawLines, 200);
     setTimeout(drawLines, 700);
     setTimeout(drawLines, 1500);
+    // Zoom controls
+    let scale = 1, panX = 0, panY = 0;
+    const viewGraph = document.getElementById('view-graph');
+    const viewport = document.getElementById('viewport');
+    function updateTransform(){
+      viewport.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    }
+    document.querySelector('[title="Zoom In"]').addEventListener('click',()=>{ scale *= 1.2; updateTransform(); });
+    document.querySelector('[title="Zoom Out"]').addEventListener('click',()=>{ scale /= 1.2; updateTransform(); });
+    document.querySelector('[title="Reset View"]').addEventListener('click',()=>{ scale=1;panX=0;panY=0;updateTransform(); });
+    // Pan canvas (graph mode) – avoid conflict with node drag
+    let panStart = null;
+    viewGraph.addEventListener('pointerdown', e => {
+      if (e.target.closest('.net-node')) return;
+      if (document.querySelector('.net-mode-btn.active').dataset.mode !== 'graph') return;
+      panStart = {x: e.clientX, y: e.clientY, startX: panX, startY: panY};
+    });
+    document.addEventListener('pointermove', e => {
+      if (!panStart) return;
+      panX = panStart.startX + (e.clientX - panStart.x);
+      panY = panStart.startY + (e.clientY - panStart.y);
+      updateTransform();
+    });
+    document.addEventListener('pointerup', () => { panStart = null; });
     window.addEventListener('load', drawLines);
     window.addEventListener('resize', drawLines);
   </script>
