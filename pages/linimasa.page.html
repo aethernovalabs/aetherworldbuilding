@@ -13,6 +13,9 @@
     rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
+  <script src="/js/dexie.min.js"></script>
+  <script src="/js/aether-state.js"></script>
+  <script src="/js/awb-page-utils.js"></script>
   <style>
     .timeline-toolbar {
       padding: 0.85rem 1.75rem;
@@ -234,16 +237,11 @@
         <div class="awb-logo-collapsed">AN<br>WB</div>
         <div class="awb-logo-expanded">Aether Nova WB</div>
         <button class="awb-sb-expand-btn" id="btn-expand-main-sidebar" title="Perbesar Sidebar">&gt;</button>
-        <div class="awb-world-wrap">
-          <button class="awb-world-btn" id="btn-toggle-world-menu">
-            <span class="world-label" id="cur-world-name">Pilih Dunia</span>
-            <span class="world-arrow">V</span>
+                <div class="awb-world-wrap">
+          <button class="awb-world-btn" id="btn-toggle-world-menu" title="World Manager">
+            <iconify-icon icon="lucide:globe" width="15"></iconify-icon>
+            <span class="world-label">World Manager</span>
           </button>
-          <div class="awb-world-dropdown" id="awb-world-dropdown">
-            <div class="awb-world-opt active" data-world="Dunia1">Dunia1</div>
-            <div class="awb-world-opt" data-world="Dunia2">Dunia2</div>
-            <div class="awb-world-opt add-btn" id="btn-tambah-dunia-opt">+ Tambah Dunia</div>
-          </div>
         </div>
       </div>
       <nav class="awb-sb-nav">
@@ -284,7 +282,7 @@
           <span class="awb-nav-box"><iconify-icon icon="lucide:circle-user-round" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Akun</span>
         </a>
-        <a class="awb-nav-link" href="#" title="Setting">
+        <a class="awb-nav-link" href="#" id="btn-open-settings" title="Setting">
           <span class="awb-nav-box"><iconify-icon icon="lucide:settings-2" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Setting</span>
         </a>
@@ -620,7 +618,90 @@
       const del = e.target.closest('.extra-del');
       if (del) { const w = del.closest('.extra-wrap'); const l = w?.querySelector('.extra-list'); const it = del.closest('.extra-item'); if (l && it && l.querySelectorAll('.extra-item').length > 1) it.remove(); return; }
     });
+
+    // Initialize with AetherPageUtils
+    async function initLinimasaPage() {
+      var utils = await window.AetherPageUtils.initPage();
+      if (!utils.query) return;
+      
+      // Load events from database
+      var events = await utils.query.getEvents();
+      renderTimeline(events);
+      
+      window.linimasaQuery = utils.query;
+    }
+
+    function renderTimeline(events) {
+      var container = document.getElementById('timeline-content');
+      if (!container) return;
+      
+      var track = container.querySelector('.timeline-track');
+      if (!track) return;
+      
+      if (!events || events.length === 0) {
+        track.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-faint);font-size:0.85rem;">Belum ada peristiwa<br><button class="btn-action" style="margin-top:0.5rem;" onclick="document.getElementById(\'modal-peristiwa\').classList.add(\'open\')">+ Tambah Peristiwa</button></div>';
+        return;
+      }
+      
+      // Group events by era
+      var eventsByEra = {};
+      events.forEach(function(e) {
+        var era = e.data?.era || 'Era Tidak Diketahui';
+        if (!eventsByEra[era]) eventsByEra[era] = [];
+        eventsByEra[era].push(e);
+      });
+      
+      var html = '';
+      Object.entries(eventsByEra).forEach(function([era, eraEvents]) {
+        html += '<div class="era-section">';
+        html += '<div class="era-title"><iconify-icon icon="lucide:sun"></iconify-icon> ' + era + '</div>';
+        html += '<div class="timeline-track">';
+        eraEvents.forEach(function(ev, idx) {
+          var isMajor = ev.data?.major === true;
+          html += '<div class="timeline-event' + (isMajor ? ' major' : '') + '">';
+          html += '<div class="event-card">';
+          html += '<div class="event-header">';
+          html += '<div class="event-name">' + (ev.name || 'Unknown') + '</div>';
+          html += '<div style="display:flex;gap:0.3rem;align-items:center;">';
+          html += '<button class="win-btn" title="Edit" onclick="event.stopPropagation();openEventModal(' + ev.id + ')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button>';
+          html += '<button class="win-btn event-del" title="Hapus" style="color:var(--danger);" onclick="event.stopPropagation();deleteEvent(' + ev.id + ')"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button>';
+          html += '</div>';
+          html += '</div>';
+          html += '<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.5rem;">';
+          html += '<span class="badge badge-' + (ev.data?.type || 'lainnya').toLowerCase() + '">' + (ev.data?.type || 'Lainnya') + '</span>';
+          html += '<span class="badge badge-purple">Era: ' + era + '</span>';
+          html += '</div>';
+          html += '<div class="event-desc">' + (ev.data?.description || ev.data?.deskripsi || '-') + '</div>';
+          html += '<div style="margin-top:0.5rem;font-size:0.78rem;color:var(--text-faint);display:flex;flex-direction:column;gap:0.25rem;">';
+          if (ev.data?.cause) html += '<div><strong style="color:var(--text-muted);">Penyebab:</strong> ' + ev.data.cause + '</div>';
+          if (ev.data?.consequence) html += '<div><strong style="color:var(--text-muted);">Konsekuensi:</strong> ' + ev.data.consequence + '</div>';
+          if (ev.data?.location) html += '<div><strong style="color:var(--text-muted);">Lokasi:</strong> ' + ev.data.location + '</div>';
+          if (ev.data?.people) html += '<div><strong style="color:var(--text-muted);">Orang Terlibat:</strong> ' + ev.data.people + '</div>';
+          html += '</div>';
+          html += '</div>';
+          html += '</div>';
+        });
+        html += '</div></div>';
+      });
+      
+      track.innerHTML = html;
+    }
+
+    function openEventModal(id) {
+      document.getElementById('modal-peristiwa').classList.add('open');
+      // TODO: Populate form with event data
+    }
+
+    async function deleteEvent(id) {
+      if (!confirm('Hapus peristiwa ini?')) return;
+      if (!window.linimasaQuery) return;
+      await window.linimasaQuery.deleteEvent(id);
+      await window.linimasaQuery.logActivity('delete', 'event', id, 'Event', 'Dihapus dari linimasa');
+      var events = await window.linimasaQuery.getEvents();
+      renderTimeline(events);
+    }
+
+    initLinimasaPage();
   </script>
 </body>
-
 </html>

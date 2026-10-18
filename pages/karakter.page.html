@@ -13,6 +13,9 @@
     rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
+  <script src="/js/dexie.min.js"></script>
+  <script src="/js/aether-state.js"></script>
+  <script src="/js/awb-page-utils.js"></script>
   <style>
     /* Panel filter ala referensi: Search + dropdown + Tag + grid/list */
     .char-filter-panel {
@@ -792,6 +795,200 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* ===== Identitas: image box ===== */
+    .cf-imgbox {
+      position: relative;
+      width: 100%;
+      height: 92px;
+      border: 1px dashed var(--border-hover);
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .cf-imgbox img { width: 100%; height: 100%; object-fit: cover; }
+    .cf-img-empty { color: var(--text-faint); display: flex; }
+    .cf-img-edit {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: rgba(8, 12, 20, 0.85);
+      color: #cbd5e1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .cf-img-edit:hover { background: var(--primary); color: #fff; }
+
+    .cf-err { font-size: 0.72rem; color: var(--danger); margin-top: 0.25rem; }
+
+    /* ===== Identitas: Linked input ===== */
+    .linked-wrap { position: relative; display: flex; flex-direction: column; gap: 0.4rem; }
+    .linked-input-row { display: flex; gap: 0.4rem; align-items: center; }
+    .linked-input-row input { flex: 1; }
+    .linked-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 30;
+      background: #111726;
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
+      max-height: 190px;
+      overflow-y: auto;
+      display: none;
+      flex-direction: column;
+    }
+    .linked-dropdown.open { display: flex; }
+    .linked-opt {
+      padding: 0.4rem 0.55rem;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.4rem;
+    }
+    .linked-opt:hover, .linked-opt.active { background: #25334c; color: #fff; }
+    .linked-opt .linked-opt-type { font-size: 0.66rem; color: var(--text-faint); }
+    .linked-opt.create { color: #93c5fd; font-weight: 600; }
+    .linked-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .linked-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      padding: 0.15rem 0.35rem 0.15rem 0.5rem;
+      border: 1px solid var(--border-hover);
+      border-radius: 4px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+    }
+    .linked-chip button {
+      border: none;
+      background: transparent;
+      color: var(--text-faint);
+      cursor: pointer;
+      font-size: 0.8rem;
+      line-height: 1;
+      padding: 0;
+      display: inline-flex;
+    }
+    .linked-chip button:hover { color: var(--danger); }
+
+    /* ===== Custom Field ===== */
+    .cf-row {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-dark);
+      padding: 0.55rem 0.65rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .cf-row-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .cf-row-name { font-size: 0.78rem; font-weight: 700; color: var(--text-main); }
+    .cf-row-type { font-size: 0.66rem; color: var(--text-faint); }
+    .cf-row-body { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+    .cf-row-body .form-input { flex: 1; min-width: 120px; }
+    .cf-num-wrap { display: flex; flex: 1; gap: 0.3rem; align-items: center; }
+    .cf-num-step { display: flex; flex-direction: column; gap: 1px; }
+    .cf-num-step button {
+      width: 20px;
+      height: 14px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.6rem;
+      line-height: 1;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cf-num-step button:hover { color: var(--text-main); background: var(--bg-card-hover); }
+
+    /* ===== Popup kecil (image / custom field) ===== */
+    .cf-pop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(3px);
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .cf-pop.open { display: flex; }
+    .cf-pop-box {
+      width: 100%;
+      max-width: 420px;
+      background: #111726;
+      border: 1px solid var(--border-hover);
+      border-radius: 8px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .cf-pop-head {
+      padding: 0.65rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    .cf-pop-body {
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .cf-pop-foot {
+      padding: 0.6rem 0.9rem;
+      border-top: 1px solid var(--border);
+      background: var(--bg-dark);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+    .cf-img-pop-preview {
+      height: 160px;
+      border: 1px dashed var(--border-hover);
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-faint);
+      overflow: hidden;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    .cf-img-pop-preview img { width: 100%; height: 100%; object-fit: contain; }
   </style>
 </head>
 
@@ -805,16 +1002,11 @@
         <div class="awb-logo-collapsed">AN<br>WB</div>
         <div class="awb-logo-expanded">Aether Nova WB</div>
         <button class="awb-sb-expand-btn" id="btn-expand-main-sidebar" title="Perbesar Sidebar">&gt;</button>
-        <div class="awb-world-wrap">
-          <button class="awb-world-btn" id="btn-toggle-world-menu">
-            <span class="world-label" id="cur-world-name">Pilih Dunia</span>
-            <span class="world-arrow">V</span>
+                <div class="awb-world-wrap">
+          <button class="awb-world-btn" id="btn-toggle-world-menu" title="World Manager">
+            <iconify-icon icon="lucide:globe" width="15"></iconify-icon>
+            <span class="world-label">World Manager</span>
           </button>
-          <div class="awb-world-dropdown" id="awb-world-dropdown">
-            <div class="awb-world-opt active" data-world="Dunia1">Dunia1</div>
-            <div class="awb-world-opt" data-world="Dunia2">Dunia2</div>
-            <div class="awb-world-opt add-btn" id="btn-tambah-dunia-opt">+ Tambah Dunia</div>
-          </div>
         </div>
       </div>
       <nav class="awb-sb-nav">
@@ -855,7 +1047,7 @@
           <span class="awb-nav-box"><iconify-icon icon="lucide:circle-user-round" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Akun</span>
         </a>
-        <a class="awb-nav-link" href="#" title="Setting">
+        <a class="awb-nav-link" href="#" id="btn-open-settings" title="Setting">
           <span class="awb-nav-box"><iconify-icon icon="lucide:settings-2" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Setting</span>
         </a>
@@ -884,10 +1076,10 @@
               <div class="char-filter-row">
                 <div class="search-wrap">
                   <iconify-icon icon="lucide:search"></iconify-icon>
-                  <input type="text" class="search-field" placeholder="Cari nama karakter">
+                  <input type="text" class="search-field" id="char-search" placeholder="Cari nama karakter">
                 </div>
-                <select class="char-select">
-                  <option>Semua Status</option>
+                <select class="char-select" id="char-filter-status">
+                  <option value="">Semua Status</option>
                   <option>Hidup</option>
                   <option>Mati</option>
                 </select>
@@ -913,63 +1105,7 @@
               <div class="char-tag-row">Tag: <span class="badge">tag1</span> <span class="badge">tag2</span> <span
                   class="badge">tag3</span></div>
             </div>
-            <div class="char-grid" id="char-grid">
-
-              <div class="char-card" onclick="openCharDetail('Name')">
-                <div class="char-card-img"><iconify-icon icon="lucide:image" width="44"></iconify-icon><span
-                    class="char-status">Hidup</span></div>
-                <div class="char-info">
-                  <div class="char-name">Name <span class="char-actions"><button class="win-btn"
-                        onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon icon="lucide:pen-line"
-                          width="14"></iconify-icon></button><button class="win-btn del"
-                        onclick="event.stopPropagation()"><iconify-icon icon="lucide:trash-2"
-                          width="14"></iconify-icon></button></span>
-                  </div>
-                  <div class="char-meta">Spesies: Spesies1 Spesies2</div>
-                  <div class="char-meta">Lokasi: Lokasi1</div>
-                  <div class="char-meta">Faksi: Faksi1</div>
-                  <div class="char-meta">Gelar: Gelar1</div>
-                  <div class="char-tags">Tag1 tag2</div>
-                </div>
-              </div>
-
-              <div class="char-card" onclick="openCharDetail('Name')">
-                <div class="char-card-img"><iconify-icon icon="lucide:image" width="44"></iconify-icon><span
-                    class="char-status">Hidup</span></div>
-                <div class="char-info">
-                  <div class="char-name">Name <span class="char-actions"><button class="win-btn"
-                        onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon icon="lucide:pen-line"
-                          width="14"></iconify-icon></button><button class="win-btn del"
-                        onclick="event.stopPropagation()"><iconify-icon icon="lucide:trash-2"
-                          width="14"></iconify-icon></button></span>
-                  </div>
-                  <div class="char-meta">Spesies: Spesies1 Spesies2</div>
-                  <div class="char-meta">Lokasi: Lokasi1</div>
-                  <div class="char-meta">Faksi: Faksi1</div>
-                  <div class="char-meta">Gelar: Gelar1</div>
-                  <div class="char-tags">Tag1 tag2</div>
-                </div>
-              </div>
-
-              <div class="char-card" onclick="openCharDetail('Name')">
-                <div class="char-card-img"><iconify-icon icon="lucide:image" width="44"></iconify-icon><span
-                    class="char-status">Hidup</span></div>
-                <div class="char-info">
-                  <div class="char-name">Name <span class="char-actions"><button class="win-btn"
-                        onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon icon="lucide:pen-line"
-                          width="14"></iconify-icon></button><button class="win-btn del"
-                        onclick="event.stopPropagation()"><iconify-icon icon="lucide:trash-2"
-                          width="14"></iconify-icon></button></span>
-                  </div>
-                  <div class="char-meta">Spesies: Spesies1 Spesies2</div>
-                  <div class="char-meta">Lokasi: Lokasi1</div>
-                  <div class="char-meta">Faksi: Faksi1</div>
-                  <div class="char-meta">Gelar: Gelar1</div>
-                  <div class="char-tags">Tag1 tag2</div>
-                </div>
-              </div>
-
-            </div>
+            <div class="char-grid" id="char-grid"></div>
 
             <div class="char-table-wrap" id="char-table" style="display:none;">
               <table class="list-table">
@@ -977,58 +1113,15 @@
                   <tr>
                     <th>Nama</th>
                     <th>Status</th>
-                    <th>Gelar</th>
+                    <th>Alias</th>
                     <th>Spesies</th>
-                    <th>Lokasi</th>
-                    <th>Faksi</th>
-                    <th>Tag</th>
+                    <th>Lokasi Penting</th>
+                    <th>Tempat Lahir</th>
+                    <th>Tanggal Lahir</th>
                     <th>Action</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr onclick="openCharDetail('Name')">
-                    <td><span class="char-row-name"><span class="char-row-thumb"><iconify-icon icon="lucide:image"
-                            width="14"></iconify-icon></span>Name</span></td>
-                    <td>Hidup</td>
-                    <td>Gelar1</td>
-                    <td>Spesies1, Spesies2</td>
-                    <td>Lokasi1</td>
-                    <td>Faksi1</td>
-                    <td><span class="tag-red">Tag1, tag2</span></td>
-                    <td><button class="win-btn" onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon
-                          icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn"
-                        style="color:var(--danger);" onclick="event.stopPropagation()"><iconify-icon
-                          icon="lucide:trash-2" width="14"></iconify-icon></button></td>
-                  </tr>
-                  <tr onclick="openCharDetail('Name')">
-                    <td><span class="char-row-name"><span class="char-row-thumb"><iconify-icon icon="lucide:image"
-                            width="14"></iconify-icon></span>Name</span></td>
-                    <td>Hidup</td>
-                    <td>Gelar1</td>
-                    <td>Spesies1, Spesies2</td>
-                    <td>Lokasi1</td>
-                    <td>Faksi1</td>
-                    <td><span class="tag-red">Tag1, tag2</span></td>
-                    <td><button class="win-btn" onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon
-                          icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn"
-                        style="color:var(--danger);" onclick="event.stopPropagation()"><iconify-icon
-                          icon="lucide:trash-2" width="14"></iconify-icon></button></td>
-                  </tr>
-                  <tr onclick="openCharDetail('Name')">
-                    <td><span class="char-row-name"><span class="char-row-thumb"><iconify-icon icon="lucide:image"
-                            width="14"></iconify-icon></span>Name</span></td>
-                    <td>Hidup</td>
-                    <td>Gelar1</td>
-                    <td>Spesies1, Spesies2</td>
-                    <td>Lokasi1</td>
-                    <td>Faksi1</td>
-                    <td><span class="tag-red">Tag1, tag2</span></td>
-                    <td><button class="win-btn" onclick="event.stopPropagation();openCharModal('Name')"><iconify-icon
-                          icon="lucide:pen-line" width="14"></iconify-icon></button><button class="win-btn"
-                        style="color:var(--danger);" onclick="event.stopPropagation()"><iconify-icon
-                          icon="lucide:trash-2" width="14"></iconify-icon></button></td>
-                  </tr>
-                </tbody>
+                <tbody></tbody>
               </table>
             </div>
           </div>
@@ -1625,82 +1718,81 @@
         <!-- Tab: Identitas = BuatKarakterIdentitas.png -->
         <div class="char-pane active" id="pane-identitas">
           <div class="field-block">
-            <div><label class="form-label">Nama Lengkap</label><input type="text" class="form-input"></div>
-            <div class="form-row">
-              <div><label class="form-label">Nama Depan</label><input type="text" class="form-input"></div>
-              <div><label class="form-label">Nama Belakang</label><input type="text" class="form-input"></div>
+            <div>
+              <label class="form-label">Nama Lengkap <span style="color:var(--danger);">*</span></label>
+              <input type="text" class="form-input" id="cf-nama-lengkap" placeholder="Wajib diisi">
+              <div class="cf-err" id="err-nama-lengkap" style="display:none;">Nama Lengkap wajib diisi.</div>
             </div>
             <div class="form-row">
-              <div><label class="form-label">Tanggal Lahir</label>
-                <div style="display:flex;gap:0.4rem;"><input type="text" class="form-input" style="flex:1;"><button
-                    class="win-btn" style="border:1px solid var(--border);" title="Kalender"><iconify-icon
-                      icon="lucide:calendar" width="15"></iconify-icon></button></div>
+              <div><label class="form-label">Nama Depan</label><input type="text" class="form-input" id="cf-nama-depan"></div>
+              <div><label class="form-label">Nama Belakang</label><input type="text" class="form-input" id="cf-nama-belakang"></div>
+            </div>
+            <div class="form-row">
+              <div>
+                <label class="form-label" style="display:flex;align-items:center;justify-content:space-between;">
+                  <span>Tanggal Lahir</span>
+                  <button type="button" class="win-btn" id="cf-tgl-mode-btn" title="Ubah mode (tanggal/teks)">
+                    <iconify-icon icon="lucide:repeat" width="14"></iconify-icon>
+                  </button>
+                </label>
+                <div id="cf-tgl-number-wrap" style="display:flex;gap:0.4rem;">
+                  <input type="date" class="form-input" id="cf-tgl-number" style="flex:1;">
+                  <button type="button" class="win-btn" id="cf-tgl-picker" style="border:1px solid var(--border);" title="Pilih tanggal">
+                    <iconify-icon icon="lucide:calendar" width="15"></iconify-icon>
+                  </button>
+                </div>
+                <input type="text" class="form-input" id="cf-tgl-text" style="display:none;" placeholder="Mis. Tahun 231 Era Kedua">
               </div>
-              <div><label class="form-label">Usia</label><input type="text" class="form-input"></div>
+              <div><label class="form-label">Usia</label><input type="text" class="form-input" id="cf-usia"></div>
             </div>
             <div class="form-row">
-              <div><label class="form-label">Jenis Kelamin</label><select class="form-input">
+              <div><label class="form-label">Jenis Kelamin</label><select class="form-input" id="cf-jenis-kelamin">
                   <option>None</option>
                   <option>Laki-laki</option>
                   <option>Perempuan</option>
                   <option>Lainnya</option>
                 </select></div>
-              <div><label class="form-label">Status</label><select class="form-input">
+              <div><label class="form-label">Status</label><select class="form-input" id="cf-status">
                   <option>None</option>
                   <option>Hidup</option>
                   <option>Mati</option>
                 </select></div>
             </div>
             <div class="form-row">
-              <div><label class="form-label">Alias</label><input type="text" class="form-input"></div>
-              <div><label class="form-label">URL Image</label><input type="text" class="form-input"></div>
+              <div><label class="form-label">Alias</label><input type="text" class="form-input" id="cf-alias"></div>
+              <div>
+                <label class="form-label">Gambar Karakter</label>
+                <div class="cf-imgbox" id="cf-imgbox">
+                  <img id="cf-img-preview" alt="Preview" style="display:none;">
+                  <span class="cf-img-empty" id="cf-img-empty"><iconify-icon icon="lucide:image" width="22"></iconify-icon></span>
+                  <button type="button" class="cf-img-edit" id="cf-img-edit-btn" title="Edit gambar">
+                    <iconify-icon icon="lucide:pen-line" width="13"></iconify-icon>
+                  </button>
+                </div>
+              </div>
             </div>
-            <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="4"></textarea></div>
+            <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="4" id="cf-deskripsi"></textarea></div>
           </div>
+
           <div class="field-block">
             <div class="field-block-title">Spesies</div>
-            <input type="text" class="form-input">
-            <div class="chip-row"><span class="chip">Spesies1 x</span><span class="chip">Spesies2 x</span></div>
+            <div class="linked-wrap" id="linked-spesies" data-linked-type="Spesies"></div>
           </div>
+
           <div class="field-block">
             <div class="field-block-title">Tempat Penting</div>
-            <input type="text" class="form-input">
-            <div class="chip-row"><span class="chip">Lokasi1 x</span><span class="chip">Lokasi2 x</span></div>
-            <div style="margin-top:0.4rem;"><label class="form-label">Tempat Lahir</label><input type="text"
-                class="form-input"></div>
+            <div class="linked-wrap" id="linked-tempat" data-linked-type="Lokasi"></div>
+            <div style="margin-top:0.4rem;"><label class="form-label">Tempat Lahir</label><input type="text" class="form-input" id="cf-tempat-lahir"></div>
           </div>
+
           <div class="field-block">
-            <div class="field-block-title">Custom Field</div>
-            <div style="display:flex;gap:0.5rem;"><input type="text" class="form-input" style="flex:2;"><select
-                class="form-input" style="flex:1;">
-                <option></option>
-                <option>Text</option>
-                <option>Number</option>
-                <option>Boolean</option>
-                <option>Linked</option>
-              </select><input type="text" class="form-input" style="flex:1;"></div>
-            <div class="custom-row"><span class="custom-name">Name Custom Field<br>(Text Type)</span><input type="text"
-                class="form-input" style="flex:1;"><button class="win-btn" style="color:var(--danger);"><iconify-icon
-                  icon="lucide:trash-2" width="16"></iconify-icon></button></div>
-            <div class="custom-row"><span class="custom-name">Name Custom Field<br>(Number Type)</span><input
-                type="number" class="form-input" style="flex:1;"><button class="win-btn"
-                style="color:var(--danger);"><iconify-icon icon="lucide:trash-2" width="16"></iconify-icon></button>
+            <div class="field-block-title" style="display:flex;align-items:center;justify-content:space-between;">
+              <span>Custom Field</span>
             </div>
-            <div class="custom-row"><span class="custom-name">Name Custom Field<br>(Boolean Type)</span><select
-                class="form-input" style="flex:1;">
-                <option>Pilih ya / tidak</option>
-                <option>Ya</option>
-                <option>Tidak</option>
-              </select><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"
-                  width="16"></iconify-icon></button></div>
-            <div class="custom-row" style="flex-direction:column;align-items:stretch;">
-              <div style="display:flex;gap:0.5rem;align-items:center;"><span class="custom-name">Name Custom
-                  Field<br>(Linked Type)</span><input type="text" class="form-input"><select class="form-input">
-                  <option>Pilih jenis Element</option>
-                </select><button class="win-btn" style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"
-                    width="16"></iconify-icon></button></div>
-              <div class="chip-row"><span class="chip">Element1 x</span><span class="chip">Element2 x</span></div>
-            </div>
+            <div id="custom-field-list" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+            <button type="button" class="btn-action" id="btn-add-custom-field" style="align-self:flex-start;padding:0.35rem 0.7rem;font-size:0.78rem;">
+              <iconify-icon icon="lucide:plus" width="14"></iconify-icon> Tambahkan Custom Field
+            </button>
           </div>
         </div>
         <div class="char-pane" id="pane-penampilan">
@@ -2062,8 +2154,110 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <script src="/js/awb-sidebar.js"></script>
+  <!-- Popup: Edit Gambar Karakter -->
+  <div class="cf-pop" id="pop-img">
+    <div class="cf-pop-box">
+      <div class="cf-pop-head">
+        <span><iconify-icon icon="lucide:image" width="16"></iconify-icon> Edit Gambar</span>
+        <button class="win-btn" data-cf-close="pop-img"><iconify-icon icon="lucide:x"></iconify-icon></button>
+      </div>
+      <div class="cf-pop-body">
+        <div class="cf-img-pop-preview" id="pop-img-preview">Masukkan URL gambar untuk melihat pratinjau</div>
+        <div>
+          <label class="form-label">URL Image</label>
+          <input type="text" class="form-input" id="pop-img-url" placeholder="https://...">
+        </div>
+      </div>
+      <div class="cf-pop-foot">
+        <button class="btn-cancel" data-cf-close="pop-img">Batal</button>
+        <button class="btn-confirm" id="pop-img-save">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup: Tambah Custom Field -->
+  <div class="cf-pop" id="pop-cf">
+    <div class="cf-pop-box">
+      <div class="cf-pop-head">
+        <span><iconify-icon icon="lucide:list-plus" width="16"></iconify-icon> Tambah Custom Field</span>
+        <button class="win-btn" data-cf-close="pop-cf"><iconify-icon icon="lucide:x"></iconify-icon></button>
+      </div>
+      <div class="cf-pop-body">
+        <div>
+          <label class="form-label">Type</label>
+          <select class="form-input" id="pop-cf-type">
+            <option value="text">Text Bebas</option>
+            <option value="number">Number</option>
+            <option value="boolean">Boolean</option>
+            <option value="linked">Linked</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Name Field</label>
+          <input type="text" class="form-input" id="pop-cf-name" placeholder="Nama field...">
+        </div>
+        <div id="pop-cf-value-text-wrap">
+          <label class="form-label">Isi Field</label>
+          <input type="text" class="form-input" id="pop-cf-value-text" placeholder="Isi / deskripsi field">
+        </div>
+        <div id="pop-cf-value-number-wrap" style="display:none;">
+          <label class="form-label">Isi Field</label>
+          <input type="number" class="form-input" id="pop-cf-value-number" placeholder="0">
+        </div>
+        <div id="pop-cf-value-bool-wrap" style="display:none;">
+          <label class="form-label">Isi Field</label>
+          <select class="form-input" id="pop-cf-value-bool">
+            <option value="Ya">Ya</option>
+            <option value="Tidak">Tidak</option>
+          </select>
+        </div>
+        <div id="pop-cf-value-linked-wrap" style="display:none;">
+          <label class="form-label">Jenis Element</label>
+          <select class="form-input" id="pop-cf-linked-type">
+            <option>Spesies</option>
+            <option>Lokasi</option>
+            <option>Makhluk</option>
+            <option>Faksi</option>
+            <option>Pekerjaan</option>
+            <option>Agama</option>
+            <option>Sistem Sihir</option>
+            <option>Teknologi</option>
+            <option>Bahasa</option>
+            <option>Item</option>
+            <option>Kelompok</option>
+            <option>Dewa</option>
+            <option>Gelar</option>
+          </select>
+          <div class="linked-wrap" id="linked-pop-cf" data-linked-type="Spesies" style="margin-top:0.5rem;"></div>
+        </div>
+      </div>
+      <div class="cf-pop-foot">
+        <button class="btn-cancel" data-cf-close="pop-cf">Batal</button>
+        <button class="btn-confirm" id="pop-cf-save">Tambah</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup: Konfirmasi Hapus Custom Field -->
+  <div class="cf-pop" id="pop-confirm">
+    <div class="cf-pop-box" style="max-width:340px;">
+      <div class="cf-pop-head">
+        <span><iconify-icon icon="lucide:alert-triangle" width="16" style="color:var(--danger);"></iconify-icon> Hapus Field</span>
+        <button class="win-btn" data-cf-close="pop-confirm"><iconify-icon icon="lucide:x"></iconify-icon></button>
+      </div>
+      <div class="cf-pop-body">
+        <div style="font-size:0.82rem;color:var(--text-muted);" id="pop-confirm-text">Hapus custom field ini?</div>
+      </div>
+      <div class="cf-pop-foot">
+        <button class="btn-cancel" data-cf-close="pop-confirm">Batal</button>
+        <button class="btn-confirm" id="pop-confirm-yes" style="background:var(--danger);border-color:var(--danger);">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/awb-sidebar.js"></script>
     <script>
       document.querySelectorAll('.char-modal-tab').forEach(tab => {
         tab.addEventListener('click', () => {
@@ -2081,6 +2275,489 @@
         document.getElementById('pane-identitas').classList.add('active');
       }
 
+      // ===================== STATE KARAKTER =====================
+      var charState = {
+        editingId: null,
+        image: '',
+        birthMode: 'number',
+        linked: { spesies: [], tempat: [] },
+        customFields: []
+      };
+
+      var debounceTimer = null;
+      function debounce(fn, ms) {
+        return function () {
+          var args = arguments, ctx = this;
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(function () { fn.apply(ctx, args); }, ms);
+        };
+      }
+
+      function escapeHtml(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+
+      // ===================== POPUP HELPERS =====================
+      function openPop(id) { document.getElementById(id).classList.add('open'); }
+      function closePop(id) { document.getElementById(id).classList.remove('open'); }
+      document.querySelectorAll('[data-cf-close]').forEach(function (b) {
+        b.addEventListener('click', function () { closePop(b.dataset.cfClose); });
+      });
+      document.querySelectorAll('.cf-pop').forEach(function (ov) {
+        ov.addEventListener('click', function (e) { if (e.target === ov) ov.classList.remove('open'); });
+      });
+
+      // ===================== POPUP IMAGE =====================
+      var popImgUrl = document.getElementById('pop-img-url');
+      var popImgPreview = document.getElementById('pop-img-preview');
+
+      document.getElementById('cf-img-edit-btn').addEventListener('click', function () {
+        popImgUrl.value = charState.image || '';
+        renderPopImgPreview(charState.image || '');
+        openPop('pop-img');
+        popImgUrl.focus();
+      });
+
+      function renderPopImgPreview(url) {
+        if (!url) {
+          popImgPreview.innerHTML = 'Masukkan URL gambar untuk melihat pratinjau';
+          return;
+        }
+        popImgPreview.innerHTML = '';
+        var img = new Image();
+        img.onload = function () {
+          popImgPreview.innerHTML = '';
+          popImgPreview.appendChild(img);
+        };
+        img.onerror = function () {
+          popImgPreview.innerHTML = '<span style="color:var(--danger);">URL gambar tidak valid</span>';
+        };
+        img.src = url;
+      }
+
+      popImgUrl.addEventListener('input', debounce(function () {
+        renderPopImgPreview(popImgUrl.value.trim());
+      }, 350));
+
+      document.getElementById('pop-img-save').addEventListener('click', function () {
+        var url = popImgUrl.value.trim();
+        if (url) {
+          var test = new Image();
+          test.onload = function () {
+            charState.image = url;
+            applyImagePreview();
+            closePop('pop-img');
+          };
+          test.onerror = function () {
+            alert('URL gambar tidak valid, tidak bisa disimpan.');
+          };
+          test.src = url;
+        } else {
+          charState.image = '';
+          applyImagePreview();
+          closePop('pop-img');
+        }
+      });
+
+      function applyImagePreview() {
+        var img = document.getElementById('cf-img-preview');
+        var empty = document.getElementById('cf-img-empty');
+        if (charState.image) {
+          img.src = charState.image;
+          img.style.display = 'block';
+          empty.style.display = 'none';
+        } else {
+          img.removeAttribute('src');
+          img.style.display = 'none';
+          empty.style.display = 'flex';
+        }
+      }
+
+      // ===================== TANGGAL LAHIR DUAL MODE =====================
+      var tglNumberWrap = document.getElementById('cf-tgl-number-wrap');
+      var tglText = document.getElementById('cf-tgl-text');
+      var tglNumber = document.getElementById('cf-tgl-number');
+
+      document.getElementById('cf-tgl-mode-btn').addEventListener('click', function () {
+        charState.birthMode = charState.birthMode === 'number' ? 'text' : 'number';
+        applyBirthMode();
+      });
+      document.getElementById('cf-tgl-picker').addEventListener('click', function () {
+        if (tglNumber.showPicker) { try { tglNumber.showPicker(); } catch (e) { tglNumber.focus(); } }
+        else tglNumber.focus();
+      });
+      function applyBirthMode() {
+        var isNum = charState.birthMode === 'number';
+        tglNumberWrap.style.display = isNum ? 'flex' : 'none';
+        tglText.style.display = isNum ? 'none' : 'block';
+      }
+
+      // ===================== LINKED INPUT (Spesies / Tempat / Custom) =====================
+      // data linked: [{ id, name, type }]
+      function LinkedInput(wrapEl, opts) {
+        opts = opts || {};
+        var type = opts.type || 'Spesies';
+        var state = opts.state || null;
+        var onChange = opts.onChange || function () {};
+        var items = [];
+        var cache = [];
+
+        wrapEl.innerHTML =
+          '<div class="linked-input-row"><input type="text" class="form-input" placeholder="Ketik lalu Enter untuk tambah..."></div>' +
+          '<div class="linked-dropdown"></div>' +
+          '<div class="linked-chips"></div>';
+
+        var input = wrapEl.querySelector('input');
+        var dropdown = wrapEl.querySelector('.linked-dropdown');
+        var chips = wrapEl.querySelector('.linked-chips');
+
+        function refreshCache() {
+          return window.karakterQuery.getElements(type).then(function (els) {
+            cache = (els || []).map(function (e) { return { id: e.id, name: e.name, type: e.type }; });
+            return cache;
+          });
+        }
+
+        function renderChips() {
+          chips.innerHTML = '';
+          items.forEach(function (it, idx) {
+            var chip = document.createElement('span');
+            chip.className = 'linked-chip';
+            chip.innerHTML = escapeHtml(it.name) + ' <button type="button" title="Hapus linked">&times;</button>';
+            chip.querySelector('button').addEventListener('click', function () {
+              items.splice(idx, 1);
+              renderChips();
+              onChange(items.slice());
+            });
+            chips.appendChild(chip);
+          });
+        }
+
+        function addItem(item) {
+          var exists = items.some(function (i) {
+            return (item.id && i.id === item.id) || i.name.toLowerCase() === item.name.toLowerCase();
+          });
+          if (exists) return;
+          items.push(item);
+          renderChips();
+          onChange(items.slice());
+        }
+
+        function renderDropdown(query) {
+          var q = (query || '').toLowerCase().trim();
+          var filtered = cache.filter(function (e) {
+            return !items.some(function (i) { return i.id === e.id; }) && e.name.toLowerCase().indexOf(q) !== -1;
+          }).slice(0, 8);
+
+          dropdown.innerHTML = '';
+          filtered.forEach(function (e) {
+            var opt = document.createElement('div');
+            opt.className = 'linked-opt';
+            opt.innerHTML = '<span>' + escapeHtml(e.name) + '</span><span class="linked-opt-type">' + escapeHtml(e.type) + '</span>';
+            opt.addEventListener('mousedown', function (ev) {
+              ev.preventDefault();
+              addItem({ id: e.id, name: e.name, type: e.type });
+              input.value = '';
+              closeDropdown();
+            });
+            dropdown.appendChild(opt);
+          });
+
+          var exactExists = cache.some(function (e) { return e.name.toLowerCase() === q; });
+          if (q && !exactExists) {
+            var createOpt = document.createElement('div');
+            createOpt.className = 'linked-opt create';
+            createOpt.innerHTML = '<span>+ Buat "' + escapeHtml(input.value.trim()) + '"</span><span class="linked-opt-type">' + escapeHtml(type) + '</span>';
+            createOpt.addEventListener('mousedown', function (ev) {
+              ev.preventDefault();
+              var name = input.value.trim();
+              if (!name) return;
+              window.karakterQuery.addElement({ name: name, type: type, data: {} }).then(function (created) {
+                if (created) addItem({ id: created.id, name: created.name, type: created.type });
+                input.value = '';
+                refreshCache();
+                closeDropdown();
+              });
+            });
+            dropdown.appendChild(createOpt);
+          }
+
+          if (dropdown.children.length) dropdown.classList.add('open');
+          else dropdown.classList.remove('open');
+        }
+
+        function closeDropdown() { dropdown.classList.remove('open'); }
+
+        input.addEventListener('input', debounce(function () {
+          refreshCache().then(function () { renderDropdown(input.value); });
+        }, 200));
+
+        input.addEventListener('focus', function () {
+          refreshCache().then(function () { renderDropdown(input.value); });
+        });
+
+        input.addEventListener('blur', function () {
+          setTimeout(closeDropdown, 150);
+        });
+
+        input.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            var name = input.value.trim();
+            if (!name) return;
+            var found = cache.find(function (x) { return x.name.toLowerCase() === name.toLowerCase(); });
+            if (found) {
+              addItem({ id: found.id, name: found.name, type: found.type });
+              input.value = '';
+              closeDropdown();
+              return;
+            }
+            window.karakterQuery.addElement({ name: name, type: type, data: {} }).then(function (created) {
+              if (created) addItem({ id: created.id, name: created.name, type: created.type });
+              input.value = '';
+              refreshCache();
+              closeDropdown();
+            });
+          } else if (e.key === 'Escape') {
+            closeDropdown();
+          }
+        });
+
+        return {
+          getItems: function () { return items.slice(); },
+          setItems: function (arr) { items = (arr || []).slice(); renderChips(); },
+          setType: function (t) { type = t; refreshCache(); },
+          refresh: refreshCache,
+          _input: input
+        };
+      }
+
+      var linkedSpesies = LinkedInput(document.getElementById('linked-spesies'), {
+        type: 'Spesies',
+        onChange: function (items) { charState.linked.spesies = items; }
+      });
+      var linkedTempat = LinkedInput(document.getElementById('linked-tempat'), {
+        type: 'Lokasi',
+        onChange: function (items) { charState.linked.tempat = items; }
+      });
+
+      // ===================== CUSTOM FIELD =====================
+      var popCfType = document.getElementById('pop-cf-type');
+      var popCfLinkedItems = [];
+      var popCfLinked = LinkedInput(document.getElementById('linked-pop-cf'), {
+        type: 'Spesies',
+        onChange: function (items) { popCfLinkedItems = items; }
+      });
+
+      document.getElementById('pop-cf-linked-type').addEventListener('change', function () {
+        popCfLinked.setType(this.value);
+      });
+
+      popCfType.addEventListener('change', function () {
+        var t = this.value;
+        document.getElementById('pop-cf-value-text-wrap').style.display = t === 'text' ? 'block' : 'none';
+        document.getElementById('pop-cf-value-number-wrap').style.display = t === 'number' ? 'block' : 'none';
+        document.getElementById('pop-cf-value-bool-wrap').style.display = t === 'boolean' ? 'block' : 'none';
+        document.getElementById('pop-cf-value-linked-wrap').style.display = t === 'linked' ? 'block' : 'none';
+        if (t === 'linked') {
+          var lt = document.getElementById('pop-cf-linked-type').value;
+          popCfLinked.setType(lt);
+        }
+      });
+
+      document.getElementById('btn-add-custom-field').addEventListener('click', function () {
+        document.getElementById('pop-cf-name').value = '';
+        document.getElementById('pop-cf-value-text').value = '';
+        document.getElementById('pop-cf-value-number').value = '';
+        document.getElementById('pop-cf-value-bool').value = 'Ya';
+        popCfType.value = 'text';
+        popCfType.dispatchEvent(new Event('change'));
+        popCfLinked.setItems([]);
+        popCfLinkedItems = [];
+        openPop('pop-cf');
+      });
+
+      document.getElementById('pop-cf-save').addEventListener('click', function () {
+        var name = document.getElementById('pop-cf-name').value.trim();
+        if (!name) { alert('Nama Field wajib diisi'); return; }
+        var type = popCfType.value;
+        var field = { id: 'cf_' + Date.now(), name: name, type: type };
+        if (type === 'text') field.value = document.getElementById('pop-cf-value-text').value;
+        else if (type === 'number') field.value = document.getElementById('pop-cf-value-number').value;
+        else if (type === 'boolean') field.value = document.getElementById('pop-cf-value-bool').value;
+        else if (type === 'linked') {
+          field.elementType = document.getElementById('pop-cf-linked-type').value;
+          field.value = popCfLinked.getItems();
+        }
+        charState.customFields.push(field);
+        renderCustomFields();
+        closePop('pop-cf');
+      });
+
+      function renderCustomFields() {
+        var list = document.getElementById('custom-field-list');
+        list.innerHTML = '';
+        charState.customFields.forEach(function (field, idx) {
+          var row = document.createElement('div');
+          row.className = 'cf-row';
+
+          var head = document.createElement('div');
+          head.className = 'cf-row-head';
+          head.innerHTML = '<div><div class="cf-row-name">' + escapeHtml(field.name) + '</div>' +
+            '<div class="cf-row-type">' + escapeHtml(typeLabel(field.type)) + (field.elementType ? ' · ' + escapeHtml(field.elementType) : '') + '</div></div>';
+          var delBtn = document.createElement('button');
+          delBtn.className = 'win-btn';
+          delBtn.style.color = 'var(--danger)';
+          delBtn.innerHTML = '<iconify-icon icon="lucide:trash-2" width="16"></iconify-icon>';
+          delBtn.addEventListener('click', function () {
+            pendingDeleteField = idx;
+            document.getElementById('pop-confirm-text').textContent = 'Hapus custom field "' + field.name + '"?';
+            openPop('pop-confirm');
+          });
+          head.appendChild(delBtn);
+          row.appendChild(head);
+
+          var body = document.createElement('div');
+          body.className = 'cf-row-body';
+
+          if (field.type === 'text') {
+            var inp = document.createElement('input');
+            inp.type = 'text';
+            inp.className = 'form-input';
+            inp.value = field.value || '';
+            inp.addEventListener('input', function () { field.value = inp.value; });
+            body.appendChild(inp);
+          } else if (field.type === 'number') {
+            var numWrap = document.createElement('div');
+            numWrap.className = 'cf-num-wrap';
+            var num = document.createElement('input');
+            num.type = 'number';
+            num.className = 'form-input';
+            num.value = field.value || '';
+            num.addEventListener('input', function () { field.value = num.value; });
+            var step = document.createElement('div');
+            step.className = 'cf-num-step';
+            var up = document.createElement('button');
+            up.type = 'button'; up.innerHTML = '&uarr;';
+            up.addEventListener('click', function () { num.value = String((parseFloat(num.value) || 0) + 1); field.value = num.value; });
+            var down = document.createElement('button');
+            down.type = 'button'; down.innerHTML = '&darr;';
+            down.addEventListener('click', function () { num.value = String((parseFloat(num.value) || 0) - 1); field.value = num.value; });
+            step.appendChild(up); step.appendChild(down);
+            numWrap.appendChild(num); numWrap.appendChild(step);
+            body.appendChild(numWrap);
+          } else if (field.type === 'boolean') {
+            var sel = document.createElement('select');
+            sel.className = 'form-input';
+            sel.innerHTML = '<option value="Ya">Ya</option><option value="Tidak">Tidak</option>';
+            sel.value = field.value || 'Ya';
+            sel.addEventListener('change', function () { field.value = sel.value; });
+            body.appendChild(sel);
+          } else if (field.type === 'linked') {
+            var mount = document.createElement('div');
+            mount.className = 'linked-wrap';
+            mount.style.flex = '1';
+            body.appendChild(mount);
+            var li = LinkedInput(mount, {
+              type: field.elementType || 'Spesies',
+              onChange: function (items) { field.value = items; }
+            });
+            li.setItems(field.value || []);
+          }
+
+          row.appendChild(body);
+          list.appendChild(row);
+        });
+      }
+
+      function typeLabel(t) {
+        return { text: 'Text Bebas', number: 'Number', boolean: 'Boolean', linked: 'Linked' }[t] || t;
+      }
+
+      var pendingDeleteField = -1;
+      document.getElementById('pop-confirm-yes').addEventListener('click', function () {
+        if (pendingDeleteField > -1) {
+          charState.customFields.splice(pendingDeleteField, 1);
+          pendingDeleteField = -1;
+          renderCustomFields();
+        }
+        closePop('pop-confirm');
+      });
+
+      // ===================== OPEN / FILL FORM =====================
+      function clearIdentitasForm() {
+        charState.editingId = null;
+        charState.image = '';
+        charState.birthMode = 'number';
+        charState.customFields = [];
+        document.getElementById('cf-nama-lengkap').value = '';
+        document.getElementById('cf-nama-depan').value = '';
+        document.getElementById('cf-nama-belakang').value = '';
+        tglNumber.value = '';
+        tglText.value = '';
+        document.getElementById('cf-usia').value = '';
+        document.getElementById('cf-jenis-kelamin').value = 'None';
+        document.getElementById('cf-status').value = 'None';
+        document.getElementById('cf-alias').value = '';
+        document.getElementById('cf-deskripsi').value = '';
+        document.getElementById('cf-tempat-lahir').value = '';
+        document.getElementById('err-nama-lengkap').style.display = 'none';
+        linkedSpesies.setItems([]);
+        linkedTempat.setItems([]);
+        charState.linked.spesies = [];
+        charState.linked.tempat = [];
+        applyImagePreview();
+        applyBirthMode();
+        renderCustomFields();
+      }
+
+      function fillIdentitasForm(data) {
+        charState.editingId = data._id || null;
+        charState.image = data.image || '';
+        charState.birthMode = data.birthMode || 'number';
+        document.getElementById('cf-nama-lengkap').value = data.fullName || '';
+        document.getElementById('cf-nama-depan').value = data.firstName || '';
+        document.getElementById('cf-nama-belakang').value = data.lastName || '';
+        if (charState.birthMode === 'text') tglText.value = data.birthDate || '';
+        else tglNumber.value = data.birthDate || '';
+        document.getElementById('cf-usia').value = data.age || '';
+        document.getElementById('cf-jenis-kelamin').value = data.gender || 'None';
+        document.getElementById('cf-status').value = data.status || 'None';
+        document.getElementById('cf-alias').value = data.alias || '';
+        document.getElementById('cf-deskripsi').value = data.description || '';
+        document.getElementById('cf-tempat-lahir').value = data.birthPlace || '';
+        linkedSpesies.setItems(data.species || []);
+        linkedTempat.setItems(data.places || []);
+        charState.linked.spesies = (data.species || []).slice();
+        charState.linked.tempat = (data.places || []).slice();
+        charState.customFields = JSON.parse(JSON.stringify(data.customFields || []));
+        applyImagePreview();
+        applyBirthMode();
+        renderCustomFields();
+      }
+
+      function collectIdentitas() {
+        return {
+          fullName: document.getElementById('cf-nama-lengkap').value.trim(),
+          firstName: document.getElementById('cf-nama-depan').value.trim(),
+          lastName: document.getElementById('cf-nama-belakang').value.trim(),
+          birthDate: (charState.birthMode === 'number' ? tglNumber.value : tglText.value).trim(),
+          birthMode: charState.birthMode,
+          age: document.getElementById('cf-usia').value.trim(),
+          gender: document.getElementById('cf-jenis-kelamin').value,
+          status: document.getElementById('cf-status').value,
+          alias: document.getElementById('cf-alias').value.trim(),
+          image: charState.image,
+          description: document.getElementById('cf-deskripsi').value.trim(),
+          birthPlace: document.getElementById('cf-tempat-lahir').value.trim(),
+          species: linkedSpesies.getItems(),
+          places: linkedTempat.getItems(),
+          customFields: charState.customFields
+        };
+      }
+
       function openCharCreate() {
         document.getElementById('char-modal-title').textContent = 'Buat karakter';
         document.getElementById('char-modal-sub').textContent = 'Nama Karakter';
@@ -2088,50 +2765,221 @@
         document.getElementById('base-varian-wrap').style.display = 'none';
         document.getElementById('doc-empty').style.display = 'block';
         document.getElementById('doc-list').style.display = 'none';
+        clearIdentitasForm();
         resetCharTabs();
         document.getElementById('modal-char').classList.add('open');
       }
 
-      function openCharModal(name) {
+      function openCharModal(nameOrId) {
+        var id = typeof nameOrId === 'number' ? nameOrId : window._charIdByName && window._charIdByName[nameOrId];
         document.getElementById('char-modal-title').textContent = 'Edit karakter';
-        document.getElementById('char-modal-sub').textContent = name || 'Nama Karakter';
+        document.getElementById('char-modal-sub').textContent = nameOrId || 'Nama Karakter';
         document.getElementById('tab-varian').style.display = '';
         document.getElementById('base-varian-wrap').style.display = '';
         document.getElementById('doc-empty').style.display = 'none';
         document.getElementById('doc-list').style.display = 'flex';
         resetCharTabs();
+
+        var data = id ? window._charCache && window._charCache[id] : null;
+        if (data) {
+          var ident = Object.assign({}, data.data || {}, { _id: id });
+          fillIdentitasForm(ident);
+        } else {
+          clearIdentitasForm();
+        }
         document.getElementById('modal-char').classList.add('open');
       }
 
-      function setCharView(mode) {
-        document.getElementById('char-grid').style.display = mode === 'grid' ? '' : 'none';
-        document.getElementById('char-table').style.display = mode === 'list' ? '' : 'none';
-        document.getElementById('view-grid').classList.toggle('active', mode === 'grid');
-        document.getElementById('view-list').classList.toggle('active', mode === 'list');
-      }
-
-      function toggleCharSection(head) {
-        var section = head.closest('.char-section');
-        section.classList.toggle('collapsed');
-        var toggle = head.querySelector('.char-section-toggle');
-        toggle.textContent = section.classList.contains('collapsed') ? '>' : 'v';
-      }
-
-      function openCharDetail(name) {
-        console.log('openCharDetail called with:', name);
+      function openCharDetail(nameOrId) {
+        var id = typeof nameOrId === 'number' ? nameOrId : window._charIdByName && window._charIdByName[nameOrId];
+        var c = id && window._charCache ? window._charCache[id] : null;
         var sidebar = document.getElementById('char-detail');
-        if (!sidebar) { console.error('char-detail not found'); return; }
+        if (!sidebar) return;
+        var d = c ? (c.data || {}) : {};
 
-        document.getElementById('detail-name').textContent = name;
-        document.getElementById('detail-sub').textContent = 'nama depan ' + name;
+        document.getElementById('detail-name').textContent = (c && c.name) || nameOrId || 'Nama Lengkap';
+        document.getElementById('detail-sub').textContent =
+          [d.firstName, d.lastName].filter(Boolean).join(' ') || (c && c.name) || '';
+        document.getElementById('detail-desc').textContent = d.description || 'Belum ada deskripsi.';
 
         var variantRow = document.getElementById('variant-row');
-        variantRow.innerHTML = '<button class="char-variant-btn active">Base Varian</button><button class="char-variant-btn">Varian2</button>';
+        variantRow.innerHTML = '<button class="char-variant-btn active">Base Varian</button>';
+
+        var sp = (d.species || []).map(function (s) { return '<span class="char-chip">' + escapeHtml(s.name) + '</span>'; }).join('');
+        document.getElementById('detail-spesies').innerHTML = sp || '<span style="color:var(--text-faint);">-</span>';
+        var pl = (d.places || []).map(function (s) { return '<span class="char-chip">' + escapeHtml(s.name) + '</span>'; }).join('');
+        document.getElementById('detail-lokasi').innerHTML = pl || '<span style="color:var(--text-faint);">-</span>';
 
         sidebar.classList.add('open');
-        console.log('sidebar opened');
       }
+
+      // ===================== SIMPAN =====================
+      async function saveCharacter() {
+        if (!window.karakterQuery) { alert('Database belum siap'); return; }
+        var ident = collectIdentitas();
+        var errEl = document.getElementById('err-nama-lengkap');
+        var namaInput = document.getElementById('cf-nama-lengkap');
+        if (!ident.fullName) {
+          errEl.style.display = 'block';
+          namaInput.focus();
+          document.querySelectorAll('.char-modal-tab').forEach(function (t) { t.classList.remove('active'); });
+          document.querySelectorAll('.char-pane').forEach(function (p) { p.classList.remove('active'); });
+          document.querySelector('[data-pane="pane-identitas"]').classList.add('active');
+          document.getElementById('pane-identitas').classList.add('active');
+          return;
+        }
+        errEl.style.display = 'none';
+
+        var payload = { name: ident.fullName, data: ident };
+        try {
+          if (charState.editingId) {
+            await window.karakterQuery.updateCharacter(charState.editingId, payload);
+            await window.karakterQuery.logActivity('update', 'character', charState.editingId, ident.fullName, 'Diperbarui');
+          } else {
+            var created = await window.karakterQuery.addCharacter(payload);
+            await window.karakterQuery.logActivity('create', 'character', created.id, ident.fullName, 'Karakter baru dibuat');
+          }
+          closeCharModal();
+          await refreshCharacters();
+        } catch (err) {
+          console.error(err);
+          alert('Gagal menyimpan karakter: ' + err.message);
+        }
+      }
+
+      function closeCharModal() {
+        document.getElementById('modal-char').classList.remove('open');
+      }
+
+      // ===================== RENDER DAFTAR =====================
+      var charCache = {};
+      var charIdByName = {};
+
+      async function refreshCharacters() {
+        var characters = await window.karakterQuery.getCharacters();
+        charCache = {};
+        charIdByName = {};
+        (characters || []).forEach(function (c) {
+          charCache[c.id] = c;
+          charIdByName[c.name] = c.id;
+        });
+        window._charCache = charCache;
+        window._charIdByName = charIdByName;
+        window._allCharacters = characters || [];
+        applyCharFilters();
+        updateCharBadge((characters || []).length);
+      }
+
+      // Filter pencarian & status
+      function applyCharFilters() {
+        var q = (document.getElementById('char-search') || {}).value || '';
+        var st = (document.getElementById('char-filter-status') || {}).value || '';
+        q = q.toLowerCase().trim();
+        var list = (window._allCharacters || []).filter(function (c) {
+          var d = c.data || {};
+          var nameMatch = !q || String(c.name || '').toLowerCase().indexOf(q) !== -1;
+          var stMatch = !st || String(d.status || '') === st;
+          return nameMatch && stMatch;
+        });
+        renderCharacters(list);
+      }
+
+      document.getElementById('char-search') && document.getElementById('char-search').addEventListener('input', debounce(applyCharFilters, 200));
+      document.getElementById('char-filter-status') && document.getElementById('char-filter-status').addEventListener('change', applyCharFilters);
+
+      function updateCharBadge(n) {
+        var badge = document.querySelector('.page-header h1 .badge');
+        if (badge) badge.textContent = n + ' Total';
+      }
+
+      function renderCharacters(characters) {
+        var grid = document.getElementById('char-grid');
+        var tableBody = document.querySelector('#char-table tbody');
+        if (!grid) return;
+
+        var addCard = '<div class="char-card-add" onclick="openCharCreate()"><iconify-icon icon="lucide:plus-circle" width="32"></iconify-icon><span>Tambah Karakter</span></div>';
+
+        if (!characters || characters.length === 0) {
+          grid.innerHTML = addCard;
+          if (tableBody) tableBody.innerHTML = '';
+          return;
+        }
+
+        grid.innerHTML = characters.map(function (c) {
+          var d = c.data || {};
+          var img = d.image
+            ? '<img src="' + escapeHtml(d.image) + '" alt="" style="width:100%;height:100%;object-fit:cover;">'
+            : '<iconify-icon icon="lucide:image" width="44"></iconify-icon>';
+          var species = (d.species || []).map(function (s) { return s.name; }).join(', ');
+          var places = (d.places || []).map(function (s) { return s.name; }).join(', ');
+          return '<div class="char-card" onclick="openCharDetail(' + c.id + ')">' +
+            '<div class="char-card-img">' + img + '<span class="char-status">' + escapeHtml(d.status || 'Hidup') + '</span></div>' +
+            '<div class="char-info">' +
+            '<div class="char-name">' + escapeHtml(c.name) + ' <span class="char-actions">' +
+            '<button class="win-btn" onclick="event.stopPropagation();openCharModal(' + c.id + ')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button>' +
+            '<button class="win-btn del" onclick="event.stopPropagation();deleteCharacter(' + c.id + ')"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button>' +
+            '</span></div>' +
+            '<div class="char-meta">Spesies: ' + escapeHtml(species || '-') + '</div>' +
+            '<div class="char-meta">Lokasi: ' + escapeHtml(places || '-') + '</div>' +
+            '<div class="char-meta">Status: ' + escapeHtml(d.status || '-') + '</div>' +
+            '<div class="char-tags">' + escapeHtml(d.birthDate || '') + '</div>' +
+            '</div></div>';
+        }).join('') + addCard;
+
+        if (tableBody) {
+          tableBody.innerHTML = characters.map(function (c) {
+            var d = c.data || {};
+            var species = (d.species || []).map(function (s) { return s.name; }).join(', ');
+            var places = (d.places || []).map(function (s) { return s.name; }).join(', ');
+            return '<tr onclick="openCharDetail(' + c.id + ')">' +
+              '<td><span class="char-row-name">' +
+              (d.image ? '<span class="char-row-thumb" style="overflow:hidden;padding:0;"><img src="' + escapeHtml(d.image) + '" style="width:100%;height:100%;object-fit:cover;"></span>' : '<span class="char-row-thumb"><iconify-icon icon="lucide:image" width="14"></iconify-icon></span>') +
+              escapeHtml(c.name) + '</span></td>' +
+              '<td>' + escapeHtml(d.status || '-') + '</td>' +
+              '<td>' + escapeHtml(d.alias || '-') + '</td>' +
+              '<td>' + escapeHtml(species || '-') + '</td>' +
+              '<td>' + escapeHtml(places || '-') + '</td>' +
+              '<td>' + escapeHtml(d.birthPlace || '-') + '</td>' +
+              '<td>' + escapeHtml(d.birthDate || '-') + '</td>' +
+              '<td><button class="win-btn" onclick="event.stopPropagation();openCharModal(' + c.id + ')"><iconify-icon icon="lucide:pen-line" width="14"></iconify-icon></button>' +
+              '<button class="win-btn" style="color:var(--danger);" onclick="event.stopPropagation();deleteCharacter(' + c.id + ')"><iconify-icon icon="lucide:trash-2" width="14"></iconify-icon></button></td>' +
+              '</tr>';
+          }).join('');
+        }
+      }
+
+      async function deleteCharacter(id) {
+        if (!confirm('Hapus karakter ini?')) return;
+        if (!window.karakterQuery) return;
+        var c = charCache[id];
+        await window.karakterQuery.deleteCharacter(id);
+        await window.karakterQuery.logActivity('delete', 'character', id, c ? c.name : 'Character', 'Dihapus dari daftar');
+        await refreshCharacters();
+        document.getElementById('char-detail').classList.remove('open');
+      }
+
+      // ===================== INIT =====================
+      async function initKarakterPage() {
+        var utils = await window.AetherPageUtils.initPage();
+        if (!utils.query) {
+          console.warn('Tidak ada proyek aktif; karakter tidak dimuat.');
+          renderCharacters([]);
+          return;
+        }
+        window.karakterQuery = utils.query;
+        await linkedSpesies.refresh();
+        await linkedTempat.refresh();
+        await refreshCharacters();
+
+        // tombol Simpan di footer modal
+        document.querySelector('#modal-char .btn-confirm').addEventListener('click', saveCharacter);
+        // Enter di Nama Lengkap → simpan
+        document.getElementById('cf-nama-lengkap').addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') { e.preventDefault(); saveCharacter(); }
+        });
+      }
+
+      initKarakterPage();
     </script>
 </body>
-
 </html>

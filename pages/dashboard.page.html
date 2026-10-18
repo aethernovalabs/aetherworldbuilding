@@ -13,6 +13,10 @@
     rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
+  <script src="/js/dexie.min.js"></script>
+  <script src="/js/aether-state.js"></script>
+  <script src="/js/awb-storage.js"></script>
+  <script src="/js/awb-sidebar.js"></script>
   <style>
     /* ===== Sidebar header (brand + world picker) ===== */
     .sidebar-brand-wrap {
@@ -31,6 +35,10 @@
 
     .main-sidebar.collapsed .world-picker {
       display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     .world-picker-btn {
@@ -247,14 +255,14 @@
       width: 100%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 0.5rem;
-      padding: 0.5rem 0.75rem;
+      padding: 0.5rem 0.6rem;
       border-radius: 4px;
       background: #182235;
       border: 1px solid #283750;
       color: #cbd5e1;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.12s;
     }
@@ -264,53 +272,8 @@
       color: #fff;
     }
 
-    .awb-world-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: -400px;
-      z-index: 80;
-      background: #151c2a;
-      border: 1px solid #33435e;
-      border-radius: 6px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-      padding: 0.35rem;
-      max-width: 200px;
-      max-height: 260px;
-      overflow-y: auto;
-      display: none;
-    }
 
-    .awb-world-dropdown.open {
-      display: block;
-    }
-
-    .awb-world-opt {
-      padding: 0.4rem 0.5rem;
-      font-size: 0.78rem;
-      color: #cbd5e1;
-      cursor: pointer;
-      border-radius: 3px;
-      background: transparent;
-      display: block;
-      width: 100%;
-      text-align: left;
-      transition: background 0.12s;
-    }
-
-    .awb-world-opt:hover,
-    .awb-world-opt.active {
-      background: #25334c;
-      color: #fff;
-    }
-
-    .awb-world-opt.add-btn {
-      border-top: 1px solid #283750;
-      padding-top: 0.55rem;
-      color: #93c5fd;
-    }
-
-    .awb-sb-nav {
+.awb-sb-nav {
       flex: 1;
       overflow-y: auto;
       overflow-x: hidden;
@@ -489,12 +452,6 @@
       position: relative;
     }
 
-    .world-name-row {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
     .world-name {
       font-family: var(--font-heading);
       font-size: 1.5rem;
@@ -502,25 +459,6 @@
       letter-spacing: 0.02em;
       min-width: 0;
       overflow-wrap: anywhere;
-    }
-
-    .btn-edit-name {
-      background: transparent;
-      border: none;
-      color: var(--text-faint);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.25rem;
-      border-radius: var(--radius-sm);
-      transition: all 0.15s;
-      flex-shrink: 0;
-    }
-
-    .btn-edit-name:hover {
-      color: #c4b5fd;
-      background: rgba(139, 92, 246, 0.12);
     }
 
     .world-desc {
@@ -1044,17 +982,12 @@
         <div class="awb-logo-expanded">Aether Nova WB</div>
         <button class="awb-sb-expand-btn" id="btn-expand-main-sidebar" title="Perbesar Sidebar">&gt;</button>
 
-        <!-- Dropdown Pilih Dunia (SideBarPilihDunia.png) -->
+        <!-- Tombol World Manager (buka modal Manajemen Dunia) -->
         <div class="awb-world-wrap">
-          <button class="awb-world-btn" id="btn-toggle-world-menu">
-            <span class="world-label" id="cur-world-name">Aether Nova</span>
-            <span class="world-arrow">V</span>
+          <button class="awb-world-btn" id="btn-toggle-world-menu" title="World Manager">
+            <iconify-icon icon="lucide:globe" width="15"></iconify-icon>
+            <span class="world-label">World Manager</span>
           </button>
-          <div class="awb-world-dropdown" id="awb-world-dropdown">
-            <div class="awb-world-opt active" data-world="Aether Nova">Aether Nova</div>
-            <div class="awb-world-opt" data-world="Dunia2">Dunia2</div>
-            <div class="awb-world-opt add-btn" id="btn-tambah-dunia-opt">+ Tambah Dunia</div>
-          </div>
         </div>
       </div>
 
@@ -1101,7 +1034,7 @@
           <span class="awb-nav-box"><iconify-icon icon="lucide:circle-user-round" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Akun</span>
         </a>
-        <a class="awb-nav-link" href="#" title="Setting">
+        <a class="awb-nav-link" href="#" id="btn-open-settings" title="Setting">
           <span class="awb-nav-box"><iconify-icon icon="lucide:settings-2" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Setting</span>
         </a>
@@ -1124,17 +1057,14 @@
 
             <div class="world-head">
               <div class="world-head-left">
-                <div class="world-name-row">
-                  <h1 class="world-name" id="world-title">Aether Nova</h1>
-                  <button class="btn-edit-name" id="btn-open-edit" title="Edit Dunia"><iconify-icon
-                      icon="lucide:pen-line" width="16"></iconify-icon></button>
-                </div>
-                <p class="world-desc" id="world-desc">Semesta pecahan kepulauan terapung yang saling terhubung oleh
-                  resonansi kristal aetherial. Di sinilah kisah dimulai.</p>
+                <h1 class="world-name" id="world-title">Aether Nova Worldbuilding</h1>
+                <p class="world-desc" id="world-desc"></p>
               </div>
-              <div class="page-actions">
-                <button class="btn-action" id="btn-open-edit2"><iconify-icon icon="lucide:pen-line"></iconify-icon> Edit
-                  Dunia</button>
+              <div class="page-actions" style="flex-direction:column; align-items:stretch; gap:0.5rem;">
+                <button class="btn-action" id="btn-open-create"><iconify-icon icon="lucide:circle-plus"></iconify-icon>
+                  Buat Dunia</button>
+                <button class="btn-action" id="btn-open-edit" style="display:none;"><iconify-icon
+                    icon="lucide:pen-line"></iconify-icon> Edit Dunia</button>
               </div>
             </div>
 
@@ -1257,29 +1187,33 @@
                 </div>
                 <div class="store-status-row">
                   <span class="st-label"><iconify-icon icon="lucide:save"></iconify-icon> Auto Save</span>
-                  <span class="store-pill off no-icon" data-toggle data-on="Aktif" data-off="Tidak Aktif">Tidak
-                    Aktif</span>
+                  <span class="store-pill on" id="pill-auto-save" data-toggle data-on="Active" data-off="No Active"><iconify-icon
+                      icon="lucide:check" width="12"></iconify-icon>&nbsp;Active</span>
                 </div>
                 <div class="store-status-row">
                   <span class="st-label"><iconify-icon icon="lucide:cloud"></iconify-icon> Cloud Backup</span>
-                  <span class="store-pill on" data-toggle data-on="Aktif" data-off="Tidak Aktif"><iconify-icon
-                      icon="lucide:check" width="12"></iconify-icon>&nbsp;Aktif</span>
+                  <span class="store-pill off" id="pill-cloud-backup" data-toggle data-on="Active" data-off="No Active"><iconify-icon
+                      icon="lucide:cloud-off" width="12"></iconify-icon>&nbsp;No Active</span>
+                </div>
+                <div class="store-status-row">
+                  <span class="st-label"><iconify-icon icon="lucide:folder-cog"></iconify-icon> File System Access API</span>
+                  <span class="store-pill" id="pill-fsa-status"><iconify-icon icon="lucide:loader" width="12"></iconify-icon>&nbsp;...</span>
                 </div>
 
                 <div class="store-divider"></div>
 
                 <div class="store-actions">
-                  <button class="store-btn" type="button" title="Tarik Data dari Cloud">
-                    <iconify-icon icon="lucide:cloud-download"></iconify-icon> Tarik Data dari Cloud
+                  <button class="store-btn" type="button" id="btn-pick-folder" title="Pilih Folder Penyimpanan Lokal">
+                    <iconify-icon icon="lucide:folder-open"></iconify-icon> Pilih Folder Backup
                   </button>
-                  <button class="store-btn" type="button" title="Backup to Cloud">
-                    <iconify-icon icon="lucide:cloud-upload"></iconify-icon> Backup to Cloud
-                  </button>
-                  <button class="store-btn" type="button" title="Pilih Folder Penyimpanan">
-                    <iconify-icon icon="lucide:folder-open"></iconify-icon> /Download [...]
-                  </button>
-                  <button class="store-btn" type="button" title="Export to Local">
+                  <button class="store-btn" type="button" id="btn-export-local" title="Export to Local">
                     <iconify-icon icon="lucide:file-down"></iconify-icon> Export to Local
+                  </button>
+                  <button class="store-btn" type="button" id="btn-import-local" title="Import dari Folder">
+                    <iconify-icon icon="lucide:file-up"></iconify-icon> Import dari Folder
+                  </button>
+                  <button class="store-btn" type="button" id="btn-clear-folder" title="Hapus Folder Backup" style="color: var(--danger);">
+                    <iconify-icon icon="lucide:trash-2"></iconify-icon> Hapus Folder
                   </button>
                 </div>
 
@@ -1287,15 +1221,23 @@
 
                 <div class="store-meta">
                   <span>Storage Used</span>
-                  <span><b>23.4</b> MB</span>
+                  <span><b id="storage-used">0</b> MB</span>
                 </div>
                 <div class="store-meta">
                   <span>Last Backup</span>
-                  <span class="backup-tags">
-                    <span class="backup-tag">2026-09-10 22:15</span>
-                    <span class="backup-tag cloud">v Cloud</span>
-                    <span class="backup-tag">x Local</span>
-                  </span>
+                  <span></span>
+                </div>
+                <div class="store-status-row" style="padding-left:0.5rem;">
+                  <span class="st-label"><iconify-icon icon="lucide:hard-drive"></iconify-icon> Local</span>
+                  <span class="store-pill off" id="last-backup-local"><iconify-icon icon="lucide:minus" width="12"></iconify-icon>&nbsp;(-)</span>
+                </div>
+                <div class="store-status-row" style="padding-left:0.5rem;">
+                  <span class="st-label"><iconify-icon icon="lucide:cloud"></iconify-icon> Cloud</span>
+                  <span class="store-pill off" id="last-backup-cloud"><iconify-icon icon="lucide:cloud-off" width="12"></iconify-icon>&nbsp;(No Connected)</span>
+                </div>
+                <div class="store-meta" id="backup-folder-info" style="display:none;">
+                  <span>Backup Folder</span>
+                  <span id="backup-folder-name" style="font-family: var(--font-mono); font-size: 0.7rem;"></span>
                 </div>
               </div>
             </div>
@@ -1435,62 +1377,7 @@
   </div>
 
   <script>
-    const awbSidebar = document.getElementById('awb-main-sidebar');
-    const btnExpandMain = document.getElementById('btn-expand-main-sidebar');
-    const btnBottomExpand = document.getElementById('btn-bottom-expand');
-    const btnCollapseMain = document.getElementById('btn-collapse-main-sidebar');
-
-    function expandMainSidebar() {
-      if (awbSidebar) awbSidebar.classList.add('expanded');
-    }
-    function collapseMainSidebar() {
-      if (awbSidebar) {
-        awbSidebar.classList.remove('expanded');
-        if (awbWorldDropdown) awbWorldDropdown.classList.remove('open');
-      }
-    }
-
-    if (btnExpandMain) btnExpandMain.addEventListener('click', expandMainSidebar);
-    if (btnBottomExpand) btnBottomExpand.addEventListener('click', expandMainSidebar);
-    if (btnCollapseMain) btnCollapseMain.addEventListener('click', collapseMainSidebar);
-
-    // Dropdown Pilih Dunia (SideBarPilihDunia.png)
-    const btnToggleWorldMenu = document.getElementById('btn-toggle-world-menu');
-    const awbWorldDropdown = document.getElementById('awb-world-dropdown');
-    const curWorldName = document.getElementById('cur-world-name');
-    const btnTambahDuniaOpt = document.getElementById('btn-tambah-dunia-opt');
-
-    if (btnToggleWorldMenu) {
-      btnToggleWorldMenu.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (awbWorldDropdown) awbWorldDropdown.classList.toggle('open');
-      });
-    }
-
-    document.querySelectorAll('.awb-world-opt:not(.add-btn)').forEach(opt => {
-      opt.addEventListener('click', () => {
-        document.querySelectorAll('.awb-world-opt').forEach(o => o.classList.remove('active'));
-        opt.classList.add('active');
-        if (curWorldName) curWorldName.textContent = opt.textContent;
-        if (awbWorldDropdown) awbWorldDropdown.classList.remove('open');
-      });
-    });
-
-    if (btnTambahDuniaOpt) {
-      btnTambahDuniaOpt.addEventListener('click', () => {
-        const nama = prompt('Masukkan nama dunia baru:', 'Dunia Baru');
-        if (nama && nama.trim()) {
-          const opt = document.createElement('div');
-          opt.className = 'awb-world-opt';
-          opt.dataset.world = nama.trim();
-          opt.textContent = nama.trim();
-          if (awbWorldDropdown) awbWorldDropdown.insertBefore(opt, btnTambahDuniaOpt);
-          opt.click();
-        }
-      });
-    }
-
-    // Sidebar collapse lama (legacy btn-toggle-sidebar) dihapus — pakai awb-sidebar
+    // Navigasi, collapse/expand sidebar, dan "Manajemen Dunia" ditangani awb-sidebar.js.
 
     // ===== Tab klik (wiki + dokument) =====
     document.querySelectorAll('.wiki-tabs').forEach(bar => {
@@ -1510,35 +1397,63 @@
       });
     });
 
+    // ===== File System Access API detection =====
+    function updateFsaStatus() {
+      const pill = document.getElementById('pill-fsa-status');
+      if (!pill) return;
+      const supported = !!(window.AetherStorage && AetherStorage.isSupported());
+      pill.classList.toggle('on', supported);
+      pill.classList.toggle('off', !supported);
+      pill.innerHTML = '<iconify-icon icon="' + (supported ? 'lucide:check' : 'lucide:x') + '" width="12"></iconify-icon>&nbsp;' +
+        (supported ? 'Support' : 'No Support');
+    }
+
     // ===== Toggle penyimpanan (Auto Save / Cloud Backup) =====
-    document.querySelectorAll('.store-pill[data-toggle]').forEach(pill => {
-      pill.addEventListener('click', () => {
-        const nowOn = !pill.classList.contains('on');
-        pill.classList.toggle('on', nowOn);
-        pill.classList.toggle('off', !nowOn);
-        if (pill.classList.contains('no-icon')) {
-          pill.textContent = nowOn ? pill.dataset.on : pill.dataset.off;
-        } else {
-          pill.querySelectorAll('iconify-icon').forEach(i => i.remove());
-          const icon = nowOn ? 'lucide:check' : 'lucide:cloud-off';
-          pill.innerHTML = '<iconify-icon icon="' + icon + '" width="12"></iconify-icon>&nbsp;' + (nowOn ? pill.dataset.on : pill.dataset.off);
-        }
+    function applyPill(pill, on) {
+      pill.classList.toggle('on', on);
+      pill.classList.toggle('off', !on);
+      if (pill.classList.contains('no-icon')) {
+        pill.textContent = on ? pill.dataset.on : pill.dataset.off;
+      } else {
+        pill.querySelectorAll('iconify-icon').forEach(i => i.remove());
+        const icon = on ? 'lucide:check' : (pill.id === 'pill-auto-save' ? 'lucide:save' : 'lucide:cloud-off');
+        pill.innerHTML = '<iconify-icon icon="' + icon + '" width="12"></iconify-icon>&nbsp;' + (on ? pill.dataset.on : pill.dataset.off);
+      }
+    }
+
+    // Auto Save: default Aktif. Baca preferensi tersimpan.
+    const pillAutoSave = document.getElementById('pill-auto-save');
+    let autoSaveEnabled = localStorage.getItem('awb_auto_save') !== 'false';
+    if (pillAutoSave) applyPill(pillAutoSave, autoSaveEnabled);
+
+    if (pillAutoSave) {
+      pillAutoSave.addEventListener('click', () => {
+        autoSaveEnabled = !autoSaveEnabled;
+        localStorage.setItem('awb_auto_save', String(autoSaveEnabled));
+        applyPill(pillAutoSave, autoSaveEnabled);
       });
+    }
+
+    // Sinkronkan pill bila Auto Save diubah dari popup Setting sidebar
+    window.addEventListener('awb:autosave-change', () => {
+      if (!pillAutoSave) return;
+      autoSaveEnabled = localStorage.getItem('awb_auto_save') !== 'false';
+      applyPill(pillAutoSave, autoSaveEnabled);
     });
 
-    // ===== Parameter dunia (?world=...) =====
-    const params = new URLSearchParams(window.location.search);
-    const paramWorld = params.get('world');
-    if (paramWorld) {
-      const name = paramWorld;
-      const elWorldName = document.getElementById('world-name-display');
-      if (elWorldName) elWorldName.textContent = name;
-      const elWorldTitle = document.getElementById('world-title');
-      if (elWorldTitle) elWorldTitle.textContent = name;
-      const elCurWorld = document.getElementById('cur-world-name');
-      if (elCurWorld) elCurWorld.textContent = name;
+    // Cloud Backup: default No Active (fitur belum aktif). Hanya toggle visual + preferensi.
+    const pillCloud = document.getElementById('pill-cloud-backup');
+    let cloudEnabled = localStorage.getItem('awb_cloud_backup') === 'true';
+    if (pillCloud) {
+      applyPill(pillCloud, cloudEnabled);
+      pillCloud.addEventListener('click', () => {
+        cloudEnabled = !cloudEnabled;
+        localStorage.setItem('awb_cloud_backup', String(cloudEnabled));
+        applyPill(pillCloud, cloudEnabled);
+      });
     }
-    const currentWorldName = paramWorld || (document.getElementById('world-title') ? document.getElementById('world-title').textContent : 'Aether Nova');
+
+    updateFsaStatus();
 
     // ===== Modal helpers =====
     function openModal(id) { document.getElementById(id).classList.add('open'); }
@@ -1550,68 +1465,64 @@
       ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
     });
 
-    document.getElementById('btn-open-create').addEventListener('click', () => openModal('modal-buat-dunia'));
-    for (const id of ['btn-open-edit', 'btn-open-edit2']) {
-      const el = document.getElementById(id);
-      if (el) {
-        el.addEventListener('click', () => {
-          document.getElementById('input-judul-edit').value = currentWorldName;
-          document.getElementById('input-deskripsi-edit').value = document.getElementById('world-desc').textContent;
-          openModal('modal-edit-dunia');
+    // Tombol "Buat Dunia" pada header (jika ada)
+    const btnOpenCreate = document.getElementById('btn-open-create');
+    if (btnOpenCreate) btnOpenCreate.addEventListener('click', () => openModal('modal-buat-dunia'));
+
+    // Tombol edit nama dunia (ikon pena) → isi form dari proyek aktif
+    const btnOpenEdit = document.getElementById('btn-open-edit');
+    if (btnOpenEdit) {
+      btnOpenEdit.addEventListener('click', () => {
+        whenAether(() => {
+          AetherState.getActiveProject().then(project => {
+            if (!project) return;
+            document.getElementById('input-judul-edit').value = project.name || '';
+            document.getElementById('input-deskripsi-edit').value = project.desc || '';
+            openModal('modal-edit-dunia');
+          });
         });
-      }
+      });
     }
 
-    // Simpan edit → perbarui tampilan
+    // Simpan edit → persist ke DB lalu perbarui tampilan + URL
     document.getElementById('btn-submit-edit').addEventListener('click', () => {
       const judul = document.getElementById('input-judul-edit').value.trim();
       const desk = document.getElementById('input-deskripsi-edit').value.trim();
-      if (judul) {
-        if (document.getElementById('world-title')) document.getElementById('world-title').textContent = judul;
-        if (document.getElementById('world-name-display')) document.getElementById('world-name-display').textContent = judul;
-        if (document.getElementById('cur-world-name')) document.getElementById('cur-world-name').textContent = judul;
-      }
-      if (document.getElementById('world-desc')) document.getElementById('world-desc').textContent = desk || '—';
-      closeModal(document.getElementById('btn-submit-edit'));
-    });
-
-    // Buat dunia baru → tambah project lalu navigasi
-    document.getElementById('btn-submit-buat').addEventListener('click', () => {
-      const judul = document.getElementById('input-judul').value.trim() || 'Dunia Baru';
-      const desk = document.getElementById('input-deskripsi').value.trim();
-      const go = () => location.href = 'dashboard.page.html?world=' + encodeURIComponent(judul);
+      if (!judul) { alert('Judul dunia wajib diisi'); return; }
       whenAether(() => {
-        AetherState.addProject({ name: judul, desc: desk, createdAt: new Date().toISOString() }).then(go).catch(go);
-      });
-    });
-
-    // ===== Sinkronisasi daftar dunia dengan AetherState jika ada =====
-    function syncWorldDropdown() {
-      whenAether(() => {
-        AetherState.getProjects().then(projects => {
-          if (projects && projects.length && awbWorldDropdown) {
-            awbWorldDropdown.querySelectorAll('.awb-world-opt:not(.add-btn)').forEach(o => o.remove());
-            projects.forEach(p => {
-              const opt = document.createElement('div');
-              opt.className = 'awb-world-opt' + (p.name === currentWorldName ? ' active' : '');
-              opt.dataset.world = p.name;
-              opt.textContent = p.name;
-              opt.addEventListener('click', () => {
-                location.href = 'dashboard.page.html?world=' + encodeURIComponent(p.name);
-              });
-              awbWorldDropdown.insertBefore(opt, btnTambahDuniaOpt);
-            });
-          }
+        AetherState.getActiveProject().then(proj => {
+          if (!proj) { alert('Tidak ada proyek aktif'); return; }
+          AetherState.updateProject(proj.id, { name: judul, desc: desk }).then(updated => {
+            currentProject = updated || proj;
+            if (document.getElementById('world-title')) document.getElementById('world-title').textContent = judul;
+            if (document.getElementById('world-name-display')) document.getElementById('world-name-display').textContent = judul;
+            if (document.getElementById('world-desc')) document.getElementById('world-desc').textContent = desk || '';
+            closeModal(document.getElementById('btn-submit-edit'));
+            const url = new URL(window.location.href);
+            url.searchParams.set('world', judul);
+            window.history.replaceState({}, '', url);
+            AetherState.setActiveProject(currentProject);
+          });
         });
       });
-    }
-    syncWorldDropdown();
+    });
 
-    // Close dropdown on click outside
-    document.addEventListener('click', (e) => {
-      if (awbWorldDropdown && !awbWorldDropdown.contains(e.target) && (!btnToggleWorldMenu || !btnToggleWorldMenu.contains(e.target))) {
-        awbWorldDropdown.classList.remove('open');
-      }
+    // Buat dunia baru → tambah project, set aktif, lalu navigasi
+    document.getElementById('btn-submit-buat').addEventListener('click', () => {
+      const judul = document.getElementById('input-judul').value.trim();
+      if (!judul) { alert('Judul dunia wajib diisi'); return; }
+      const desk = document.getElementById('input-deskripsi').value.trim();
+      whenAether(() => {
+        AetherState.projectExists(judul).then(exists => {
+          if (exists) { alert('Nama dunia sudah dipakai'); return; }
+          AetherState.addProject({ name: judul, desc: desk }).then(project => {
+            if (!project) return;
+            AetherState.setActiveProject(project).then(() => {
+              location.href = 'dashboard.page.html?world=' + encodeURIComponent(project.name);
+            });
+          });
+        });
+      });
     });
 
     // ===== Tunggu AetherState (disuntik setelah skrip halaman) =====
@@ -1619,6 +1530,244 @@
       if (window.AetherState && AetherState.available) { fn(); return; }
       setTimeout(() => whenAether(fn), 50);
     }
+
+    // ===== Dashboard Data Loading =====
+    let currentProject = null;
+    let backupDirectoryHandle = null;
+
+    async function loadDashboardData() {
+      await whenAether(async () => {
+        try {
+          currentProject = await AetherState.getActiveProject();
+          const titleEl = document.getElementById('world-title');
+          const descEl = document.getElementById('world-desc');
+          const editBtn = document.getElementById('btn-open-edit');
+
+          if (!currentProject) {
+            // Kondisi kosong: tampilkan judul default + tombol Buat Dunia, sembunyikan Edit Dunia
+            if (titleEl) titleEl.textContent = 'Aether Nova Worldbuilding';
+            if (descEl) descEl.textContent = '';
+            if (editBtn) editBtn.style.display = 'none';
+            // Storage & backup tetap dimuat agar status panel akurat
+            loadStorageInfo();
+            loadBackupFolderInfo();
+            return;
+          }
+
+          // Ada world: tampilkan info + tombol Edit Dunia
+          if (titleEl) titleEl.textContent = currentProject.name;
+          if (descEl) descEl.textContent = currentProject.desc || '';
+          if (editBtn) editBtn.style.display = '';
+
+          // Load stats
+          const stats = await AetherState.getStats(currentProject.id);
+          document.querySelector('.stat-tile[title="Karakter"] .stat-val').textContent = stats.characters;
+          document.querySelector('.stat-tile[title="Lokasi"] .stat-val').textContent = stats.elements; // elements includes locations
+          document.querySelector('.stat-tile[title="Makhluk"] .stat-val').textContent = 0; // subset of elements
+          document.querySelector('.stat-tile[title="Total Element"] .stat-val').textContent = stats.elements;
+          document.querySelector('.stat-tile[title="Total Bab"] .stat-val').textContent = stats.documents;
+
+          // Load recent activity
+          const activities = await AetherState.getRecentActivity(currentProject.id, 10);
+          renderRecentActivity(activities);
+
+          // Load storage info
+          loadStorageInfo();
+
+          // Load backup folder info
+          loadBackupFolderInfo();
+        } catch (err) {
+          console.error('Failed to load dashboard data:', err);
+        }
+      });
+    }
+
+    function renderRecentActivity(activities) {
+      const container = document.querySelector('.rail-panel:nth-child(2)');
+      if (!container) return;
+      const activityBody = container.querySelector(':scope > div:last-child');
+      if (!activityBody) return;
+
+      if (!activities || activities.length === 0) {
+        activityBody.innerHTML = '<div class="empty-inner"><iconify-icon icon="lucide:activity"></iconify-icon><span>Belum ada aktivitas</span></div>';
+        return;
+      }
+
+      const typeIcons = {
+        character: 'lucide:user',
+        element: 'lucide:gem',
+        event: 'lucide:calendar-range',
+        map: 'lucide:map',
+        document: 'lucide:book-open',
+        project: 'lucide:globe',
+      };
+
+      const typeBadges = {
+        character: '',
+        element: 'blue',
+        event: 'blue',
+        map: 'green',
+        document: 'yellow',
+        project: 'red',
+      };
+
+      activityBody.innerHTML = activities.map(a => {
+        const icon = typeIcons[a.entityType] || 'lucide:activity';
+        const badgeClass = typeBadges[a.entityType] || '';
+        const actionText = a.action === 'create' ? 'ditambahkan' : (a.action === 'update' ? 'diperbarui' : 'dihapus');
+        return `
+          <div class="change-row">
+            <div class="change-ico"><iconify-icon icon="${icon}"></iconify-icon></div>
+            <div class="change-body">
+              <div class="change-top">
+                <div class="change-name">${a.entityName}</div>
+                <span class="type-badge ${badgeClass}">${a.entityType}</span>
+              </div>
+              <div class="change-desc">${a.entityName} ${actionText}${a.details ? ': ' + a.details : '.'}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadStorageInfo() {
+      if (!window.AetherStorage) return;
+      try {
+        const estimate = await AetherStorage.estimateStorage();
+        const usedMB = (estimate.usage / (1024 * 1024)).toFixed(1);
+        document.getElementById('storage-used').textContent = usedMB;
+      } catch (err) {
+        console.warn('Storage estimate failed:', err);
+      }
+    }
+
+    async function loadBackupFolderInfo() {
+      if (!window.AetherStorage) return;
+      const info = await AetherStorage.getSavedDirectoryHandle();
+      const container = document.getElementById('backup-folder-info');
+      const nameEl = document.getElementById('backup-folder-name');
+      if (info && info.name) {
+        container.style.display = 'flex';
+        nameEl.textContent = info.name;
+      } else {
+        container.style.display = 'none';
+      }
+      updateLastBackupLocal();
+    }
+
+    // Status Last Backup → Local: tampilkan waktu backup terakhir (persist di localStorage)
+    function updateLastBackupLocal() {
+      const pill = document.getElementById('last-backup-local');
+      if (!pill) return;
+      const ts = localStorage.getItem('awb_last_backup_local');
+      if (ts) {
+        pill.classList.remove('off');
+        pill.classList.add('on');
+        pill.innerHTML = '<iconify-icon icon="lucide:check" width="12"></iconify-icon>&nbsp;' + ts;
+      } else {
+        pill.classList.remove('on');
+        pill.classList.add('off');
+        pill.innerHTML = '<iconify-icon icon="lucide:minus" width="12"></iconify-icon>&nbsp;(-)';
+      }
+    }
+
+    // ===== Storage Panel Actions =====
+    document.getElementById('btn-pick-folder')?.addEventListener('click', async () => {
+      if (!window.AetherStorage || !AetherStorage.isSupported()) {
+        alert('File System Access API tidak didukung di browser ini');
+        return;
+      }
+      try {
+        backupDirectoryHandle = await AetherStorage.pickDirectory();
+        AetherStorage.saveDirectoryHandle(backupDirectoryHandle);
+        loadBackupFolderInfo();
+        alert('Folder backup dipilih: ' + backupDirectoryHandle.name);
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.error('Pick folder failed:', err);
+          alert('Gagal memilih folder: ' + err.message);
+        }
+      }
+    });
+
+    document.getElementById('btn-export-local')?.addEventListener('click', async () => {
+      if (!currentProject) {
+        alert('Tidak ada proyek aktif');
+        return;
+      }
+      if (!backupDirectoryHandle) {
+        alert('Pilih folder backup terlebih dahulu');
+        return;
+      }
+
+      const btn = document.getElementById('btn-export-local');
+      btn.disabled = true;
+      btn.innerHTML = '<iconify-icon icon="lucide:loader" width="16" style="animation:spin 1s linear infinite;"></iconify-icon> Mengekspor...';
+
+      try {
+        const data = await AetherState.exportProject(currentProject.id);
+        const result = await AetherStorage.exportToLocal(data, backupDirectoryHandle);
+        const now = new Date().toLocaleString('id-ID');
+        localStorage.setItem('awb_last_backup_local', now);
+        const localPill = document.getElementById('last-backup-local');
+        if (localPill) {
+          localPill.classList.remove('off');
+          localPill.classList.add('on');
+          localPill.innerHTML = '<iconify-icon icon="lucide:check" width="12"></iconify-icon>&nbsp;' + now;
+        }
+        alert(`Berhasil mengekspor ${result.fileCount} file ke folder "${result.folderName}"`);
+      } catch (err) {
+        console.error('Export failed:', err);
+        alert('Gagal ekspor: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<iconify-icon icon="lucide:file-down"></iconify-icon> Export to Local';
+      }
+    });
+
+    document.getElementById('btn-import-local')?.addEventListener('click', async () => {
+      if (!currentProject) {
+        alert('Tidak ada proyek aktif');
+        return;
+      }
+      if (!window.AetherStorage || !AetherStorage.isSupported()) {
+        alert('File System Access API tidak didukung');
+        return;
+      }
+
+      try {
+        const dirHandle = await AetherStorage.pickDirectory();
+        const data = await AetherStorage.importFromLocal(dirHandle);
+        if (!data.project) {
+          alert('File project.json tidak ditemukan di folder tersebut');
+          return;
+        }
+        await AetherState.importProject(currentProject.id, data);
+        alert('Import berhasil! Memuat ulang data...');
+        location.reload();
+      } catch (err) {
+        console.error('Import failed:', err);
+        alert('Gagal import: ' + err.message);
+      }
+    });
+
+    document.getElementById('btn-clear-folder')?.addEventListener('click', () => {
+      if (confirm('Hapus referensi folder backup?')) {
+        AetherStorage.clearDirectoryHandle();
+        backupDirectoryHandle = null;
+        loadBackupFolderInfo();
+      }
+    });
+
+    // Initialize
+    loadDashboardData();
+
+    // Listen for world change from sidebar
+    window.addEventListener('awb:world-change', (e) => {
+      if (e.detail?.worldName) {
+        location.href = 'dashboard.page.html?world=' + encodeURIComponent(e.detail.worldName);
+      }
+    });
   </script>
 </body>
 

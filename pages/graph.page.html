@@ -13,6 +13,9 @@
     rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
+  <script src="/js/dexie.min.js"></script>
+  <script src="/js/aether-state.js"></script>
+  <script src="/js/awb-page-utils.js"></script>
   <style>
     .net-toolbar {
       padding: 0.75rem 1.5rem;
@@ -335,16 +338,11 @@
         <div class="awb-logo-collapsed">AN<br>WB</div>
         <div class="awb-logo-expanded">Aether Nova WB</div>
         <button class="awb-sb-expand-btn" id="btn-expand-main-sidebar" title="Perbesar Sidebar">&gt;</button>
-        <div class="awb-world-wrap">
-          <button class="awb-world-btn" id="btn-toggle-world-menu">
-            <span class="world-label" id="cur-world-name">Pilih Dunia</span>
-            <span class="world-arrow">V</span>
+                <div class="awb-world-wrap">
+          <button class="awb-world-btn" id="btn-toggle-world-menu" title="World Manager">
+            <iconify-icon icon="lucide:globe" width="15"></iconify-icon>
+            <span class="world-label">World Manager</span>
           </button>
-          <div class="awb-world-dropdown" id="awb-world-dropdown">
-            <div class="awb-world-opt active" data-world="Dunia1">Dunia1</div>
-            <div class="awb-world-opt" data-world="Dunia2">Dunia2</div>
-            <div class="awb-world-opt add-btn" id="btn-tambah-dunia-opt">+ Tambah Dunia</div>
-          </div>
         </div>
       </div>
       <nav class="awb-sb-nav">
@@ -385,7 +383,7 @@
           <span class="awb-nav-box"><iconify-icon icon="lucide:circle-user-round" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Akun</span>
         </a>
-        <a class="awb-nav-link" href="#" title="Setting">
+        <a class="awb-nav-link" href="#" id="btn-open-settings" title="Setting">
           <span class="awb-nav-box"><iconify-icon icon="lucide:settings-2" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Setting</span>
         </a>
@@ -630,7 +628,6 @@
       if (!dragNode) return;
       const canvas = document.getElementById('view-graph');
       const cRect = canvas.getBoundingClientRect();
-      // Adjust for pan & zoom
       const x = (e.clientX - cRect.left - panX) / scale - dragOffsetX;
       const y = (e.clientY - cRect.top - panY) / scale - dragOffsetY;
       dragNode.style.left = `${x}px`;
@@ -661,7 +658,6 @@
       const centers = {};
       for (const [k, el] of Object.entries(nodes)) {
         if (el) {
-          // Use offset positions (unscaled) within viewport
           const x = el.offsetLeft + el.offsetWidth / 2;
           const y = el.offsetTop + el.offsetHeight / 2;
           centers[k] = { x, y };
@@ -721,7 +717,88 @@
     document.addEventListener('pointerup', () => { panStart = null; });
     window.addEventListener('load', drawLines);
     window.addEventListener('resize', drawLines);
+
+    // Initialize with AetherPageUtils
+    async function initGraphPage() {
+      var utils = await window.AetherPageUtils.initPage();
+      if (!utils.query) return;
+      
+      // Load characters and elements for graph nodes
+      var characters = await utils.query.getCharacters();
+      var elements = await utils.query.getElements();
+      
+      // Render nodes from database
+      renderGraphNodes(characters, elements);
+      
+      // Load relationships
+      loadRelationships(utils.query);
+      
+      window.graphQuery = utils.query;
+    }
+
+    function renderGraphNodes(characters, elements) {
+      var viewport = document.getElementById('viewport');
+      if (!viewport) return;
+      
+      // Clear existing dynamic nodes (keep static ones for now)
+      var existingNodes = viewport.querySelectorAll('.net-node:not([data-static])');
+      existingNodes.forEach(n => n.remove());
+      
+      // Add character nodes
+      var positions = [
+        { left: '25%', top: '20%' },
+        { left: '50%', top: '35%' },
+        { left: '75%', top: '55%' },
+        { left: '15%', top: '65%' },
+        { left: '85%', top: '20%' },
+        { left: '50%', top: '75%' },
+      ];
+      
+      var idx = 0;
+      characters.forEach(function(c) {
+        if (idx >= positions.length) return;
+        var pos = positions[idx++];
+        var node = document.createElement('div');
+        node.className = 'net-node net-node-main';
+        node.dataset.id = 'char-' + c.id;
+        node.dataset.type = 'karakter';
+        node.style.left = pos.left;
+        node.style.top = pos.top;
+        node.innerHTML = '<iconify-icon icon="lucide:user"></iconify-icon><span>' + (c.name || 'Unknown') + '</span><span class="net-node-label">Karakter</span>';
+        viewport.appendChild(node);
+      });
+      
+      // Add element nodes (locations, factions, etc.)
+      var elementTypes = ['Lokasi', 'Faksi', 'Organisasi'];
+      elements.filter(function(e) { return elementTypes.includes(e.type); }).forEach(function(e, i) {
+        if (idx >= positions.length) return;
+        var pos = positions[idx++];
+        var iconMap = { 'Lokasi': 'lucide:map-pin', 'Faksi': 'lucide:building-2', 'Organisasi': 'lucide:users' };
+        var classMap = { 'Lokasi': 'net-node-location', 'Faksi': 'net-node-faction', 'Organisasi': 'net-node-secondary' };
+        var node = document.createElement('div');
+        node.className = 'net-node ' + (classMap[e.type] || 'net-node-secondary');
+        node.dataset.id = 'elem-' + e.id;
+        node.dataset.type = e.type.toLowerCase();
+        node.style.left = pos.left;
+        node.style.top = pos.top;
+        node.innerHTML = '<iconify-icon icon="' + (iconMap[e.type] || 'lucide:gem') + '"></iconify-icon><span>' + (e.name || 'Unknown') + '</span><span class="net-node-label">' + e.type + '</span>';
+        viewport.appendChild(node);
+      });
+      
+      setTimeout(drawLines, 100);
+    }
+
+    async function loadRelationships(query) {
+      // Load from elements with type 'Hubungan' or from a dedicated table
+      // For now, this is a placeholder
+      console.log('Loading relationships...');
+    }
+
+    function openNodeDetail(id) {
+      console.log('openNodeDetail:', id);
+    }
+
+    initGraphPage();
   </script>
 </body>
-
 </html>

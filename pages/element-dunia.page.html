@@ -13,6 +13,9 @@
     rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
+  <script src="/js/dexie.min.js"></script>
+  <script src="/js/aether-state.js"></script>
+  <script src="/js/awb-page-utils.js"></script>
   <style>
     /* AWB Main Sidebar (sama seperti dokumen.page.html) */
     .awb-sidebar {
@@ -139,15 +142,16 @@
       width: 100%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 0.5rem;
-      padding: 0.5rem 0.75rem;
+      padding: 0.5rem 0.6rem;
       border-radius: 4px;
       background: #182235;
       border: 1px solid #283750;
       color: #cbd5e1;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 600;
       cursor: pointer;
+      transition: all 0.12s;
     }
 
     .awb-world-btn:hover {
@@ -155,55 +159,8 @@
       color: #fff;
     }
 
-    .awb-world-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: -400px;
-      z-index: 80;
-      background: #151c2a;
-      border: 1px solid #33435e;
-      border-radius: 6px;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6);
-      padding: 0.35rem;
-      max-width: 200px;
-      max-height: 260px;
-      overflow-y: auto;
-      display: none;
-      flex-direction: column;
-    }
 
-    .awb-world-dropdown.open {
-      display: flex;
-    }
-
-    .awb-world-opt {
-      padding: 0.4rem 0.5rem;
-      font-size: 0.78rem;
-      color: #cbd5e1;
-      cursor: pointer;
-      border-radius: 3px;
-      background: #151c2a;
-      transition: background 0.12s;
-      display: block;
-      width: 100%;
-      text-align: left;
-    }
-
-    .awb-world-opt:hover,
-    .awb-world-opt.active {
-      background: #25334c;
-      color: #fff;
-    }
-
-    .awb-world-opt.add-btn {
-      border-top: 1px solid #283750;
-      padding-top: 0.55rem;
-      color: #93c5fd;
-      font-weight: 600;
-    }
-
-    .awb-sb-nav {
+.awb-sb-nav {
       flex: 1;
       overflow-y: auto;
       overflow-x: hidden;
@@ -730,16 +687,11 @@
         <div class="awb-logo-collapsed">AN<br>WB</div>
         <div class="awb-logo-expanded">Aether Nova WB</div>
         <button class="awb-sb-expand-btn" id="btn-expand-main-sidebar" title="Perbesar Sidebar">&gt;</button>
-        <div class="awb-world-wrap">
-          <button class="awb-world-btn" id="btn-toggle-world-menu">
-            <span class="world-label" id="cur-world-name">Pilih Dunia</span>
-            <span class="world-arrow">V</span>
+                <div class="awb-world-wrap">
+          <button class="awb-world-btn" id="btn-toggle-world-menu" title="World Manager">
+            <iconify-icon icon="lucide:globe" width="15"></iconify-icon>
+            <span class="world-label">World Manager</span>
           </button>
-          <div class="awb-world-dropdown" id="awb-world-dropdown">
-            <div class="awb-world-opt active" data-world="Dunia1">Dunia1</div>
-            <div class="awb-world-opt" data-world="Dunia2">Dunia2</div>
-            <div class="awb-world-opt add-btn" id="btn-tambah-dunia-opt">+ Tambah Dunia</div>
-          </div>
         </div>
       </div>
       <nav class="awb-sb-nav">
@@ -780,7 +732,7 @@
           <span class="awb-nav-box"><iconify-icon icon="lucide:circle-user-round" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Akun</span>
         </a>
-        <a class="awb-nav-link" href="#" title="Setting">
+        <a class="awb-nav-link" href="#" id="btn-open-settings" title="Setting">
           <span class="awb-nav-box"><iconify-icon icon="lucide:settings-2" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Setting</span>
         </a>
@@ -2419,7 +2371,107 @@
       const sdel = e.target.closest('.school-del');
       if (sdel) { const w = sdel.closest('.school-wrap'); const l = w?.querySelector('.school-list'); const it = sdel.closest('.school-item'); if (l && it && l.querySelectorAll('.school-item').length > 1) it.remove(); return; }
     });
+
+    // Initialize with AetherPageUtils
+    async function initElementDuniaPage() {
+      var utils = await window.AetherPageUtils.initPage();
+      if (!utils.query) return;
+
+      // Load elements for each category
+      loadElementsByType(utils.query);
+      
+      // Make query available globally for modals
+      window.elementDuniaQuery = utils.query;
+    }
+
+    async function loadElementsByType(query) {
+      var types = [
+        { type: 'Makhluk', selector: '.elem-group:nth-child(1) .elem-cards' },
+        { type: 'Lokasi', selector: '.elem-group:nth-child(2) .elem-cards' },
+        { type: 'Spesies', selector: '.elem-group:nth-child(3) .elem-cards' },
+        { type: 'Pekerjaan', selector: '.elem-group:nth-child(4) .elem-cards' },
+        { type: 'Faksi', selector: '.elem-group:nth-child(5) .elem-cards' },
+        { type: 'Agama', selector: '.elem-group:nth-child(6) .elem-cards' },
+        { type: 'Sistem Sihir', selector: '.elem-group:nth-child(7) .elem-cards' },
+        { type: 'Teknologi', selector: '.elem-group:nth-child(8) .elem-cards' },
+        { type: 'Bahasa', selector: '.elem-group:nth-child(9) .elem-cards' },
+        { type: 'Item', selector: '.elem-group:nth-child(10) .elem-cards' },
+        { type: 'Kelompok', selector: '.elem-group:nth-child(11) .elem-cards' },
+        { type: 'Dewa', selector: '.elem-group:nth-child(12) .elem-cards' },
+        { type: 'Gelar', selector: '.elem-group:nth-child(13) .elem-cards' },
+      ];
+
+      for (var i = 0; i < types.length; i++) {
+        var t = types[i];
+        var container = document.querySelector(t.selector);
+        if (!container) continue;
+        
+        var elements = await query.getElements(t.type);
+        var countEl = document.querySelector('.elem-cat-item:nth-child(' + (i + 3) + ') .elem-count'); // +3 because first two are "Semua Element" and "Entry Element"
+        if (countEl) countEl.textContent = elements.length;
+        
+        renderElements(container, elements, t.type);
+      }
+    }
+
+    function renderElements(container, elements, type) {
+      if (!elements || elements.length === 0) {
+        container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-faint);font-size:0.85rem;">Belum ada ' + type + '<br><button class="btn-action" style="margin-top:0.5rem;" onclick="openElementModal(\'' + type + '\')">+ Tambah ' + type + '</button></div>';
+        return;
+      }
+
+      container.innerHTML = elements.map(function(e) {
+        return '<div class="elem-card" onclick="openElementDetail(' + e.id + ')">' +
+          '<div class="elem-card-top"><span class="elem-thumb"><iconify-icon icon="lucide:image" width="28"></iconify-icon></span><span class="elem-card-type">' + type + '</span></div>' +
+          '<div class="elem-card-body">' +
+          '<div class="elem-card-headrow">' +
+          '<div class="elem-card-name">' + (e.name || 'Unknown') + '</div>' +
+          '<div class="elem-card-actions"><iconify-icon icon="lucide:pen-line" width="14" onclick="event.stopPropagation();openElementModal(\'' + type + '\', ' + e.id + ')"></iconify-icon><iconify-icon icon="lucide:trash-2" width="14" style="color:var(--danger);" onclick="event.stopPropagation();deleteElement(' + e.id + ')"></iconify-icon></div>' +
+          '</div>' +
+          '<div class="elem-card-desc">' + (e.data?.description || e.data?.deskripsi || '-') + '</div>' +
+          '<div class="elem-card-tags">' + (e.data?.tags?.join(' ') || '') + '</div>' +
+          '</div></div>';
+      }).join('');
+    }
+
+    function openElementModal(type, id) {
+      // Map type to modal ID
+      var modalMap = {
+        'Makhluk': 'modal-buat-makhluk',
+        'Faksi': 'modal-buat-faksi',
+        'Pekerjaan': 'modal-buat-pekerjaan',
+        'Lokasi': 'modal-buat-lokasi',
+        'Agama': 'modal-buat-agama',
+        'Sistem Sihir': 'modal-buat-sihir',
+        'Teknologi': 'modal-buat-teknologi',
+        'Bahasa': 'modal-buat-bahasa',
+        'Item': 'modal-buat-item',
+        'Kelompok': 'modal-buat-kelompok',
+        'Dewa': 'modal-buat-dewa',
+        'Gelar': 'modal-buat-gelar',
+        'Spesies': 'modal-buat-spesies',
+        'Power Tier': 'modal-buat-tier',
+      };
+      var modalId = modalMap[type];
+      if (modalId) {
+        document.getElementById(modalId).classList.add('open');
+      }
+    }
+
+    async function deleteElement(id) {
+      if (!confirm('Hapus element ini?')) return;
+      if (!window.elementDuniaQuery) return;
+      await window.elementDuniaQuery.deleteElement(id);
+      await window.elementDuniaQuery.logActivity('delete', 'element', id, 'Element', 'Dihapus dari daftar');
+      loadElementsByType(window.elementDuniaQuery);
+    }
+
+    function openElementDetail(id) {
+      console.log('openElementDetail:', id);
+      // TODO: Open detail sidebar
+    }
+
+    initElementDuniaPage();
   </script>
 </body>
-
 </html>

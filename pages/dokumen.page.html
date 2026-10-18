@@ -13,6 +13,9 @@
     rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
+  <script src="/js/dexie.min.js"></script>
+  <script src="/js/aether-state.js"></script>
+  <script src="/js/awb-page-utils.js"></script>
   <style>
     /* Reset & Workspace Layout */
     *,
@@ -146,15 +149,17 @@
     .awb-world-btn {
       width: 100%;
       display: flex;
-      align-items: stretch;
-      background: #151c2a;
-      border: 1px solid #33435e;
-      border-radius: 2px;
-      padding: 0;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.6rem;
+      border-radius: 4px;
+      background: #182235;
+      border: 1px solid #283750;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      font-weight: 600;
       cursor: pointer;
-      overflow: hidden;
-      color: #f1f5f9;
-      font-size: 0.8rem;
+      transition: all 0.12s;
     }
 
     .awb-world-btn .world-label {
@@ -167,59 +172,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
-    .awb-world-btn .world-arrow {
-      width: 26px;
-      border-left: 1px solid #33435e;
-      background: #1c2638;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #cbd5e1;
-    }
-
-    .awb-world-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #151c2a;
-      border: 1px solid #33435e;
-      border-top: none;
-      z-index: 80;
-      display: none;
-      flex-direction: column;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6);
-    }
-
-    .awb-world-dropdown.open {
-      display: flex;
-    }
-
-    .awb-world-opt {
-      padding: 0.4rem 0.6rem;
-      font-size: 0.8rem;
-      color: #cbd5e1;
-      cursor: pointer;
-      border-top: 1px solid #243148;
-      background: #151c2a;
-      transition: background 0.12s;
-    }
-
-    .awb-world-opt:hover,
-    .awb-world-opt.active {
-      background: #25334c;
-      color: #fff;
-    }
-
-    .awb-world-opt.add-btn {
-      color: #93c5fd;
-      font-weight: 600;
-    }
-
-    /* Navigasi List */
+/* Navigasi List */
     .awb-sb-nav {
       flex: 1;
       overflow-y: auto;
@@ -1558,17 +1511,12 @@
         <div class="awb-logo-expanded">Aether Nova WB</div>
         <button class="awb-sb-expand-btn" id="btn-expand-main-sidebar" title="Perbesar Sidebar">&gt;</button>
 
-        <!-- Dropdown Pilih Dunia (SideBarPilihDunia.png) -->
+        <!-- Tombol World Manager (buka modal Manajemen Dunia) -->
         <div class="awb-world-wrap">
-          <button class="awb-world-btn" id="btn-toggle-world-menu">
-            <span class="world-label" id="cur-world-name">Pilih Dunia</span>
-            <span class="world-arrow">V</span>
+          <button class="awb-world-btn" id="btn-toggle-world-menu" title="World Manager">
+            <iconify-icon icon="lucide:globe" width="15"></iconify-icon>
+            <span class="world-label">World Manager</span>
           </button>
-          <div class="awb-world-dropdown" id="awb-world-dropdown">
-            <div class="awb-world-opt active" data-world="Dunia1">Dunia1</div>
-            <div class="awb-world-opt" data-world="Dunia2">Dunia2</div>
-            <div class="awb-world-opt add-btn" id="btn-tambah-dunia-opt">+ Tambah Dunia</div>
-          </div>
         </div>
       </div>
 
@@ -1615,7 +1563,7 @@
           <span class="awb-nav-box"><iconify-icon icon="lucide:circle-user-round" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Akun</span>
         </a>
-        <a class="awb-nav-link" href="#" title="Setting">
+        <a class="awb-nav-link" href="#" id="btn-open-settings" title="Setting">
           <span class="awb-nav-box"><iconify-icon icon="lucide:settings-2" width="16"></iconify-icon></span>
           <span class="awb-nav-text">Setting</span>
         </a>
@@ -2502,65 +2450,9 @@
   </div>
 
   <!-- JAVASCRIPT LOGIC -->
+  <script src="/js/awb-sidebar.js"></script>
   <script>
-    // 1. Sidebar Utama AWB (Expand & Collapse sesuai Sidebar.png & Desktop.png)
-    const awbSidebar = document.getElementById('awb-main-sidebar');
-    const btnExpandMainSidebar = document.getElementById('btn-expand-main-sidebar');
-    const btnBottomExpand = document.getElementById('btn-bottom-expand');
-    const btnCollapseMainSidebar = document.getElementById('btn-collapse-main-sidebar');
-
-    function expandMainSidebar() {
-      awbSidebar.classList.add('expanded');
-    }
-    function collapseMainSidebar() {
-      awbSidebar.classList.remove('expanded');
-      awbWorldDropdown.classList.remove('open');
-    }
-
-    if (btnExpandMainSidebar) btnExpandMainSidebar.addEventListener('click', expandMainSidebar);
-    if (btnBottomExpand) btnBottomExpand.addEventListener('click', expandMainSidebar);
-    if (btnCollapseMainSidebar) btnCollapseMainSidebar.addEventListener('click', collapseMainSidebar);
-
-    // Dropdown Pilih Dunia (SideBarPilihDunia.png)
-    const btnToggleWorldMenu = document.getElementById('btn-toggle-world-menu');
-    const awbWorldDropdown = document.getElementById('awb-world-dropdown');
-    const curWorldName = document.getElementById('cur-world-name');
-    const btnTambahDuniaOpt = document.getElementById('btn-tambah-dunia-opt');
-
-    if (btnToggleWorldMenu) {
-      btnToggleWorldMenu.addEventListener('click', (e) => {
-        e.stopPropagation();
-        awbWorldDropdown.classList.toggle('open');
-      });
-    }
-
-    function setupWorldOptions() {
-      document.querySelectorAll('.awb-world-opt:not(.add-btn)').forEach(opt => {
-        opt.onclick = () => {
-          document.querySelectorAll('.awb-world-opt').forEach(o => o.classList.remove('active'));
-          opt.classList.add('active');
-          curWorldName.textContent = opt.textContent;
-          awbWorldDropdown.classList.remove('open');
-        };
-      });
-    }
-    setupWorldOptions();
-
-    if (btnTambahDuniaOpt) {
-      btnTambahDuniaOpt.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const namaDunia = prompt('Masukkan nama dunia baru:', 'Dunia Baru');
-        if (namaDunia && namaDunia.trim()) {
-          const newOpt = document.createElement('div');
-          newOpt.className = 'awb-world-opt';
-          newOpt.dataset.world = namaDunia.trim();
-          newOpt.textContent = namaDunia.trim();
-          awbWorldDropdown.insertBefore(newOpt, btnTambahDuniaOpt);
-          setupWorldOptions();
-          newOpt.click();
-        }
-      });
-    }
+    // Navigasi & collapse/expand sidebar utama ditangani awb-sidebar.js.
 
     // Toggle Sub-sidebar Dokumen & Bab
     const subsidebar = document.getElementById('doc-subsidebar');
@@ -3072,7 +2964,7 @@
       showView('plotgrid', title, '3 × 3', '9 total sel');
     });
 
-    // Close popovers on window click
+// Close popovers on window click
     window.addEventListener('click', (e) => {
       if (!symbolPopover.contains(e.target) && e.target !== symbolBtn) {
         symbolPopover.classList.remove('open');
@@ -3083,11 +2975,126 @@
       if (!plusLorePopover.contains(e.target) && e.target !== btnPlusLore) {
         plusLorePopover.classList.remove('open');
       }
-      if (awbWorldDropdown && !awbWorldDropdown.contains(e.target) && (!btnToggleWorldMenu || !btnToggleWorldMenu.contains(e.target))) {
-        awbWorldDropdown.classList.remove('open');
-      }
     });
+
+    // 10. Initialize with AetherPageUtils - load documents from active project
+    async function initDokumenPage() {
+      var utils = await window.AetherPageUtils.initPage();
+      if (!utils.query) return;
+
+      // Load documents
+      var documents = await utils.query.getDocuments();
+      renderDocuments(documents);
+
+      // Make query available globally for modals
+      window.dokumenQuery = utils.query;
+    }
+
+    function renderDocuments(documents) {
+      var list = document.querySelector('#doc-subsidebar .sb-block:first-child .sb-item-list');
+      if (!list) return;
+
+      if (!documents || documents.length === 0) {
+        list.innerHTML = '<div class="sb-row" style="color:#64748b;font-size:0.73rem;padding:0.5rem;text-align:center;">Belum ada dokumen</div>';
+        return;
+      }
+
+      var html = documents.map(function(d) {
+        var title = d.name || 'Tanpa Judul';
+        var folder = d.data?.folder || '';
+        var folderHtml = folder ? '<span class="sb-badge-linked">' + folder + '</span>' : '';
+        return '<div class="sb-row" data-doc-id="' + d.id + '">' +
+          '<iconify-icon icon="lucide:file-text" width="13"></iconify-icon>' +
+          '<span class="sb-row-title">' + title + '</span>' +
+          '<div class="sb-row-acts">' +
+          '<button class="sb-act-icon trash" title="Hapus" onclick="event.stopPropagation();deleteDocument(' + d.id + ')"><iconify-icon icon="lucide:trash-2" width="12"></iconify-icon></button>' +
+          '<button class="sb-act-icon" title="Edit" onclick="event.stopPropagation();editDocument(' + d.id + ')"><iconify-icon icon="lucide:pen-line" width="12"></iconify-icon></button>' +
+          '</div>' +
+          folderHtml +
+          '</div>';
+      }).join('');
+
+      list.innerHTML = html;
+
+      // Add click handlers for opening documents
+      list.querySelectorAll('.sb-row[data-doc-id]').forEach(function(row) {
+        row.addEventListener('click', function(e) {
+          if (e.target.closest('button')) return;
+          var docId = parseInt(this.dataset.docId, 10);
+          openDocInPane('a', this.querySelector('.sb-row-title').textContent.trim());
+          document.querySelectorAll('#doc-subsidebar .sb-row').forEach(function(r) { r.classList.remove('active'); });
+          this.classList.add('active');
+        });
+      });
+    }
+
+    async function deleteDocument(id) {
+      if (!confirm('Hapus dokumen ini?')) return;
+      if (!window.dokumenQuery) return;
+      await window.dokumenQuery.deleteDocument(id);
+      await window.dokumenQuery.logActivity('delete', 'document', id, 'Document', 'Dihapus dari daftar');
+      var documents = await window.dokumenQuery.getDocuments();
+      renderDocuments(documents);
+    }
+
+    async function editDocument(id) {
+      if (!window.dokumenQuery) return;
+      var doc = await window.dokumenQuery.getDocuments().then(function(docs) { return docs.find(function(d) { return d.id === id; }); });
+      if (!doc) return;
+      var newName = prompt('Nama baru untuk dokumen:', doc.name);
+      if (newName && newName.trim() && newName !== doc.name) {
+        await window.dokumenQuery.updateDocument(id, { name: newName.trim() });
+        await window.dokumenQuery.logActivity('update', 'document', id, newName.trim(), 'Nama diperbarui');
+        var documents = await window.dokumenQuery.getDocuments();
+        renderDocuments(documents);
+      }
+    }
+
+    // Add document handler
+    document.getElementById('btn-confirm-add-doc').addEventListener('click', async function() {
+      var nameInput = document.getElementById('inp-doc-name');
+      var name = nameInput.value.trim();
+      if (!name) { alert('Nama dokumen wajib diisi'); return; }
+      if (!window.dokumenQuery) return;
+      var link = document.getElementById('inp-doc-link').value;
+      var doc = await window.dokumenQuery.addDocument({ name: name, data: { linkedElement: link === 'None' ? null : link } });
+      await window.dokumenQuery.logActivity('create', 'document', doc.id, name, 'Dokumen baru dibuat');
+      closeAllModals();
+      nameInput.value = '';
+      var documents = await window.dokumenQuery.getDocuments();
+      renderDocuments(documents);
+    });
+
+    // Add folder handler
+    document.getElementById('btn-confirm-add-folder').addEventListener('click', async function() {
+      var nameInput = document.getElementById('inp-folder-name');
+      var name = nameInput.value.trim();
+      if (!name) { alert('Nama folder wajib diisi'); return; }
+      // Folder is just a document with a type flag
+      if (!window.dokumenQuery) return;
+      var doc = await window.dokumenQuery.addDocument({ name: name, data: { isFolder: true } });
+      await window.dokumenQuery.logActivity('create', 'folder', doc.id, name, 'Folder baru dibuat');
+      closeAllModals();
+      nameInput.value = '';
+      var documents = await window.dokumenQuery.getDocuments();
+      renderDocuments(documents);
+    });
+
+    // Add chapter handler
+    document.getElementById('btn-confirm-add-bab').addEventListener('click', async function() {
+      var nameInput = document.getElementById('inp-bab-name');
+      var name = nameInput.value.trim();
+      if (!name) { alert('Nama bab wajib diisi'); return; }
+      if (!window.dokumenQuery) return;
+      var doc = await window.dokumenQuery.addDocument({ name: name, data: { isChapter: true } });
+      await window.dokumenQuery.logActivity('create', 'chapter', doc.id, name, 'Bab baru dibuat');
+      closeAllModals();
+      nameInput.value = '';
+      var documents = await window.dokumenQuery.getDocuments();
+      renderDocuments(documents);
+    });
+
+    initDokumenPage();
   </script>
 </body>
-
 </html>
