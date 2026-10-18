@@ -831,6 +831,63 @@
 
     .cf-err { font-size: 0.72rem; color: var(--danger); margin-top: 0.25rem; }
 
+    /* ===== Tooltip info (ⓘ) ===== */
+    .info-i {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      border: 1px solid var(--border-hover);
+      color: var(--text-faint);
+      font-size: 0.62rem;
+      cursor: help;
+      margin-left: 0.25rem;
+      user-select: none;
+      vertical-align: middle;
+    }
+    .info-i:hover { color: #c4b5fd; border-color: var(--primary); }
+    .cf-hint-pop {
+      position: fixed;
+      z-index: 400;
+      max-width: 320px;
+      background: #0d1322;
+      border: 1px solid var(--border-hover);
+      border-radius: 6px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+      padding: 0.55rem 0.7rem;
+      font-size: 0.74rem;
+      line-height: 1.5;
+      color: #cbd5e1;
+      white-space: pre-line;
+      display: none;
+      pointer-events: none;
+    }
+    .cf-hint-pop.open { display: block; }
+
+    /* ===== Hubungan card ===== */
+    .rel-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .rel-know-row { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .rel-know-opt {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.55rem;
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+    .rel-know-opt.on { color: #c4b5fd; border-color: var(--primary); background: rgba(139, 92, 246, 0.15); }
+
     /* ===== Identitas: Linked input ===== */
     .linked-wrap { position: relative; display: flex; flex-direction: column; gap: 0.4rem; }
     .linked-input-row { display: flex; gap: 0.4rem; align-items: center; }
@@ -1102,8 +1159,7 @@
                     onclick="setCharView('list')"><iconify-icon icon="lucide:list"></iconify-icon></button>
                 </span>
               </div>
-              <div class="char-tag-row">Tag: <span class="badge">tag1</span> <span class="badge">tag2</span> <span
-                  class="badge">tag3</span></div>
+              <div class="char-tag-row" id="char-tag-row" style="display:none;">Tag: <span id="char-tag-list" style="display:inline-flex;gap:0.3rem;flex-wrap:wrap;"></span></div>
             </div>
             <div class="char-grid" id="char-grid"></div>
 
@@ -1797,317 +1853,198 @@
         </div>
         <div class="char-pane" id="pane-penampilan">
           <div class="field-block">
-            <div><label class="form-label">Tinggi ⓘ</label><input type="text" class="form-input"></div>
-            <div style="display:flex;gap:0.9rem;flex-wrap:wrap;font-size:0.8rem;color:var(--text-main);">
-              <span>Kulit ⓘ</span><span>Wajah ⓘ</span><span>Rambut ⓘ</span><span>Dada/Payudara ⓘ</span><span>Pinggang
-                ⓘ</span><span>Mata ⓘ</span>
+            <div><label class="form-label">Tinggi <span class="info-i" data-hint="Tinggi tubuh bisa berupa Centimeter (CM) atau Meter (M).&#10;Contoh: 120 CM / 1,2 M">ⓘ</span></label><input type="text" class="form-input" id="ap-tinggi" placeholder="Mis. 175 CM / 1,75 M"></div>
+            <div class="form-row">
+              <div><label class="form-label">Kulit <span class="info-i" data-hint="Warna kulit.&#10;Contoh: Porcelain, Ivory, Fair, Pale, Light, Cream, Sand, Olive, Golden, Tan, Bronze, Amber, Brown, Dark Brown, dll.">ⓘ</span></label><input type="text" class="form-input" id="ap-kulit"></div>
+              <div><label class="form-label">Wajah <span class="info-i" data-hint="Bentuk wajah (Face Shape).&#10;Contoh: Oval, Round, Square, Heart, Diamond, Long, Mature, Youthful, Triangle, dll.">ⓘ</span></label><input type="text" class="form-input" id="ap-wajah"></div>
             </div>
+            <div class="form-row">
+              <div><label class="form-label">Rambut <span class="info-i" data-hint="Warna dan bentuk rambut.&#10;Contoh: Long silky dark, Waist-length straight white, Short gray, Short messy brown, Shoulder-length blue, dll.">ⓘ</span></label><input type="text" class="form-input" id="ap-rambut"></div>
+              <div><label class="form-label">Mata <span class="info-i" data-hint="Warna dan bentuk mata.">ⓘ</span></label><input type="text" class="form-input" id="ap-mata"></div>
+            </div>
+            <div class="form-row">
+              <div><label class="form-label">Dada/Payudara <span class="info-i" data-hint="Dada untuk laki-laki (Male):&#10;Flat, Narrow, Wide, Broad, Average, Muscular, Highly Muscular, Defined, Well-defined, Barrel-chested, dll.&#10;&#10;Payudara untuk perempuan (Female):&#10;Flat, Small (B-cup), Moderate, Medium (C-cup), Full, Large (D-cup), Very large (E-cup), Extremely large, Medium-large (D-cup), dll.">ⓘ</span></label><input type="text" class="form-input" id="ap-dada"></div>
+              <div><label class="form-label">Pinggang <span class="info-i" data-hint="Bentuk pinggang.&#10;Contoh: Tiny, Very Slim, Slim, Narrow, Defined, Average, Soft, Full, Wide, Thick, dll.">ⓘ</span></label><input type="text" class="form-input" id="ap-pinggang"></div>
+            </div>
+
             <div class="field-block-title" style="margin-top:0.4rem;">Memiliki Fisik Tambahan?</div>
             <div class="check2">
-              <label><input type="checkbox"> Taring ⓘ</label><label><input type="checkbox"> Sayap ⓘ</label>
-              <label><input type="checkbox"> Cakar ⓘ</label><label><input type="checkbox"> Bulu ⓘ</label>
-              <label><input type="checkbox"> Sisik ⓘ</label><label><input type="checkbox"> Tanduk ⓘ</label>
-              <label><input type="checkbox"> Ekor ⓘ</label>
+              <label><input type="checkbox" id="ap-has-taring"> Taring <span class="info-i" data-hint="Bentuk atau jenis taring.&#10;Contoh: Tusks, Jagged, Venomous, Small Fangs, Retractable Fangs, Double Fangs, Lower Fangs, Multiple Fangs, dll.">ⓘ</span></label>
+              <label><input type="checkbox" id="ap-has-sayap"> Sayap <span class="info-i" data-hint="Bentuk, warna, jenis sayap.&#10;Contoh: Feathered, Membranous, Dragon, Insect, Angel, Demon, Butterfly, Moth, Bat, Crystal, Flame, Energy, Vestigial, Four Wings, Six Wings, Wingless, dll.">ⓘ</span></label>
+              <label><input type="checkbox" id="ap-has-cakar"> Cakar <span class="info-i" data-hint="Bentuk atau jenis cakar.&#10;Contoh: Retractable, Non-Retractable, Talons, Blade-like, Short, Long, Curved, Hollow, Crystal, Metallic, Webbed, Cloven, dll.">ⓘ</span></label>
+              <label><input type="checkbox" id="ap-has-bulu"> Bulu <span class="info-i" data-hint="Warna, bentuk, jenis bulu.&#10;Contoh: Thick, Soft, Mane, Feathered Body, Short, Long, Shaggy, Spotted, Striped, Underfur, Feathers, Plumage, Spines, Scant, Patchy, dll.">ⓘ</span></label>
+              <label><input type="checkbox" id="ap-has-sisik"> Sisik <span class="info-i" data-hint="Jenis, warna, atau bentuk sisik.&#10;Contoh: Smooth, Rough, Spiked, Crystal, Metallic, Feather-like, Transparent, Bioluminescent, Dragon, dll.">ⓘ</span></label>
+              <label><input type="checkbox" id="ap-has-tanduk"> Tanduk <span class="info-i" data-hint="Bentuk, warna, jenis tanduk.&#10;Contoh: Curved, Antlers, Single Horn, Dragon, Demon, Straight, Spiral, Upward, Backward, Forward, Sideways, Forked, Brow, Crown-like, Multiple, Broken, Crystal, Metallic, Retractable, dll.">ⓘ</span></label>
+              <label><input type="checkbox" id="ap-has-ekor"> Ekor <span class="info-i" data-hint="Jenis, warna, bentuk ekor.&#10;Contoh: Cat, Lizard, Dragon, Bushy, Demon, Monkey, Prehensile, Scorpion, Snake, Fish, Mermaid, Horse, Lion, Rabbit, Multiple Tail, Split, Tentacle, Stinger, Club, dll.">ⓘ</span></label>
+            </div>
+
+            <div class="phys-detail-wrap" style="display:flex;flex-direction:column;gap:0.4rem;margin-top:0.4rem;">
+              <div class="form-row phys-row" id="row-taring" style="display:none;"><div><label class="form-label">Detail Taring</label><input type="text" class="form-input" id="ap-taring"></div></div>
+              <div class="form-row phys-row" id="row-sayap" style="display:none;"><div><label class="form-label">Detail Sayap</label><input type="text" class="form-input" id="ap-sayap"></div></div>
+              <div class="form-row phys-row" id="row-cakar" style="display:none;"><div><label class="form-label">Detail Cakar</label><input type="text" class="form-input" id="ap-cakar"></div></div>
+              <div class="form-row phys-row" id="row-bulu" style="display:none;"><div><label class="form-label">Detail Bulu</label><input type="text" class="form-input" id="ap-bulu"></div></div>
+              <div class="form-row phys-row" id="row-sisik" style="display:none;"><div><label class="form-label">Detail Sisik</label><input type="text" class="form-input" id="ap-sisik"></div></div>
+              <div class="form-row phys-row" id="row-tanduk" style="display:none;"><div><label class="form-label">Detail Tanduk</label><input type="text" class="form-input" id="ap-tanduk"></div></div>
+              <div class="form-row phys-row" id="row-ekor" style="display:none;"><div><label class="form-label">Detail Ekor</label><input type="text" class="form-input" id="ap-ekor"></div></div>
             </div>
           </div>
           <div class="field-block">
-            <div class="field-block-title">Deskripsi Fisik</div><textarea class="form-input" rows="4"></textarea>
+            <div class="field-block-title">Deskripsi Fisik</div><textarea class="form-input" rows="4" id="ap-desc-fisik"></textarea>
           </div>
           <div class="field-block">
-            <div class="field-block-title">Deskripsi Fisik Unik</div><textarea class="form-input" rows="4"></textarea>
+            <div class="field-block-title">Deskripsi Fisik Unik</div><textarea class="form-input" rows="4" id="ap-desc-unik"></textarea>
           </div>
           <div class="field-block">
-            <div class="field-block-title">Deskripsi Pakaian</div><textarea class="form-input" rows="4"></textarea>
+            <div class="field-block-title">Deskripsi Pakaian</div><textarea class="form-input" rows="4" id="ap-desc-pakaian"></textarea>
           </div>
           <div class="field-block">
-            <div class="field-block-title">Deskripsi Aksesoris</div><textarea class="form-input" rows="4"></textarea>
+            <div class="field-block-title">Deskripsi Aksesoris</div><textarea class="form-input" rows="4" id="ap-desc-aksesoris"></textarea>
           </div>
         </div>
+
         <div class="char-pane" id="pane-kepribadian">
           <div class="field-block">
-            <div class="field-block-title">Deskripsi Psikologis</div><textarea class="form-input" rows="4"></textarea>
-            <div class="ref-hint">Tips:<br>• Bagaimana cara dia berhubungan? * Keyakinan? * Nilai? * Temperamen?<br>•
-              Bagaimana cara dia berbicara atau gaya Bicara? * Apa saja sifat yang dia miliki?</div>
+            <div class="field-block-title">Deskripsi Psikologis</div>
+            <textarea class="form-input" rows="4" id="kp-psikologis"></textarea>
+            <div class="ref-hint">Tips:<br>• Bagaimana cara dia berhubungan? * Keyakinan? * Nilai? * Temperamen?<br>• Bagaimana cara dia berbicara atau gaya bicara? * Apa saja sifat yang dia miliki?</div>
           </div>
           <div class="field-block">
-            <div><label class="form-label">Motivasi</label><textarea class="form-input" rows="4"></textarea></div>
-            <div><label class="form-label">Kekurangan dan Ketakutan</label><textarea class="form-input"
-                rows="4"></textarea></div>
-            <div><label class="form-label">Rahasia</label><textarea class="form-input" rows="4"></textarea></div>
-            <div><label class="form-label">Suka</label><textarea class="form-input" rows="4"></textarea></div>
-            <div><label class="form-label">Tidak suka</label><textarea class="form-input" rows="4"></textarea></div>
+            <div><label class="form-label">Motivasi</label><textarea class="form-input" rows="4" id="kp-motivasi"></textarea>
+              <div class="ref-hint">Apa yang paling dia inginkan atau perjuangkan? Tujuan jangka panjang/pendek?</div></div>
+            <div><label class="form-label">Kekurangan dan Ketakutan</label><textarea class="form-input" rows="4" id="kp-kekurangan"></textarea>
+              <div class="ref-hint">Kelemahan, trauma, fobia, atau hal yang membuatnya rapuh.</div></div>
+            <div><label class="form-label">Rahasia</label><textarea class="form-input" rows="4" id="kp-rahasia"></textarea>
+              <div class="ref-hint">Hal yang disembunyikan dari orang lain (atau dari pembaca).</div></div>
+            <div><label class="form-label">Suka</label><textarea class="form-input" rows="4" id="kp-suka"></textarea>
+              <div class="ref-hint">Hal-hal yang dia nikmati, sukai, atau hobi.</div></div>
+            <div><label class="form-label">Tidak suka</label><textarea class="form-input" rows="4" id="kp-tidak-suka"></textarea>
+              <div class="ref-hint">Hal-hal yang dia benci, hindari, atau membuatnya kesal.</div></div>
           </div>
         </div>
+
         <div class="char-pane" id="pane-latar">
           <div class="field-block">
-            <div class="field-block-title">Gelar</div><input type="text" class="form-input">
-            <div class="chip-row"><span class="chip">Gelar1 x</span><span class="chip">Gelar2 x</span><span
-                class="chip">Gelar3 x</span></div>
+            <div class="field-block-title">Gelar</div>
+            <div class="linked-wrap" id="lat-gelar" data-linked-type="Gelar"></div>
           </div>
           <div class="field-block">
-            <div class="field-block-title">Pekerjaan</div><input type="text" class="form-input">
-            <div class="chip-row"><span class="chip">Pekerjaan1 x</span><span class="chip">Pekerjaan2 x</span><span
-                class="chip">Pekerjaan3 x</span></div>
+            <div class="field-block-title">Pekerjaan</div>
+            <div class="linked-wrap" id="lat-pekerjaan" data-linked-type="Pekerjaan"></div>
           </div>
           <div class="field-block">
-            <div class="field-block-title">Latar Belakang Pribadi</div><textarea class="form-input" rows="3"></textarea>
+            <div class="field-block-title">Latar Belakang Pribadi</div>
+            <textarea class="form-input" rows="3" id="lat-desc-pribadi"></textarea>
           </div>
           <div class="field-block">
-            <div class="field-block-title">Faksi</div><input type="text" class="form-input">
-            <div class="chip-row"><span class="chip">Faksi1 x</span><span class="chip">Faksi2 x</span><span
-                class="chip">Faksi3 x</span></div>
+            <div class="field-block-title">Faksi</div>
+            <div class="linked-wrap" id="lat-faksi" data-linked-type="Faksi"></div>
           </div>
           <div class="field-block">
-            <div class="field-block-title">Agama</div><input type="text" class="form-input">
-            <div class="chip-row"><span class="chip">Agama1 x</span><span class="chip">Agama2 x</span><span
-                class="chip">Agama3 x</span></div>
+            <div class="field-block-title">Agama</div>
+            <div class="linked-wrap" id="lat-agama" data-linked-type="Agama"></div>
           </div>
           <div class="field-block">
             <div class="field-block-title">Kelompok dan Organisasi</div>
-            <div><label class="form-label">Anggota Kelompok</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span
-                  class="chip">Kelompok3 x</span></div>
-            </div>
-            <div><label class="form-label">Pemimpin Kelompok</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span
-                  class="chip">Kelompok3 x</span></div>
-            </div>
-            <div><label class="form-label">Pendiri Kelompok</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span
-                  class="chip">Kelompok3 x</span></div>
-            </div>
-            <div><label class="form-label">Mantan anggota Kelompok</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span
-                  class="chip">Kelompok3 x</span></div>
-            </div>
-            <div><label class="form-label">Mantan pemimpin Kelompok</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Kelompok1 x</span><span class="chip">Kelompok2 x</span><span
-                  class="chip">Kelompok3 x</span></div>
-            </div>
+            <div><label class="form-label">Anggota Kelompok</label><div class="linked-wrap" id="lat-anggota-kelompok" data-linked-type="Kelompok"></div></div>
+            <div><label class="form-label">Pemimpin Kelompok</label><div class="linked-wrap" id="lat-pemimpin-kelompok" data-linked-type="Kelompok"></div></div>
+            <div><label class="form-label">Pendiri Kelompok</label><div class="linked-wrap" id="lat-pendiri-kelompok" data-linked-type="Kelompok"></div></div>
+            <div><label class="form-label">Mantan Anggota Kelompok</label><div class="linked-wrap" id="lat-mantan-anggota" data-linked-type="Kelompok"></div></div>
+            <div><label class="form-label">Mantan Pemimpin Kelompok</label><div class="linked-wrap" id="lat-mantan-pemimpin" data-linked-type="Kelompok"></div></div>
           </div>
           <div class="field-block">
             <div class="field-block-title">Dewa dan Ilahi</div>
-            <div><label class="form-label">Pengikut Dewa</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span
-                  class="chip">Dewa3 x</span></div>
-            </div>
-            <div><label class="form-label">Diberkati oleh dewa</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span
-                  class="chip">Dewa3 x</span></div>
-            </div>
-            <div><label class="form-label">Dikutuk oleh Dewa</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span
-                  class="chip">Dewa3 x</span></div>
-            </div>
-            <div><label class="form-label">Musuh Dewa</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span
-                  class="chip">Dewa3 x</span></div>
-            </div>
-            <div><label class="form-label">Mantan pengikut dewa</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Dewa1 x</span><span class="chip">Dewa2 x</span><span
-                  class="chip">Dewa3 x</span></div>
-            </div>
+            <div><label class="form-label">Pengikut Dewa</label><div class="linked-wrap" id="lat-pengikut-dewa" data-linked-type="Dewa"></div></div>
+            <div><label class="form-label">Diberkati oleh Dewa</label><div class="linked-wrap" id="lat-diberkati-dewa" data-linked-type="Dewa"></div></div>
+            <div><label class="form-label">Dikutuk oleh Dewa</label><div class="linked-wrap" id="lat-dikutuk-dewa" data-linked-type="Dewa"></div></div>
+            <div><label class="form-label">Musuh Dewa</label><div class="linked-wrap" id="lat-musuh-dewa" data-linked-type="Dewa"></div></div>
+            <div><label class="form-label">Mantan Pengikut Dewa</label><div class="linked-wrap" id="lat-mantan-pengikut-dewa" data-linked-type="Dewa"></div></div>
           </div>
           <div class="field-block">
-            <div class="field-block-title">Makhluk dan binatang</div>
-            <div><label class="form-label">Makhluk yang di jinakan</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span
-                  class="chip">Makhluk3 x</span></div>
-            </div>
-            <div><label class="form-label">Makhluk Sahabat</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span
-                  class="chip">Makhluk3 x</span></div>
-            </div>
-            <div><label class="form-label">Makhluk yang di buru</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span
-                  class="chip">Makhluk3 x</span></div>
-            </div>
-            <div><label class="form-label">Makhluk yang di lindungi</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span
-                  class="chip">Makhluk3 x</span></div>
-            </div>
-            <div><label class="form-label">Makhluk yang di temui</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Makhluk1 x</span><span class="chip">Makhluk2 x</span><span
-                  class="chip">Makhluk3 x</span></div>
-            </div>
+            <div class="field-block-title">Makhluk dan Binatang</div>
+            <div><label class="form-label">Makhluk yang dijinakan</label><div class="linked-wrap" id="lat-makhluk-jinak" data-linked-type="Makhluk"></div></div>
+            <div><label class="form-label">Makhluk Sahabat</label><div class="linked-wrap" id="lat-makhluk-sahabat" data-linked-type="Makhluk"></div></div>
+            <div><label class="form-label">Makhluk yang diburu</label><div class="linked-wrap" id="lat-makhluk-buru" data-linked-type="Makhluk"></div></div>
+            <div><label class="form-label">Makhluk yang dilindungi</label><div class="linked-wrap" id="lat-makhluk-lindungi" data-linked-type="Makhluk"></div></div>
+            <div><label class="form-label">Makhluk yang ditemui</label><div class="linked-wrap" id="lat-makhluk-temui" data-linked-type="Makhluk"></div></div>
           </div>
           <div class="field-block">
             <div class="field-block-title">Objek dan Artefak</div>
-            <div><label class="form-label">Objek yang di miliki</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span
-                  class="chip">Objek3 x</span></div>
-            </div>
-            <div><label class="form-label">Objek yang pernah dimiliki</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span
-                  class="chip">Objek3 x</span></div>
-            </div>
-            <div><label class="form-label">Pencipta Objek</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span
-                  class="chip">Objek3 x</span></div>
-            </div>
-            <div><label class="form-label">Penemu Objek</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span
-                  class="chip">Objek3 x</span></div>
-            </div>
-            <div><label class="form-label">Pencari Objek</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span
-                  class="chip">Objek3 x</span></div>
-            </div>
-            <div><label class="form-label">Penjaga Objek</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Objek1 x</span><span class="chip">Objek2 x</span><span
-                  class="chip">Objek3 x</span></div>
-            </div>
+            <div><label class="form-label">Objek yang dimiliki</label><div class="linked-wrap" id="lat-objek-miliki" data-linked-type="Item"></div></div>
+            <div><label class="form-label">Objek yang pernah dimiliki</label><div class="linked-wrap" id="lat-objek-pernah" data-linked-type="Item"></div></div>
+            <div><label class="form-label">Pencipta Objek</label><div class="linked-wrap" id="lat-objek-pencipta" data-linked-type="Item"></div></div>
+            <div><label class="form-label">Penemu Objek</label><div class="linked-wrap" id="lat-objek-penemu" data-linked-type="Item"></div></div>
+            <div><label class="form-label">Pencari Objek</label><div class="linked-wrap" id="lat-objek-pencari" data-linked-type="Item"></div></div>
+            <div><label class="form-label">Penjaga Objek</label><div class="linked-wrap" id="lat-objek-penjaga" data-linked-type="Item"></div></div>
           </div>
           <div class="field-block">
             <div class="field-block-title">Peristiwa dan Sejarah</div>
-            <div><label class="form-label">Peserta Peristiwa</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span
-                  class="chip">Peristiwa3 x</span></div>
-            </div>
-            <div><label class="form-label">Tokoh Kunci Peristiwa</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span
-                  class="chip">Peristiwa3 x</span></div>
-            </div>
-            <div><label class="form-label">Pahlawan Peristiwa</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span
-                  class="chip">Peristiwa3 x</span></div>
-            </div>
-            <div><label class="form-label">Penyebab Peristiwa</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span
-                  class="chip">Peristiwa3 x</span></div>
-            </div>
-            <div><label class="form-label">Saksi Peristiwa</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Peristiwa1 x</span><span class="chip">Peristiwa2 x</span><span
-                  class="chip">Peristiwa3 x</span></div>
-            </div>
+            <div><label class="form-label">Peserta Peristiwa</label><div class="linked-wrap" id="lat-peserta-peristiwa" data-linked-type="Peristiwa"></div></div>
+            <div><label class="form-label">Tokoh Kunci Peristiwa</label><div class="linked-wrap" id="lat-tokoh-peristiwa" data-linked-type="Peristiwa"></div></div>
+            <div><label class="form-label">Pahlawan Peristiwa</label><div class="linked-wrap" id="lat-pahlawan-peristiwa" data-linked-type="Peristiwa"></div></div>
+            <div><label class="form-label">Penyebab Peristiwa</label><div class="linked-wrap" id="lat-penyebab-peristiwa" data-linked-type="Peristiwa"></div></div>
+            <div><label class="form-label">Saksi Peristiwa</label><div class="linked-wrap" id="lat-saksi-peristiwa" data-linked-type="Peristiwa"></div></div>
           </div>
         </div>
+
         <div class="char-pane" id="pane-kemampuan">
           <div class="field-block">
-            <div class="field-block-title">Sifat dan Keterampilan</div><textarea class="form-input" rows="2"></textarea>
-            <div><label class="form-label">Keterampilan Fisik</label><textarea class="form-input" rows="2"></textarea>
-            </div>
-            <div><label class="form-label">Keterampilan Mental</label><textarea class="form-input" rows="2"></textarea>
-            </div>
-            <div><label class="form-label">Keterampilan Magic</label><textarea class="form-input" rows="2"></textarea>
-            </div>
+            <div class="field-block-title">Sifat dan Keterampilan</div>
+            <textarea class="form-input" rows="2" id="km-sifat"></textarea>
+            <div><label class="form-label">Keterampilan Fisik</label><textarea class="form-input" rows="2" id="km-fisik"></textarea></div>
+            <div><label class="form-label">Keterampilan Mental</label><textarea class="form-input" rows="2" id="km-mental"></textarea></div>
+            <div><label class="form-label">Keterampilan Magic</label><textarea class="form-input" rows="2" id="km-magic"></textarea></div>
           </div>
           <div class="field-block">
             <div class="field-block-title">Sistem Sihir</div>
-            <div><label class="form-label">Magic dan Spell yang digunakan</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Magic1 x</span><span class="chip">Magic2 x</span><span
-                  class="chip">Magic3 x</span></div>
-            </div>
-            <div><label class="form-label">Magic dan Spell yang di ketahui</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Magic1 x</span><span class="chip">Magic2 x</span><span
-                  class="chip">Magic3 x</span></div>
-            </div>
-            <div><label class="form-label">Magic dan Spell yang pernah di pelajari</label><input type="text"
-                class="form-input">
-              <div class="chip-row"><span class="chip">Magic1 x</span><span class="chip">Magic2 x</span><span
-                  class="chip">Magic3 x</span></div>
-            </div>
+            <div><label class="form-label">Magic dan Spell yang digunakan</label><div class="linked-wrap" id="km-magic-digunakan" data-linked-type="Sistem Sihir"></div></div>
+            <div><label class="form-label">Magic dan Spell yang diketahui</label><div class="linked-wrap" id="km-magic-diketahui" data-linked-type="Sistem Sihir"></div></div>
+            <div><label class="form-label">Magic dan Spell yang pernah dipelajari</label><div class="linked-wrap" id="km-magic-dipelajari" data-linked-type="Sistem Sihir"></div></div>
           </div>
           <div class="field-block">
             <div class="field-block-title">Teknologi</div>
-            <div><label class="form-label">Teknologi yang digunakan</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Teknologi1 x</span><span class="chip">Teknologi2 x</span><span
-                  class="chip">Teknologi3 x</span></div>
-            </div>
-            <div><label class="form-label">Teknologi yang diketahui</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Teknologi1 x</span><span class="chip">Teknologi2 x</span><span
-                  class="chip">Teknologi3 x</span></div>
-            </div>
-            <div><label class="form-label">Teknologi yang pernah di buat</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Teknologi1 x</span><span class="chip">Teknologi2 x</span><span
-                  class="chip">Teknologi3 x</span></div>
-            </div>
-            <div><label class="form-label">Memiliki Akses ke teknologi</label><input type="text" class="form-input">
-              <div class="chip-row"><span class="chip">Teknologi1 x</span><span class="chip">Teknologi2 x</span><span
-                  class="chip">Teknologi3 x</span></div>
-            </div>
+            <div><label class="form-label">Teknologi yang digunakan</label><div class="linked-wrap" id="km-tek-digunakan" data-linked-type="Teknologi"></div></div>
+            <div><label class="form-label">Teknologi yang diketahui</label><div class="linked-wrap" id="km-tek-diketahui" data-linked-type="Teknologi"></div></div>
+            <div><label class="form-label">Teknologi yang pernah dibuat</label><div class="linked-wrap" id="km-tek-dibuat" data-linked-type="Teknologi"></div></div>
+            <div><label class="form-label">Memiliki Akses ke Teknologi</label><div class="linked-wrap" id="km-tek-akses" data-linked-type="Teknologi"></div></div>
           </div>
           <div class="field-block">
-            <div class="field-block-title">Bahasa</div><input type="text" class="form-input">
-            <div class="chip-row"><span class="chip">Bahasa1 x</span><span class="chip">Bahasa2 x</span><span
-                class="chip">Bahasa3 x</span></div>
+            <div class="field-block-title">Bahasa</div>
+            <div class="linked-wrap" id="km-bahasa" data-linked-type="Bahasa"></div>
           </div>
         </div>
+
         <div class="char-pane" id="pane-hubungan">
-          <div style="display:flex;align-items:center;justify-content:space-between;"><strong>Hubungan
-              Pribadi</strong><button class="btn-action" style="padding:0.3rem 0.65rem;font-size:0.78rem;">+
-              Hubungan</button></div>
-          <div class="field-block hub-card">
-            <div style="display:flex;align-items:center;justify-content:space-between;"><strong>Hubungan Dengan
-                {name}</strong><button class="win-btn" style="color:var(--danger);"><iconify-icon
-                  icon="lucide:trash-2"></iconify-icon></button></div>
-            <div class="form-row">
-              <div><label class="form-label">Pilih karakter</label><select class="form-input">
-                  <option></option>
-                </select></div>
-              <div><label class="form-label">Type Hubungan</label><select class="form-input">
-                  <option></option>
-                </select></div>
-            </div>
-            <div><label class="form-label">Deskripsi Hubungan</label><textarea class="form-input" rows="3"></textarea>
-            </div>
-            <div class="hub-two"><label style="display:flex;gap:0.4rem;align-items:center;"><input type="checkbox"
-                  checked> Hubungan Dua Arah</label>
-              <div style="margin-top:0.4rem;"><label class="form-label">Type Hubungan Invert</label><select
-                  class="form-input">
-                  <option></option>
-                </select></div>
-            </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+            <strong>Hubungan Pribadi</strong>
+            <button class="btn-action" id="btn-add-relation" style="padding:0.3rem 0.65rem;font-size:0.78rem;">+ Hubungan</button>
           </div>
-          <div class="field-block hub-card">
-            <div style="display:flex;align-items:center;justify-content:space-between;"><strong>Hubungan Dengan
-                {name}</strong><button class="win-btn" style="color:var(--danger);"><iconify-icon
-                  icon="lucide:trash-2"></iconify-icon></button></div>
-            <div class="form-row">
-              <div><label class="form-label">Pilih karakter</label><select class="form-input">
-                  <option></option>
-                </select></div>
-              <div><label class="form-label">Type Hubungan</label><select class="form-input">
-                  <option></option>
-                </select></div>
-            </div>
-            <div><label class="form-label">Deskripsi Hubungan</label><textarea class="form-input" rows="3"></textarea>
-            </div>
-            <div class="hub-two"><label style="display:flex;gap:0.4rem;align-items:center;"><input type="checkbox"
-                  checked> Hubungan Dua Arah</label>
-              <div style="margin-top:0.4rem;"><label class="form-label">Type Hubungan Invert</label><select
-                  class="form-input">
-                  <option></option>
-                </select></div>
-            </div>
-          </div>
+          <div id="relation-empty" style="text-align:center;padding:2rem 1rem;font-size:0.85rem;color:var(--text-muted);">Tidak ada hubungan yang di buat</div>
+          <div id="relation-list" style="display:none;flex-direction:column;gap:0.6rem;"></div>
         </div>
+
         <div class="char-pane" id="pane-catatan">
-          <div class="field-block"><input type="text" class="form-input">
-            <div class="chip-row"><span class="chip">Tag1 x</span><span class="chip">Tag2 x</span><span
-                class="chip">Tag3 x</span></div>
+          <div class="field-block">
+            <div class="field-block-title">Tag</div>
+            <div class="linked-input-row" style="display:flex;gap:0.4rem;">
+              <input type="text" class="form-input" id="cat-tag-input" placeholder="Ketik tag lalu Enter...">
+              <button type="button" class="win-btn" id="btn-add-tag" title="Tambah Tag" style="border:1px solid var(--border);width:34px;">
+                <iconify-icon icon="lucide:plus" width="15"></iconify-icon>
+              </button>
+            </div>
+            <div class="linked-chips" id="cat-tag-chips"></div>
           </div>
           <div class="field-block">
-            <div class="field-block-title">Catatan Tambahan</div><textarea class="form-input" rows="4"></textarea>
+            <div class="field-block-title">Catatan Tambahan</div>
+            <textarea class="form-input" rows="4" id="cat-catatan"></textarea>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;"><label class="form-label"
               style="margin:0;">Dokumen Terikat pada karakter ini</label><button class="win-btn"
               title="Tambah Dokumen"><iconify-icon icon="lucide:plus"></iconify-icon></button></div>
           <div id="doc-empty" style="text-align:center;padding:3rem 1rem;font-size:0.85rem;color:var(--text-muted);">
             Tidak Ada Dokumen terikat</div>
-          <div id="doc-list" style="display:none;flex-direction:column;gap:0.5rem;">
-            <div class="doclink-row"><span class="char-row-thumb"><iconify-icon icon="lucide:file-text"
-                  width="14"></iconify-icon></span><span style="flex:1;">Dokumen1</span><button
-                class="win-btn"><iconify-icon icon="lucide:eye"></iconify-icon></button><button
-                class="win-btn"><iconify-icon icon="lucide:pen-line"></iconify-icon></button><button class="win-btn"
-                style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
-            <div class="doclink-row"><span class="char-row-thumb"><iconify-icon icon="lucide:file-text"
-                  width="14"></iconify-icon></span><span style="flex:1;">Dokumen2</span><button
-                class="win-btn"><iconify-icon icon="lucide:eye"></iconify-icon></button><button
-                class="win-btn"><iconify-icon icon="lucide:pen-line"></iconify-icon></button><button class="win-btn"
-                style="color:var(--danger);"><iconify-icon icon="lucide:trash-2"></iconify-icon></button></div>
-          </div>
+          <div id="doc-list" style="display:none;flex-direction:column;gap:0.5rem;"></div>
         </div>
+
         <div class="char-pane" id="pane-varian">
           <div><label class="form-label">Manajemen Varian Karakter</label></div>
           <div
@@ -2275,13 +2212,29 @@
         document.getElementById('pane-identitas').classList.add('active');
       }
 
+      function setCharView(mode) {
+        document.getElementById('char-grid').style.display = mode === 'grid' ? '' : 'none';
+        document.getElementById('char-table').style.display = mode === 'list' ? '' : 'none';
+        document.getElementById('view-grid').classList.toggle('active', mode === 'grid');
+        document.getElementById('view-list').classList.toggle('active', mode === 'list');
+      }
+
+      function toggleCharSection(head) {
+        var section = head.closest('.char-section');
+        section.classList.toggle('collapsed');
+        var toggle = head.querySelector('.char-section-toggle');
+        toggle.textContent = section.classList.contains('collapsed') ? '>' : 'v';
+      }
+
       // ===================== STATE KARAKTER =====================
       var charState = {
         editingId: null,
         image: '',
         birthMode: 'number',
         linked: { spesies: [], tempat: [] },
-        customFields: []
+        customFields: [],
+        relations: [],
+        tags: []
       };
 
       var debounceTimer = null;
@@ -2543,6 +2496,399 @@
         onChange: function (items) { charState.linked.tempat = items; }
       });
 
+      // ===================== TOOLTIP INFO (ⓘ) =====================
+      var hintPop = document.createElement('div');
+      hintPop.className = 'cf-hint-pop';
+      document.body.appendChild(hintPop);
+      var hintPinned = false;
+
+      function showHint(el) {
+        hintPop.textContent = el.dataset.hint || '';
+        hintPop.classList.add('open');
+        var r = el.getBoundingClientRect();
+        var top = r.bottom + 6;
+        var left = Math.min(r.left, window.innerWidth - 336);
+        if (left < 8) left = 8;
+        // jika melewati bawah layar, tampilkan di atas
+        if (top + hintPop.offsetHeight > window.innerHeight - 8) {
+          top = Math.max(8, r.top - hintPop.offsetHeight - 6);
+        }
+        hintPop.style.top = top + 'px';
+        hintPop.style.left = left + 'px';
+      }
+      function hideHint() {
+        if (hintPinned) return;
+        hintPop.classList.remove('open');
+      }
+
+      document.addEventListener('mouseover', function (e) {
+        var el = e.target.closest && e.target.closest('.info-i');
+        if (el) showHint(el);
+      });
+      document.addEventListener('mouseout', function (e) {
+        var el = e.target.closest && e.target.closest('.info-i');
+        if (el && !hintPinned) hideHint();
+      });
+      document.addEventListener('click', function (e) {
+        var el = e.target.closest && e.target.closest('.info-i');
+        if (el) {
+          e.preventDefault();
+          e.stopPropagation();
+          hintPinned = !hintPinned;
+          if (hintPinned) showHint(el); else hideHint();
+          return;
+        }
+        hintPinned = false;
+        hintPop.classList.remove('open');
+      }, true);
+
+      // ===================== LINKED COLLECTION (Latar & Kemampuan) =====================
+      var linkedCollections = {};
+
+      function initLinkedCollection(id) {
+        var el = document.getElementById(id);
+        if (!el) return null;
+        var type = el.dataset.linkedType || 'Spesies';
+        var inst = LinkedInput(el, { type: type });
+        linkedCollections[id] = inst;
+        return inst;
+      }
+
+      var LATAR_LINKED_IDS = [
+        'lat-gelar', 'lat-pekerjaan', 'lat-faksi', 'lat-agama',
+        'lat-anggota-kelompok', 'lat-pemimpin-kelompok', 'lat-pendiri-kelompok', 'lat-mantan-anggota', 'lat-mantan-pemimpin',
+        'lat-pengikut-dewa', 'lat-diberkati-dewa', 'lat-dikutuk-dewa', 'lat-musuh-dewa', 'lat-mantan-pengikut-dewa',
+        'lat-makhluk-jinak', 'lat-makhluk-sahabat', 'lat-makhluk-buru', 'lat-makhluk-lindungi', 'lat-makhluk-temui',
+        'lat-objek-miliki', 'lat-objek-pernah', 'lat-objek-pencipta', 'lat-objek-penemu', 'lat-objek-pencari', 'lat-objek-penjaga',
+        'lat-peserta-peristiwa', 'lat-tokoh-peristiwa', 'lat-pahlawan-peristiwa', 'lat-penyebab-peristiwa', 'lat-saksi-peristiwa'
+      ];
+      var KEMAMPUAN_LINKED_IDS = [
+        'km-magic-digunakan', 'km-magic-diketahui', 'km-magic-dipelajari',
+        'km-tek-digunakan', 'km-tek-diketahui', 'km-tek-dibuat', 'km-tek-akses',
+        'km-bahasa'
+      ];
+      var ALL_COLLECTION_IDS = LATAR_LINKED_IDS.concat(KEMAMPUAN_LINKED_IDS);
+
+      ALL_COLLECTION_IDS.forEach(function (id) { initLinkedCollection(id); });
+
+      function getCollectionItems(id) {
+        var inst = linkedCollections[id];
+        return inst ? inst.getItems() : [];
+      }
+      function setCollectionItems(id, items) {
+        var inst = linkedCollections[id];
+        if (inst) inst.setItems(items || []);
+      }
+      async function refreshAllCollections() {
+        for (var key in linkedCollections) {
+          await linkedCollections[key].refresh();
+        }
+      }
+
+      // ===================== HUBUNGAN =====================
+      // Struktur satu relasi:
+      // { id, targetId, targetName, typeKey, customName, selfLabel, know: 'Publik'|..., since, description, twoWay }
+      var RELATION_TYPES = [
+        { group: 'Keluarga', options: [
+          'Ayah / Ibu', 'Putra / Putri', 'Saudara Laki-Laki / Saudara Perempuan', 'Kakek / Nenek', 'Cucu',
+          'Paman / Bibi', 'Keponakan', 'Sepupu', 'Ayah Mertua / Ibu Mertua', 'Menantu Laki-Laki / Menantu Perempuan',
+          'Ipar Laki-Laki / Ipar Perempuan', 'Ayah Tiri / Ibu Tiri', 'Wali', 'Anak Perwalian'
+        ]},
+        { group: 'Pasangan Dan Ikatan', options: [
+          'Suami / Istri', 'Kekasih', 'Teman', 'Sekutu', 'Saingan', 'Musuh', 'Mantan Pasangan', 'Kenalan', 'Netral'
+        ]},
+        { group: 'Profesional', options: ['Mentor', 'Murid', 'Atasan', 'Bawahan', 'Guru'] },
+        { group: 'Lainnya', options: ['Pencipta', 'Ciptaan', 'Lainnya (Custom)'] }
+      ];
+
+      // Peta type kebalikan untuk record dua arah
+      var RELATION_INVERSE = {
+        'Ayah / Ibu': 'Putra / Putri',
+        'Putra / Putri': 'Ayah / Ibu',
+        'Saudara Laki-Laki / Saudara Perempuan': 'Saudara Laki-Laki / Saudara Perempuan',
+        'Kakek / Nenek': 'Cucu',
+        'Cucu': 'Kakek / Nenek',
+        'Paman / Bibi': 'Keponakan',
+        'Keponakan': 'Paman / Bibi',
+        'Sepupu': 'Sepupu',
+        'Ayah Mertua / Ibu Mertua': 'Menantu Laki-Laki / Menantu Perempuan',
+        'Menantu Laki-Laki / Menantu Perempuan': 'Ayah Mertua / Ibu Mertua',
+        'Ipar Laki-Laki / Ipar Perempuan': 'Ipar Laki-Laki / Ipar Perempuan',
+        'Ayah Tiri / Ibu Tiri': 'Putra / Putri',
+        'Wali': 'Anak Perwalian',
+        'Anak Perwalian': 'Wali',
+        'Suami / Istri': 'Suami / Istri',
+        'Kekasih': 'Kekasih',
+        'Teman': 'Teman',
+        'Sekutu': 'Sekutu',
+        'Saingan': 'Saingan',
+        'Musuh': 'Musuh',
+        'Mantan Pasangan': 'Mantan Pasangan',
+        'Kenalan': 'Kenalan',
+        'Netral': 'Netral',
+        'Mentor': 'Murid',
+        'Murid': 'Mentor',
+        'Atasan': 'Bawahan',
+        'Bawahan': 'Atasan',
+        'Guru': 'Murid',
+        'Pencipta': 'Ciptaan',
+        'Ciptaan': 'Pencipta'
+      };
+
+      // Hint "Label Sendiri" per type (placeholder)
+      var SELF_LABEL_HINT = {
+        'Ayah / Ibu': 'Kosong: Ayah / Ibu',
+        'Putra / Putri': 'Kosong: Putra / Putri',
+        'Suami / Istri': 'Kosong: Suami / Istri',
+        'Teman': 'Kosong: Teman',
+        'Mentor': 'Kosong: Mentor',
+        'Murid': 'Kosong: Murid',
+        'Musuh': 'Kosong: Musuh'
+      };
+
+      var KNOW_OPTIONS = ['Publik', 'Rahasia', 'Desas-Desus', 'Diperdebatkan'];
+
+      function relationTypeOptionsHtml() {
+        var html = '<option value="">Pilih Type Hubungan</option>';
+        RELATION_TYPES.forEach(function (g) {
+          html += '<optgroup label="' + g.group + '">';
+          g.options.forEach(function (o) {
+            html += '<option value="' + o + '">' + o + '</option>';
+          });
+          html += '</optgroup>';
+        });
+        return html;
+      }
+
+      function renderRelations() {
+        var list = document.getElementById('relation-list');
+        var empty = document.getElementById('relation-empty');
+        if (!list) return;
+        var rels = charState.relations || [];
+        if (!rels.length) {
+          list.style.display = 'none';
+          empty.style.display = 'block';
+          return;
+        }
+        empty.style.display = 'none';
+        list.style.display = 'flex';
+        list.innerHTML = '';
+        rels.forEach(function (rel, idx) {
+          var card = document.createElement('div');
+          card.className = 'field-block hub-card';
+
+          // Header
+          var head = document.createElement('div');
+          head.className = 'rel-card-head';
+          var title = document.createElement('span');
+          title.textContent = 'Hubungan ' + (idx + 1) + (rel.targetName ? ' — ' + rel.targetName : '');
+          var del = document.createElement('button');
+          del.className = 'win-btn';
+          del.style.color = 'var(--danger)';
+          del.innerHTML = '<iconify-icon icon="lucide:trash-2"></iconify-icon>';
+          del.addEventListener('click', function () {
+            rels.splice(idx, 1);
+            renderRelations();
+          });
+          head.appendChild(title);
+          head.appendChild(del);
+          card.appendChild(head);
+
+          // Baris: Karakter | Type Hubungan
+          var row1 = document.createElement('div');
+          row1.className = 'form-row';
+          row1.innerHTML = '<div><label class="form-label">Karakter</label></div><div><label class="form-label">Type Hubungan</label></div>';
+          var selChar = document.createElement('select');
+          selChar.className = 'form-input';
+          selChar.innerHTML = '<option value="">Pilih karakter</option>' + otherCharactersOptions(rel.targetId);
+          selChar.value = rel.targetId ? String(rel.targetId) : '';
+          selChar.addEventListener('change', function () {
+            rel.targetId = selChar.value ? parseInt(selChar.value, 10) : null;
+            var c = charCache[rel.targetId];
+            rel.targetName = c ? c.name : '';
+            renderRelations();
+          });
+          var selType = document.createElement('select');
+          selType.className = 'form-input';
+          selType.innerHTML = relationTypeOptionsHtml();
+          selType.value = rel.typeKey || '';
+          selType.addEventListener('change', function () {
+            rel.typeKey = selType.value;
+            renderRelations();
+          });
+          var row1b = document.createElement('div');
+          row1b.className = 'form-row';
+          var d1 = document.createElement('div'); d1.appendChild(selChar);
+          var d2 = document.createElement('div'); d2.appendChild(selType);
+          row1b.appendChild(d1); row1b.appendChild(d2);
+          card.appendChild(row1b);
+
+          // Custom name jika Lainnya
+          if (rel.typeKey === 'Lainnya (Custom)') {
+            var cw = document.createElement('div');
+            cw.innerHTML = '<label class="form-label">Nama Ikatan</label>';
+            var ci = document.createElement('input');
+            ci.type = 'text';
+            ci.className = 'form-input';
+            ci.value = rel.customName || '';
+            ci.placeholder = 'Nama ikatan...';
+            ci.addEventListener('input', function () { rel.customName = ci.value; });
+            cw.appendChild(ci);
+            card.appendChild(cw);
+          }
+
+          // Label Sendiri
+          var lw = document.createElement('div');
+          lw.innerHTML = '<label class="form-label">Label Sendiri</label>';
+          var li = document.createElement('input');
+          li.type = 'text';
+          li.className = 'form-input';
+          li.value = rel.selfLabel || '';
+          li.placeholder = SELF_LABEL_HINT[rel.typeKey] || 'Kosong: (mengikuti type)';
+          li.addEventListener('input', function () { rel.selfLabel = li.value; });
+          lw.appendChild(li);
+          card.appendChild(lw);
+
+          // Siapa yang tahu?
+          var kw = document.createElement('div');
+          kw.innerHTML = '<label class="form-label">Siapa yang tahu?</label>';
+          var kr = document.createElement('div');
+          kr.className = 'rel-know-row';
+          KNOW_OPTIONS.forEach(function (opt) {
+            var b = document.createElement('span');
+            b.className = 'rel-know-opt' + ((rel.know || 'Publik') === opt ? ' on' : '');
+            b.textContent = opt;
+            b.addEventListener('click', function () {
+              rel.know = opt;
+              renderRelations();
+            });
+            kr.appendChild(b);
+          });
+          kw.appendChild(kr);
+          card.appendChild(kw);
+
+          // Sejak
+          var sw = document.createElement('div');
+          sw.innerHTML = '<label class="form-label">Sejak</label>';
+          var si = document.createElement('input');
+          si.type = 'text';
+          si.className = 'form-input';
+          si.value = rel.since || '';
+          si.placeholder = 'mis. musim panah 2001';
+          si.addEventListener('input', function () { rel.since = si.value; });
+          sw.appendChild(si);
+          card.appendChild(sw);
+
+          // Deskripsi
+          var dw = document.createElement('div');
+          dw.innerHTML = '<label class="form-label">Deskripsi Hubungan</label>';
+          var di = document.createElement('textarea');
+          di.className = 'form-input';
+          di.rows = 3;
+          di.value = rel.description || '';
+          di.addEventListener('input', function () { rel.description = di.value; });
+          dw.appendChild(di);
+          card.appendChild(dw);
+
+          // Dua arah
+          var tw = document.createElement('label');
+          tw.style.display = 'flex';
+          tw.style.gap = '0.4rem';
+          tw.style.alignItems = 'center';
+          var cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.checked = !!rel.twoWay;
+          cb.addEventListener('change', function () { rel.twoWay = cb.checked; });
+          tw.appendChild(cb);
+          tw.appendChild(document.createTextNode(' Hubungan Dua Arah'));
+          card.appendChild(tw);
+
+          list.appendChild(card);
+        });
+      }
+
+      // Opsi karakter lain (kecuali karakter yang sedang diedit)
+      function otherCharactersOptions(excludeId) {
+        var selfId = charState.editingId;
+        return (window._allCharacters || []).filter(function (c) {
+          return c.id !== selfId;
+        }).map(function (c) {
+          return '<option value="' + c.id + '"' + (String(c.id) === String(excludeId) ? ' selected' : '') + '>' + escapeHtml(c.name) + '</option>';
+        }).join('');
+      }
+
+      // Tombol + Hubungan
+      document.getElementById('btn-add-relation').addEventListener('click', function () {
+        var others = (window._allCharacters || []).filter(function (c) { return c.id !== charState.editingId; });
+        // karakter lain yang belum terhubung
+        var used = (charState.relations || []).map(function (r) { return r.targetId; });
+        var available = others.filter(function (c) { return used.indexOf(c.id) === -1; });
+
+        if (!others.length) {
+          alert('Harap buat karakter lain terlebih dahulu.');
+          return;
+        }
+        if (!available.length) {
+          alert('Semua karakter lain sudah dihubungkan dengan karakter ini.');
+          return;
+        }
+        charState.relations.push({
+          id: 'rel_' + Date.now(),
+          targetId: null,
+          targetName: '',
+          typeKey: '',
+          customName: '',
+          selfLabel: '',
+          know: 'Publik',
+          since: '',
+          description: '',
+          twoWay: false
+        });
+        renderRelations();
+      });
+
+      // ===================== TAG =====================
+      function renderTagChips() {
+        var wrap = document.getElementById('cat-tag-chips');
+        if (!wrap) return;
+        wrap.innerHTML = '';
+        (charState.tags || []).forEach(function (t, i) {
+          var chip = document.createElement('span');
+          chip.className = 'linked-chip';
+          chip.innerHTML = escapeHtml(t) + ' <button type="button">&times;</button>';
+          chip.querySelector('button').addEventListener('click', function () {
+            charState.tags.splice(i, 1);
+            renderTagChips();
+          });
+          wrap.appendChild(chip);
+        });
+      }
+
+      function addTagFromInput() {
+        var inp = document.getElementById('cat-tag-input');
+        var val = (inp.value || '').trim();
+        if (!val) return;
+        charState.tags = charState.tags || [];
+        if (charState.tags.indexOf(val) === -1) charState.tags.push(val);
+        inp.value = '';
+        renderTagChips();
+      }
+
+      document.getElementById('btn-add-tag').addEventListener('click', addTagFromInput);
+      document.getElementById('cat-tag-input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); addTagFromInput(); }
+      });
+
+      // ===================== FISIK TAMBAHAN (toggle detail) =====================
+      ['taring', 'sayap', 'cakar', 'bulu', 'sisik', 'tanduk', 'ekor'].forEach(function (key) {
+        var cb = document.getElementById('ap-has-' + key);
+        if (!cb) return;
+        cb.addEventListener('change', function () {
+          document.getElementById('row-' + key).style.display = cb.checked ? 'grid' : 'none';
+        });
+      });
+
+
       // ===================== CUSTOM FIELD =====================
       var popCfType = document.getElementById('pop-cf-type');
       var popCfLinkedItems = [];
@@ -2687,11 +3033,136 @@
       });
 
       // ===================== OPEN / FILL FORM =====================
+      // Field peta: id elemen → key data
+      var PENAMPILAN_FIELDS = ['ap-tinggi', 'ap-kulit', 'ap-wajah', 'ap-rambut', 'ap-mata', 'ap-dada', 'ap-pinggang'];
+      var PENAMPILAN_PHYS = [
+        { key: 'taring', label: 'Taring' }, { key: 'sayap', label: 'Sayap' }, { key: 'cakar', label: 'Cakar' },
+        { key: 'bulu', label: 'Bulu' }, { key: 'sisik', label: 'Sisik' }, { key: 'tanduk', label: 'Tanduk' },
+        { key: 'ekor', label: 'Ekor' }
+      ];
+      var PENAMPILAN_TEXTAREAS = ['ap-desc-fisik', 'ap-desc-unik', 'ap-desc-pakaian', 'ap-desc-aksesoris'];
+      var KEPRIBADIAN_FIELDS = ['kp-psikologis', 'kp-motivasi', 'kp-kekurangan', 'kp-rahasia', 'kp-suka', 'kp-tidak-suka'];
+      var KEMAMPUAN_TEXTAREAS = ['km-sifat', 'km-fisik', 'km-mental', 'km-magic'];
+
+      function clearPenampilanForm() {
+        PENAMPILAN_FIELDS.forEach(function (id) { document.getElementById(id).value = ''; });
+        PENAMPILAN_PHYS.forEach(function (p) {
+          document.getElementById('ap-has-' + p.key).checked = false;
+          document.getElementById('ap-' + p.key).value = '';
+          document.getElementById('row-' + p.key).style.display = 'none';
+        });
+        PENAMPILAN_TEXTAREAS.forEach(function (id) { document.getElementById(id).value = ''; });
+      }
+
+      function fillPenampilanForm(data) {
+        var ap = data.appearance || {};
+        PENAMPILAN_FIELDS.forEach(function (id) {
+          var key = id.replace('ap-', '');
+          document.getElementById(id).value = ap[key] || '';
+        });
+        var phys = ap.physical || {};
+        PENAMPILAN_PHYS.forEach(function (p) {
+          var enabled = !!phys[p.key];
+          document.getElementById('ap-has-' + p.key).checked = enabled;
+          document.getElementById('ap-' + p.key).value = phys[p.key] || '';
+          document.getElementById('row-' + p.key).style.display = enabled ? 'grid' : 'none';
+        });
+        document.getElementById('ap-desc-fisik').value = ap.descFisik || '';
+        document.getElementById('ap-desc-unik').value = ap.descUnik || '';
+        document.getElementById('ap-desc-pakaian').value = ap.descPakaian || '';
+        document.getElementById('ap-desc-aksesoris').value = ap.descAksesoris || '';
+      }
+
+      function collectPenampilan() {
+        var ap = {};
+        PENAMPILAN_FIELDS.forEach(function (id) { ap[id.replace('ap-', '')] = document.getElementById(id).value.trim(); });
+        ap.physical = {};
+        PENAMPILAN_PHYS.forEach(function (p) {
+          if (document.getElementById('ap-has-' + p.key).checked) {
+            ap.physical[p.key] = document.getElementById('ap-' + p.key).value.trim();
+          }
+        });
+        ap.descFisik = document.getElementById('ap-desc-fisik').value.trim();
+        ap.descUnik = document.getElementById('ap-desc-unik').value.trim();
+        ap.descPakaian = document.getElementById('ap-desc-pakaian').value.trim();
+        ap.descAksesoris = document.getElementById('ap-desc-aksesoris').value.trim();
+        return ap;
+      }
+
+      function clearKepribadianForm() {
+        KEPRIBADIAN_FIELDS.forEach(function (id) { document.getElementById(id).value = ''; });
+      }
+      function fillKepribadianForm(data) {
+        var kp = data.personality || {};
+        document.getElementById('kp-psikologis').value = kp.psikologis || '';
+        document.getElementById('kp-motivasi').value = kp.motivasi || '';
+        document.getElementById('kp-kekurangan').value = kp.kekurangan || '';
+        document.getElementById('kp-rahasia').value = kp.rahasia || '';
+        document.getElementById('kp-suka').value = kp.suka || '';
+        document.getElementById('kp-tidak-suka').value = kp.tidakSuka || '';
+      }
+      function collectKepribadian() {
+        return {
+          psikologis: document.getElementById('kp-psikologis').value.trim(),
+          motivasi: document.getElementById('kp-motivasi').value.trim(),
+          kekurangan: document.getElementById('kp-kekurangan').value.trim(),
+          rahasia: document.getElementById('kp-rahasia').value.trim(),
+          suka: document.getElementById('kp-suka').value.trim(),
+          tidakSuka: document.getElementById('kp-tidak-suka').value.trim()
+        };
+      }
+
+      function clearLatarForm() {
+        LATAR_LINKED_IDS.forEach(function (id) { setCollectionItems(id, []); });
+        document.getElementById('lat-desc-pribadi').value = '';
+      }
+      function fillLatarForm(data) {
+        var lat = data.background || {};
+        LATAR_LINKED_IDS.forEach(function (id) {
+          var key = id.replace('lat-', '');
+          setCollectionItems(id, lat[key] || []);
+        });
+        document.getElementById('lat-desc-pribadi').value = lat.descPribadi || '';
+      }
+      function collectLatar() {
+        var lat = {};
+        LATAR_LINKED_IDS.forEach(function (id) { lat[id.replace('lat-', '')] = getCollectionItems(id); });
+        lat.descPribadi = document.getElementById('lat-desc-pribadi').value.trim();
+        return lat;
+      }
+
+      function clearKemampuanForm() {
+        KEMAMPUAN_LINKED_IDS.forEach(function (id) { setCollectionItems(id, []); });
+        KEMAMPUAN_TEXTAREAS.forEach(function (id) { document.getElementById(id).value = ''; });
+      }
+      function fillKemampuanForm(data) {
+        var km = data.abilities || {};
+        KEMAMPUAN_LINKED_IDS.forEach(function (id) {
+          var key = id.replace('km-', '');
+          setCollectionItems(id, km[key] || []);
+        });
+        document.getElementById('km-sifat').value = km.sifat || '';
+        document.getElementById('km-fisik').value = km.fisik || '';
+        document.getElementById('km-mental').value = km.mental || '';
+        document.getElementById('km-magic').value = km.magicSkill || '';
+      }
+      function collectKemampuan() {
+        var km = {};
+        KEMAMPUAN_LINKED_IDS.forEach(function (id) { km[id.replace('km-', '')] = getCollectionItems(id); });
+        km.sifat = document.getElementById('km-sifat').value.trim();
+        km.fisik = document.getElementById('km-fisik').value.trim();
+        km.mental = document.getElementById('km-mental').value.trim();
+        km.magicSkill = document.getElementById('km-magic').value.trim();
+        return km;
+      }
+
       function clearIdentitasForm() {
         charState.editingId = null;
         charState.image = '';
         charState.birthMode = 'number';
         charState.customFields = [];
+        charState.relations = [];
+        charState.tags = [];
         document.getElementById('cf-nama-lengkap').value = '';
         document.getElementById('cf-nama-depan').value = '';
         document.getElementById('cf-nama-belakang').value = '';
@@ -2711,6 +3182,14 @@
         applyImagePreview();
         applyBirthMode();
         renderCustomFields();
+
+        clearPenampilanForm();
+        clearKepribadianForm();
+        clearLatarForm();
+        clearKemampuanForm();
+        renderRelations();
+        renderTagChips();
+        document.getElementById('cat-catatan').value = '';
       }
 
       function fillIdentitasForm(data) {
@@ -2736,10 +3215,22 @@
         applyImagePreview();
         applyBirthMode();
         renderCustomFields();
+
+        fillPenampilanForm(data);
+        fillKepribadianForm(data);
+        fillLatarForm(data);
+        fillKemampuanForm(data);
+
+        charState.relations = JSON.parse(JSON.stringify(data.relations || []));
+        renderRelations();
+        charState.tags = (data.tags || []).slice();
+        renderTagChips();
+        document.getElementById('cat-catatan').value = data.notes || '';
       }
 
       function collectIdentitas() {
         return {
+          // Identitas
           fullName: document.getElementById('cf-nama-lengkap').value.trim(),
           firstName: document.getElementById('cf-nama-depan').value.trim(),
           lastName: document.getElementById('cf-nama-belakang').value.trim(),
@@ -2754,7 +3245,15 @@
           birthPlace: document.getElementById('cf-tempat-lahir').value.trim(),
           species: linkedSpesies.getItems(),
           places: linkedTempat.getItems(),
-          customFields: charState.customFields
+          customFields: charState.customFields,
+          // Tab lain
+          appearance: collectPenampilan(),
+          personality: collectKepribadian(),
+          background: collectLatar(),
+          abilities: collectKemampuan(),
+          relations: charState.relations,
+          tags: charState.tags,
+          notes: document.getElementById('cat-catatan').value.trim()
         };
       }
 
@@ -2832,18 +3331,64 @@
 
         var payload = { name: ident.fullName, data: ident };
         try {
-          if (charState.editingId) {
-            await window.karakterQuery.updateCharacter(charState.editingId, payload);
-            await window.karakterQuery.logActivity('update', 'character', charState.editingId, ident.fullName, 'Diperbarui');
+          var savedId = charState.editingId;
+          if (savedId) {
+            await window.karakterQuery.updateCharacter(savedId, payload);
+            await window.karakterQuery.logActivity('update', 'character', savedId, ident.fullName, 'Diperbarui');
           } else {
             var created = await window.karakterQuery.addCharacter(payload);
+            savedId = created.id;
             await window.karakterQuery.logActivity('create', 'character', created.id, ident.fullName, 'Karakter baru dibuat');
           }
+
+          // Sinkronkan hubungan dua arah
+          await syncTwoWayRelations(savedId, ident);
+
           closeCharModal();
           await refreshCharacters();
         } catch (err) {
           console.error(err);
           alert('Gagal menyimpan karakter: ' + err.message);
+        }
+      }
+
+      // Buat/perbarui record hubungan balik pada karakter target
+      async function syncTwoWayRelations(savedId, ident) {
+        var rels = ident.relations || [];
+        for (var i = 0; i < rels.length; i++) {
+          var rel = rels[i];
+          if (!rel.twoWay || !rel.targetId) continue;
+          var target = charCache[rel.targetId];
+          if (!target) continue;
+          var tData = JSON.parse(JSON.stringify(target.data || {}));
+          tData.relations = tData.relations || [];
+
+          var inverseType = rel.typeKey === 'Lainnya (Custom)'
+            ? (rel.customName || 'Lainnya (Custom)')
+            : (RELATION_INVERSE[rel.typeKey] || rel.typeKey);
+
+          // Cari record balik yang menunjuk savedId
+          var existing = tData.relations.find(function (r) { return r.targetId === savedId; });
+          if (existing) {
+            existing.typeKey = inverseType;
+            existing.targetName = ident.fullName;
+            existing.twoWay = true;
+          } else {
+            tData.relations.push({
+              id: 'rel_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+              targetId: savedId,
+              targetName: ident.fullName,
+              typeKey: inverseType,
+              customName: '',
+              selfLabel: '',
+              know: rel.know || 'Publik',
+              since: rel.since || '',
+              description: rel.description || '',
+              twoWay: true
+            });
+          }
+          await window.karakterQuery.updateCharacter(rel.targetId, { name: target.name, data: tData });
+          await window.karakterQuery.logActivity('update', 'character', rel.targetId, target.name, 'Hubungan dua arah diperbarui');
         }
       }
 
@@ -2867,10 +3412,14 @@
         window._charIdByName = charIdByName;
         window._allCharacters = characters || [];
         applyCharFilters();
+        if (typeof renderTagFilterBar === 'function') renderTagFilterBar();
         updateCharBadge((characters || []).length);
       }
 
       // Filter pencarian & status
+      // Tag aktif untuk filter (null = semua)
+      var activeTagFilter = null;
+
       function applyCharFilters() {
         var q = (document.getElementById('char-search') || {}).value || '';
         var st = (document.getElementById('char-filter-status') || {}).value || '';
@@ -2879,9 +3428,53 @@
           var d = c.data || {};
           var nameMatch = !q || String(c.name || '').toLowerCase().indexOf(q) !== -1;
           var stMatch = !st || String(d.status || '') === st;
-          return nameMatch && stMatch;
+          var tagMatch = !activeTagFilter || (d.tags || []).indexOf(activeTagFilter) !== -1;
+          return nameMatch && stMatch && tagMatch;
         });
         renderCharacters(list);
+      }
+
+      // Bangun baris tag dari seluruh karakter (unik)
+      function renderTagFilterBar() {
+        var row = document.getElementById('char-tag-row');
+        var listEl = document.getElementById('char-tag-list');
+        if (!row || !listEl) return;
+
+        var tagSet = {};
+        (window._allCharacters || []).forEach(function (c) {
+          ((c.data || {}).tags || []).forEach(function (t) { tagSet[t] = true; });
+        });
+        var tags = Object.keys(tagSet).sort();
+
+        if (!tags.length) {
+          row.style.display = 'none';
+          listEl.innerHTML = '';
+          activeTagFilter = null;
+          return;
+        }
+        row.style.display = 'flex';
+        row.style.alignItems = 'center';
+        row.style.gap = '0.35rem';
+        row.style.flexWrap = 'wrap';
+
+        listEl.innerHTML = '';
+        tags.forEach(function (t) {
+          var badge = document.createElement('span');
+          badge.className = 'badge';
+          badge.style.cursor = 'pointer';
+          if (activeTagFilter === t) {
+            badge.style.background = 'rgba(139,92,246,0.25)';
+            badge.style.borderColor = 'var(--primary)';
+            badge.style.color = '#c4b5fd';
+          }
+          badge.textContent = t;
+          badge.addEventListener('click', function () {
+            activeTagFilter = (activeTagFilter === t) ? null : t;
+            renderTagFilterBar();
+            applyCharFilters();
+          });
+          listEl.appendChild(badge);
+        });
       }
 
       document.getElementById('char-search') && document.getElementById('char-search').addEventListener('input', debounce(applyCharFilters, 200));
@@ -2969,7 +3562,9 @@
         window.karakterQuery = utils.query;
         await linkedSpesies.refresh();
         await linkedTempat.refresh();
+        await refreshAllCollections();
         await refreshCharacters();
+        renderTagFilterBar();
 
         // tombol Simpan di footer modal
         document.querySelector('#modal-char .btn-confirm').addEventListener('click', saveCharacter);
