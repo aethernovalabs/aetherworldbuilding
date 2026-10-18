@@ -13,669 +13,10 @@
     rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
   <link rel="stylesheet" href="/styles/shared-workspace.css">
+  <link rel="stylesheet" href="/styles/element-dunia.css">
   <script src="/js/dexie.min.js"></script>
   <script src="/js/aether-state.js"></script>
   <script src="/js/awb-page-utils.js"></script>
-  <style>
-    /* AWB Main Sidebar (sama seperti dokumen.page.html) */
-    .awb-sidebar {
-      width: 52px;
-      background: #111724;
-      border-right: 1px solid #1c2638;
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      z-index: 50;
-      transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow: hidden;
-      user-select: none;
-      height: 100vh;
-    }
-
-    .awb-sidebar.expanded {
-      width: 200px;
-      background: #1e2636;
-    }
-
-    .awb-sb-header {
-      padding: 0.75rem 0.5rem 0.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex-shrink: 0;
-    }
-
-    .awb-sidebar.expanded .awb-sb-header {
-      align-items: flex-start;
-      padding: 0.85rem 0.85rem 0.5rem;
-    }
-
-    .awb-logo-collapsed {
-      font-family: 'Cinzel', serif;
-      font-weight: 800;
-      font-size: 0.85rem;
-      line-height: 1.1;
-      text-align: center;
-      color: #e2e8f0;
-      margin-bottom: 0.45rem;
-      letter-spacing: 0.05em;
-      display: block;
-    }
-
-    .awb-sidebar.expanded .awb-logo-collapsed {
-      display: none;
-    }
-
-    .awb-logo-expanded {
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      font-weight: 800;
-      font-size: 0.95rem;
-      color: #ffffff;
-      display: none;
-      white-space: nowrap;
-      letter-spacing: 0.05em;
-    }
-
-    .awb-sidebar.expanded .awb-logo-expanded {
-      display: block;
-    }
-
-    .awb-sb-expand-btn {
-      width: 24px;
-      height: 24px;
-      background: #182235;
-      border: 1px solid #283750;
-      border-radius: 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #cbd5e1;
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-bottom: 0.6rem;
-      transition: all 0.12s;
-    }
-
-    .awb-sb-expand-btn:hover {
-      background: #223049;
-      color: #fff;
-    }
-
-    .awb-sb-collapse-btn {
-      width: 24px;
-      height: 24px;
-      background: #25334c;
-      border: 1px solid #3b4c6b;
-      border-radius: 2px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #cbd5e1;
-      font-size: 0.75rem;
-      font-weight: 700;
-      transition: all 0.12s;
-    }
-
-    .awb-sidebar.expanded .awb-sb-collapse-btn {
-      display: flex;
-    }
-
-    .awb-sb-collapse-btn:hover {
-      background: #334466;
-      color: #fff;
-    }
-
-    .awb-world-wrap {
-      display: none;
-      width: 100%;
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .awb-sidebar.expanded .awb-world-wrap {
-      display: block;
-    }
-
-    .awb-world-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 0.6rem;
-      border-radius: 4px;
-      background: #182235;
-      border: 1px solid #283750;
-      color: #cbd5e1;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.12s;
-    }
-
-    .awb-world-btn:hover {
-      background: #25334c;
-      color: #fff;
-    }
-
-
-.awb-sb-nav {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      padding: 0.35rem;
-      min-height: 0;
-    }
-
-    .awb-sidebar.collapsed .awb-sb-nav {
-      padding: 0.25rem 0.2rem;
-    }
-
-    .awb-nav-link {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      padding: 0.3rem 0.45rem;
-      border-radius: 4px;
-      color: #cbd5e1;
-      text-decoration: none;
-      cursor: pointer;
-      transition: background 0.12s;
-      white-space: nowrap;
-      font-size: 0.84rem;
-    }
-
-    .awb-sidebar.collapsed .awb-nav-link {
-      padding: 0.35rem 0.45rem;
-      justify-content: center;
-    }
-
-    .awb-nav-link:hover {
-      background: rgba(255, 255, 255, 0.05);
-      color: #fff;
-    }
-
-    .awb-nav-link.active {
-      background: rgba(139, 92, 246, 0.15);
-      color: #fff;
-      font-weight: 600;
-    }
-
-    .awb-nav-box {
-      width: 26px;
-      height: 26px;
-      border-radius: 4px;
-      background: #182235;
-      border: 1px solid #283850;
-      flex-shrink: 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: #94a3b8;
-      transition: all 0.12s;
-    }
-
-    .awb-nav-link:hover .awb-nav-box {
-      background: #25334c;
-      color: #fff;
-      border-color: #3b4f73;
-    }
-
-    .awb-nav-link.active .awb-nav-box {
-      background: #8b5cf6;
-      color: #fff;
-      border-color: #8b5cf6;
-    }
-
-    .awb-nav-icon {
-      width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      opacity: 0.95;
-    }
-
-    .awb-nav-link .awb-nav-icon {
-      color: inherit;
-    }
-
-    .awb-nav-text {
-      font-size: 0.84rem;
-      color: #f1f5f9;
-      display: none;
-    }
-
-    .awb-sidebar.expanded .awb-nav-text {
-      display: inline-block;
-    }
-
-    .awb-sb-spacer {
-      flex: 1;
-      min-height: 1.5rem;
-    }
-
-    .awb-sb-footer {
-      padding: 0.6rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .awb-sidebar.expanded .awb-sb-footer {
-      justify-content: flex-end;
-      padding: 0.6rem 0.85rem;
-    }
-
-    .awb-sb-collapse-btn {
-      width: 24px;
-      height: 24px;
-      background: #25334c;
-      border: 1px solid #3b4c6b;
-      border-radius: 2px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #cbd5e1;
-      font-size: 0.75rem;
-      font-weight: 700;
-      transition: all 0.12s;
-    }
-
-    .awb-sidebar.expanded .awb-sb-collapse-btn {
-      display: flex;
-    }
-
-    .awb-sb-collapse-btn:hover {
-      background: #334466;
-      color: #fff;
-    }
-
-    .awb-bottom-rail-expand {
-      width: 32px;
-      height: 32px;
-      background: #182235;
-      border: 1px solid #283750;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #cbd5e1;
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-bottom: 0.6rem;
-      transition: all 0.15s;
-    }
-
-    .awb-bottom-rail-expand:hover {
-      background: #223049;
-      color: #fff;
-    }
-
-    .awb-sidebar.expanded .awb-bottom-rail-expand {
-      display: none;
-    }
-
-    .elem-cat {
-      width: 200px;
-      flex-shrink: 0;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      background: #0d121f;
-      padding: 0.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      position: sticky;
-      top: 0;
-      max-height: calc(100vh - 220px);
-      overflow-y: auto;
-    }
-
-    .elem-cat-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-weight: 800;
-      font-size: 0.82rem;
-      padding: 0.2rem 0.3rem 0.5rem;
-    }
-
-    .elem-cat-btn {
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: var(--bg-surface);
-      color: var(--text-main);
-      font-size: 0.75rem;
-      padding: 0.35rem 0.6rem;
-      margin-bottom: 0.3rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      justify-content: center;
-    }
-
-    .elem-cat.collapsed {
-      width: 54px;
-      padding: 0.5rem 0.35rem;
-    }
-
-    .elem-cat.collapsed .elem-cat-head {
-      justify-content: center;
-      padding: 0.2rem 0 0.5rem;
-    }
-
-    .elem-cat.collapsed .elem-cat-title {
-      display: none;
-    }
-
-    .elem-cat.collapsed .elem-cat-btn {
-      width: 32px;
-      height: 32px;
-      padding: 0;
-      margin: 0 auto 0.3rem;
-      border-radius: 8px;
-    }
-
-    .elem-cat.collapsed .cat-btn-text {
-      display: none;
-    }
-
-    .elem-cat.collapsed .elem-cat-item {
-      justify-content: center;
-      padding: 0.45rem 0;
-    }
-
-    .elem-cat.collapsed .cat-label-text {
-      display: none;
-    }
-
-    .elem-cat.collapsed .elem-count {
-      display: none;
-    }
-
-    .elem-cat.collapsed .elem-cat-label {
-      gap: 0;
-    }
-
-    .elem-cat-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      padding: 0.4rem 0.6rem;
-      border-radius: var(--radius-sm);
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 0.78rem;
-      cursor: pointer;
-      text-align: left;
-    }
-
-    .elem-cat-item:hover {
-      background: var(--bg-surface);
-      color: var(--text-main);
-    }
-
-    .elem-cat-item.active {
-      background: rgba(139, 92, 246, 0.14);
-      color: #c4b5fd;
-      font-weight: 700;
-    }
-
-    .elem-cat-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      min-width: 0;
-    }
-
-    .elem-cat-label iconify-icon {
-      flex-shrink: 0;
-      opacity: 0.9;
-    }
-
-    .elem-count {
-      font-size: 0.68rem;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 0 0.3rem;
-      color: var(--text-faint);
-    }
-
-    .search-panel {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      background: var(--bg-card);
-      padding: 0.7rem 0.85rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .elem-group {
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: var(--bg-card);
-      overflow: hidden;
-    }
-
-    .elem-group.open {
-      border-radius: var(--radius-md);
-    }
-
-    .elem-group-head {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      padding: 0.55rem 0.85rem;
-      background: var(--bg-surface);
-      border: none;
-      color: var(--text-main);
-      font-size: 0.82rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .elem-group.open .elem-group-head {
-      border-bottom: 1px solid var(--border);
-    }
-
-    .elem-group:not(.open) .elem-cards {
-      display: none;
-    }
-
-    .elem-group:not(.open) {
-      border-radius: 999px;
-    }
-
-    .elem-group:not(.open) .elem-group-head .chev {
-      transform: rotate(-90deg);
-    }
-
-    .elem-cards {
-      padding: 0.85rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 0.75rem;
-      background: var(--bg-card);
-    }
-
-    .elem-card {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      background: var(--bg-dark);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    .elem-card-top {
-      position: relative;
-      background: var(--bg-surface);
-      border-bottom: 1px solid var(--border);
-      min-height: 110px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .elem-thumb {
-      width: 64px;
-      height: 56px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--bg-dark);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-faint);
-      flex-shrink: 0;
-    }
-
-    .elem-card-type {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      font-size: 0.65rem;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.1rem 0.45rem;
-      background: var(--bg-dark);
-      color: var(--text-muted);
-    }
-
-    .elem-card-body {
-      padding: 0.6rem 0.7rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-    }
-
-    .elem-card-headrow {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.4rem;
-    }
-
-    .elem-card-actions {
-      display: flex;
-      gap: 0.3rem;
-      color: var(--text-faint);
-      align-items: center;
-      flex-shrink: 0;
-    }
-
-    .elem-card-name {
-      font-size: 0.85rem;
-      font-weight: 700;
-    }
-
-    .elem-card-desc {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .elem-card-tags {
-      font-size: 0.72rem;
-      color: var(--danger);
-    }
-
-    .elem-card-foot {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: var(--text-faint);
-    }
-
-    .elem-cards.list-mode {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .elem-cards.list-mode .elem-card {
-      flex-direction: row;
-      align-items: stretch;
-    }
-
-    .elem-cards.list-mode .elem-card-top {
-      min-height: 56px;
-      width: 150px;
-      flex-shrink: 0;
-      border-bottom: none;
-      border-right: 1px solid var(--border);
-      flex-direction: column;
-      gap: 0.3rem;
-      padding: 0.5rem;
-    }
-
-    .elem-cards.list-mode .elem-card-type {
-      position: static;
-    }
-
-    .elem-cards.list-mode .elem-card-body {
-      flex: 1;
-      flex-direction: row;
-      align-items: center;
-      gap: 0.8rem;
-    }
-
-    .elem-cards.list-mode .elem-card-headrow {
-      display: contents;
-    }
-
-    .elem-cards.list-mode .elem-card-name {
-      flex: 0 0 130px;
-      order: 1;
-    }
-
-    .elem-cards.list-mode .elem-card-desc {
-      flex: 1;
-      order: 2;
-    }
-
-    .elem-cards.list-mode .elem-card-tags {
-      flex: 0 0 120px;
-      order: 3;
-    }
-
-    .elem-cards.list-mode .elem-card-actions {
-      flex: 0 0 auto;
-      order: 4;
-      margin-left: auto;
-    }
-
-    .view-btn.active {
-      background: rgba(139, 92, 246, .18);
-      color: #c4b5fd;
-      border-color: rgba(139, 92, 246, .5);
-    }
-
-    @media (max-width: 860px) {
-      .page-body {
-        flex-direction: column !important;
-      }
-
-      .elem-cat {
-        width: 100%;
-        max-height: 220px;
-        position: static;
-      }
-    }
-  </style>
 </head>
 
 <body>
@@ -826,71 +167,35 @@
             <div style="font-size:0.78rem;color:var(--text-muted);">Tag: <span>tag1</span> <span>tag2</span>
               <span>tag3</span></div>
           </div>
-          <div class="elem-group open">
-            <button class="elem-group-head" onclick="this.parentElement.classList.toggle('open')">Pekerjaan <span
-                class="chev" style="margin-left:auto;display:inline-block;transition:transform .15s;">v</span></button>
-            <div class="elem-cards">
-              <div class="elem-card">
-                <div class="elem-card-top"><span class="elem-thumb"><iconify-icon icon="lucide:image"
-                      width="28"></iconify-icon></span><span class="elem-card-type">Pekerjaan</span></div>
-                <div class="elem-card-body">
-                  <div class="elem-card-headrow">
-                    <div class="elem-card-name">Name</div>
-                    <div class="elem-card-actions"><iconify-icon icon="lucide:pen-line"
-                        width="14"></iconify-icon><iconify-icon icon="lucide:trash-2" width="14"
-                        style="color:var(--danger);"></iconify-icon></div>
-                  </div>
-                  <div class="elem-card-desc">Deskripsi</div>
-                  <div class="elem-card-tags">Tag1 tag2</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="elem-group open">
-            <button class="elem-group-head" onclick="this.parentElement.classList.toggle('open')">Lokasi <span
-                class="chev" style="margin-left:auto;display:inline-block;transition:transform .15s;">v</span></button>
-            <div class="elem-cards">
-              <div class="elem-card">
-                <div class="elem-card-top"><span class="elem-thumb"><iconify-icon icon="lucide:image"
-                      width="28"></iconify-icon></span><span class="elem-card-type">Lokasi</span></div>
-                <div class="elem-card-body">
-                  <div class="elem-card-headrow">
-                    <div class="elem-card-name">Name</div>
-                    <div class="elem-card-actions"><iconify-icon icon="lucide:pen-line"
-                        width="14"></iconify-icon><iconify-icon icon="lucide:trash-2" width="14"
-                        style="color:var(--danger);"></iconify-icon></div>
-                  </div>
-                  <div class="elem-card-desc">Deskripsi</div>
-                  <div class="elem-card-tags">Tag1 tag2</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="elem-group open">
-            <button class="elem-group-head" onclick="this.parentElement.classList.toggle('open')">Spesies <span
-                class="chev" style="margin-left:auto;display:inline-block;transition:transform .15s;">v</span></button>
-            <div class="elem-cards">
-              <div class="elem-card">
-                <div class="elem-card-top"><span class="elem-thumb"><iconify-icon icon="lucide:image"
-                      width="28"></iconify-icon></span><span class="elem-card-type">Spesies</span></div>
-                <div class="elem-card-body">
-                  <div class="elem-card-headrow">
-                    <div class="elem-card-name">Name</div>
-                    <div class="elem-card-actions"><iconify-icon icon="lucide:pen-line"
-                        width="14"></iconify-icon><iconify-icon icon="lucide:trash-2" width="14"
-                        style="color:var(--danger);"></iconify-icon></div>
-                  </div>
-                  <div class="elem-card-desc">Deskripsi</div>
-                  <div class="elem-card-tags">Tag1 tag2</div>
-                </div>
-              </div>
-            </div>
-          </div>
+           <!-- Element groups rendered by JavaScript -->
+           <div id="elem-groups-container"></div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="modal-overlay" id="modal-pilih-entry">
+     </div>
+   </div>
+
+   <!-- Image Preview Popup -->
+   <div class="cf-pop" id="pop-elem-img">
+     <div class="cf-pop-box">
+       <div class="cf-pop-head">
+         <span><iconify-icon icon="lucide:image" width="16"></iconify-icon> Edit Gambar</span>
+         <button class="win-btn" onclick="document.getElementById('pop-elem-img').classList.remove('open')"><iconify-icon icon="lucide:x"></iconify-icon></button>
+       </div>
+       <div class="cf-pop-body">
+         <div id="elem-pop-img-preview" class="cf-img-pop-preview">Masukkan URL gambar untuk melihat pratinjau</div>
+         <div>
+           <label class="form-label">URL Image</label>
+           <input type="text" class="form-input" id="elem-pop-img-url" placeholder="https://...">
+         </div>
+       </div>
+       <div class="cf-pop-foot">
+         <button class="btn-cancel" onclick="document.getElementById('pop-elem-img').classList.remove('open')">Batal</button>
+         <button class="btn-confirm" onclick="window.saveElementImagePreview()">Simpan</button>
+       </div>
+     </div>
+   </div>
+
+   <div class="modal-overlay" id="modal-pilih-entry">
     <div class="modal-frame" style="max-width:320px;">
       <div class="modal-header">
         <h3>Pilih Entry Element</h3><button class="win-btn"
@@ -921,10 +226,7 @@
         <h3 style="display:flex;align-items:center;gap:0.5rem;"><span
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Makhluk</h3>
-        <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-makhluk').classList.remove('open')">Batal</button><button
-            class="btn-confirm"
-            onclick="document.getElementById('modal-buat-makhluk').classList.remove('open')">Simpan</button></div>
+         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel" onclick="document.getElementById('modal-buat-makhluk').classList.remove('open')">Batal</button><button class="btn-confirm" onclick="window.saveElementForm('Makhluk')">Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -932,35 +234,61 @@
           Informasi Dasar</div>
         <div style="flex:1;text-align:center;padding:0.6rem;font-size:0.8rem;color:var(--text-muted);">Dokumen</div>
       </div>
-      <div class="modal-body">
-        <div
-          style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
-          <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
-          <div><label class="form-label">Tag</label><input type="text" class="form-input">
-            <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
-                x</span><span class="badge">tag2 x</span><span class="badge">tag3 x</span></div>
-          </div>
-        </div>
-        <div
-          style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5rem;">
-            <div><label class="form-label">Type Makhluk</label><select class="form-input">
+       <div class="modal-body">
+         <div
+           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
+           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
+           <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
+           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
+           <div><label class="form-label">Tag</label><input type="text" class="form-input">
+             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
+                 x</span><span class="badge">tag2 x</span><span class="badge">tag3 x</span></div>
+           </div>
+         </div>
+         <div
+           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
+           <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5rem;">
+             <div><label class="form-label">Type Makhluk</label><select class="form-input">
+                <option></option>
+                <option>Natural</option>
                 <option>Magic</option>
+                <option>Hybrid</option>
               </select></div>
             <div><label class="form-label">Perilaku</label><select class="form-input">
+                <option></option>
+                <option>Agresif</option>
                 <option>Netral</option>
+                <option>Pasif</option>
               </select></div>
             <div><label class="form-label">Kecerdasan</label><select class="form-input">
+                <option></option>
                 <option>Hewan</option>
+                <option>Sapid</option>
+                <option>Sentient</option>
               </select></div>
             <div><label class="form-label">Ukuran</label><select class="form-input">
-                <option>Kolosal</option>
+                <option></option>
+                <option>Tiny</option>
+                <option>Small</option>
+                <option>Medium</option>
+                <option>Large</option>
+                <option>Huge</option>
+                <option>Colossal</option>
               </select></div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;">
             <div><label class="form-label">Makanan</label><select class="form-input">
+                <option></option>
+                <option>Daging</option>
+                <option>Tumbuhan</option>
+                <option>Omnivore</option>
                 <option>Energi</option>
               </select></div>
             <div><label class="form-label">Rentang Hidup</label><input type="text" class="form-input"></div>
@@ -1030,9 +358,9 @@
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Faksi</h3>
         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-faksi').classList.remove('open')">Batal</button><button
+            onclick="window.saveElementForm('Faksi')"Batal</button><button
             class="btn-confirm"
-            onclick="document.getElementById('modal-buat-faksi').classList.remove('open')">Simpan</button></div>
+            onclick="window.saveElementForm('Faksi')"Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -1044,7 +372,14 @@
         <div
           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
+          <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
           <div><label class="form-label">Tag</label><input type="text" class="form-input">
             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
@@ -1124,9 +459,9 @@
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Pekerjaan</h3>
         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-pekerjaan').classList.remove('open')">Batal</button><button
+            onclick="window.saveElementForm('Pekerjaan')"Batal</button><button
             class="btn-confirm"
-            onclick="document.getElementById('modal-buat-pekerjaan').classList.remove('open')">Simpan</button></div>
+            onclick="window.saveElementForm('Pekerjaan')"Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -1138,7 +473,14 @@
         <div
           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
+          <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
           <div><label class="form-label">Tag</label><input type="text" class="form-input">
             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
@@ -1202,9 +544,9 @@
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Lokasi</h3>
         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-lokasi').classList.remove('open')">Batal</button><button
+            onclick="window.saveElementForm('Lokasi')"Batal</button><button
             class="btn-confirm"
-            onclick="document.getElementById('modal-buat-lokasi').classList.remove('open')">Simpan</button></div>
+            onclick="window.saveElementForm('Lokasi')"Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -1216,7 +558,14 @@
         <div
           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
+          <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
           <div><label class="form-label">Tag</label><input type="text" class="form-input">
             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
@@ -1295,9 +644,9 @@
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Agama</h3>
         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-agama').classList.remove('open')">Batal</button><button
+            onclick="window.saveElementForm('Agama')"Batal</button><button
             class="btn-confirm"
-            onclick="document.getElementById('modal-buat-agama').classList.remove('open')">Simpan</button></div>
+            onclick="window.saveElementForm('Agama')"Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -1309,7 +658,14 @@
         <div
           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
+          <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
           <div><label class="form-label">Tag</label><input type="text" class="form-input">
             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
@@ -1373,9 +729,9 @@
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Sistem Sihir</h3>
         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-sihir').classList.remove('open')">Batal</button><button
+            onclick="window.saveElementForm('Sistem Sihir')"Batal</button><button
             class="btn-confirm"
-            onclick="document.getElementById('modal-buat-sihir').classList.remove('open')">Simpan</button></div>
+            onclick="window.saveElementForm('Sistem Sihir')"Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -1387,7 +743,14 @@
         <div
           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
+          <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
           <div><label class="form-label">Tag</label><input type="text" class="form-input">
             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
@@ -1471,9 +834,9 @@
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Teknologi</h3>
         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-teknologi').classList.remove('open')">Batal</button><button
+            onclick="window.saveElementForm('Teknologi')"Batal</button><button
             class="btn-confirm"
-            onclick="document.getElementById('modal-buat-teknologi').classList.remove('open')">Simpan</button></div>
+            onclick="window.saveElementForm('Teknologi')"Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -1485,7 +848,14 @@
         <div
           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
+          <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
           <div><label class="form-label">Tag</label><input type="text" class="form-input">
             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
@@ -1552,9 +922,9 @@
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Bahasa</h3>
         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-bahasa').classList.remove('open')">Batal</button><button
+            onclick="window.saveElementForm('Bahasa')"Batal</button><button
             class="btn-confirm"
-            onclick="document.getElementById('modal-buat-bahasa').classList.remove('open')">Simpan</button></div>
+            onclick="window.saveElementForm('Bahasa')"Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -1566,7 +936,14 @@
         <div
           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
+          <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
           <div><label class="form-label">Tag</label><input type="text" class="form-input">
             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
@@ -1643,9 +1020,9 @@
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Item</h3>
         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-item').classList.remove('open')">Batal</button><button
+            onclick="window.saveElementForm('Item')"Batal</button><button
             class="btn-confirm"
-            onclick="document.getElementById('modal-buat-item').classList.remove('open')">Simpan</button></div>
+            onclick="window.saveElementForm('Item')"Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -1657,7 +1034,14 @@
         <div
           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
+          <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
           <div><label class="form-label">Tag</label><input type="text" class="form-input">
             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
@@ -1753,9 +1137,9 @@
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Kelompok</h3>
         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-kelompok').classList.remove('open')">Batal</button><button
+            onclick="window.saveElementForm('Kelompok')"Batal</button><button
             class="btn-confirm"
-            onclick="document.getElementById('modal-buat-kelompok').classList.remove('open')">Simpan</button></div>
+            onclick="window.saveElementForm('Kelompok')"Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -1767,7 +1151,14 @@
         <div
           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
+          <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
           <div><label class="form-label">Tag</label><input type="text" class="form-input">
             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
@@ -1865,9 +1256,9 @@
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Dewa</h3>
         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-dewa').classList.remove('open')">Batal</button><button
+            onclick="window.saveElementForm('Dewa')"Batal</button><button
             class="btn-confirm"
-            onclick="document.getElementById('modal-buat-dewa').classList.remove('open')">Simpan</button></div>
+            onclick="window.saveElementForm('Dewa')"Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -1879,7 +1270,14 @@
         <div
           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
+          <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
           <div><label class="form-label">Tag</label><input type="text" class="form-input">
             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
@@ -1979,9 +1377,9 @@
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Gelar</h3>
         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-gelar').classList.remove('open')">Batal</button><button
+            onclick="window.saveElementForm('Gelar')"Batal</button><button
             class="btn-confirm"
-            onclick="document.getElementById('modal-buat-gelar').classList.remove('open')">Simpan</button></div>
+            onclick="window.saveElementForm('Gelar')"Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -1993,7 +1391,14 @@
         <div
           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
+          <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
           <div><label class="form-label">Tag</label><input type="text" class="form-input">
             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
@@ -2096,9 +1501,9 @@
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Spesies</h3>
         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-spesies').classList.remove('open')">Batal</button><button
+            onclick="window.saveElementForm('Spesies')"Batal</button><button
             class="btn-confirm"
-            onclick="document.getElementById('modal-buat-spesies').classList.remove('open')">Simpan</button></div>
+            onclick="window.saveElementForm('Spesies')"Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -2110,7 +1515,14 @@
         <div
           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
+          <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
           <div><label class="form-label">Tag</label><input type="text" class="form-input">
             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
@@ -2198,9 +1610,9 @@
             style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;"><iconify-icon
               icon="lucide:image" width="16"></iconify-icon></span>Buat Power Tier</h3>
         <div style="display:flex;gap:0.5rem;"><button class="btn-cancel"
-            onclick="document.getElementById('modal-buat-tier').classList.remove('open')">Batal</button><button
+            onclick="window.saveElementForm('Power Tier')"Batal</button><button
             class="btn-confirm"
-            onclick="document.getElementById('modal-buat-tier').classList.remove('open')">Simpan</button></div>
+            onclick="window.saveElementForm('Power Tier')"Simpan</button></div>
       </div>
       <div style="display:flex;border-bottom:1px solid var(--border);">
         <div
@@ -2212,7 +1624,14 @@
         <div
           style="border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;background:var(--bg-dark);display:flex;flex-direction:column;gap:0.5rem;">
           <div><label class="form-label">Name</label><input type="text" class="form-input"></div>
-          <div><label class="form-label">Url Image</label><input type="text" class="form-input"></div>
+          <div>
+             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+               <label class="form-label" style="margin:0;">Gambar</label>
+               <button type="button" class="win-btn" onclick="window.openElementImagePopup(this)" style="flex-shrink:0;">Edit</button>
+             </div>
+             <div class="elem-img-preview" style="width:100%;height:120px;border:1px solid var(--border);border-radius:6px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;color:var(--text-faint);overflow:hidden;"><iconify-icon icon="lucide:image" width="32"></iconify-icon></div>
+             <input type="text" class="elem-img-url" style="display:none;">
+           </div>
           <div><label class="form-label">Deskripsi</label><textarea class="form-input" rows="3"></textarea></div>
           <div><label class="form-label">Tag</label><input type="text" class="form-input">
             <div style="display:flex;gap:0.3rem;margin-top:0.3rem;font-size:0.72rem;"><span class="badge">tag1
@@ -2352,126 +1771,6 @@
     </div>
   </div>
   <script src="/js/awb-sidebar.js"></script>
-  <script>
-    document.getElementById('btn-collapse-cat')?.addEventListener('click', e => { const btn = e.currentTarget; const c = btn.closest('.elem-cat'); c?.classList.toggle('collapsed'); btn.textContent = c?.classList.contains('collapsed') ? '>' : '<'; });
-    document.getElementById('btn-entry-element')?.addEventListener('click', () => document.getElementById('modal-pilih-entry').classList.add('open'));
-    document.getElementById('btn-custom-element')?.addEventListener('click', () => document.getElementById('modal-custom').classList.add('open'));
-    document.querySelector('#modal-pilih-entry .modal-body')?.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const t = b.textContent; const map = { Makhluk: 'modal-buat-makhluk', Faksi: 'modal-buat-faksi', Pekerjaan: 'modal-buat-pekerjaan', Lokasi: 'modal-buat-lokasi', Agama: 'modal-buat-agama', 'Sistem Sihir': 'modal-buat-sihir', Teknologi: 'modal-buat-teknologi', Bahasa: 'modal-buat-bahasa', Item: 'modal-buat-item', Kelompok: 'modal-buat-kelompok', Dewa: 'modal-buat-dewa', Gelar: 'modal-buat-gelar', Spesies: 'modal-buat-spesies', 'Power Tier': 'modal-buat-tier' }; for (const k in map) if (t.includes(k)) { document.getElementById('modal-pilih-entry').classList.remove('open'); document.getElementById(map[k]).classList.add('open'); break; } });
-    document.querySelectorAll('.elem-cat-item').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.elem-cat-item').forEach(x => x.classList.remove('active')); b.classList.add('active'); }));
-    const setView = v => { document.querySelectorAll('.elem-cards').forEach(c => c.classList.toggle('list-mode', v === 'list')); document.getElementById('view-grid')?.classList.toggle('active', v === 'grid'); document.getElementById('view-list')?.classList.toggle('active', v === 'list'); };
-    document.getElementById('view-grid')?.addEventListener('click', () => setView('grid'));
-    document.getElementById('view-list')?.addEventListener('click', () => setView('list'));
-    document.addEventListener('click', e => {
-      const add = e.target.closest('.extra-add,.extra-add-top');
-      if (add) { const w = add.closest('.extra-wrap'); const l = w?.querySelector('.extra-list'); const f = l?.querySelector('.extra-item'); if (l && f) l.appendChild(f.cloneNode(true)); return; }
-      const del = e.target.closest('.extra-del');
-      if (del) { const w = del.closest('.extra-wrap'); const l = w?.querySelector('.extra-list'); const it = del.closest('.extra-item'); if (l && it && l.querySelectorAll('.extra-item').length > 1) it.remove(); return; }
-      const sadd = e.target.closest('.school-add');
-      if (sadd) { const w = sadd.closest('.school-wrap'); const l = w?.querySelector('.school-list'); const f = l?.querySelector('.school-item'); if (l && f) l.appendChild(f.cloneNode(true)); return; }
-      const sdel = e.target.closest('.school-del');
-      if (sdel) { const w = sdel.closest('.school-wrap'); const l = w?.querySelector('.school-list'); const it = sdel.closest('.school-item'); if (l && it && l.querySelectorAll('.school-item').length > 1) it.remove(); return; }
-    });
-
-    // Initialize with AetherPageUtils
-    async function initElementDuniaPage() {
-      var utils = await window.AetherPageUtils.initPage();
-      if (!utils.query) return;
-
-      // Load elements for each category
-      loadElementsByType(utils.query);
-      
-      // Make query available globally for modals
-      window.elementDuniaQuery = utils.query;
-    }
-
-    async function loadElementsByType(query) {
-      var types = [
-        { type: 'Makhluk', selector: '.elem-group:nth-child(1) .elem-cards' },
-        { type: 'Lokasi', selector: '.elem-group:nth-child(2) .elem-cards' },
-        { type: 'Spesies', selector: '.elem-group:nth-child(3) .elem-cards' },
-        { type: 'Pekerjaan', selector: '.elem-group:nth-child(4) .elem-cards' },
-        { type: 'Faksi', selector: '.elem-group:nth-child(5) .elem-cards' },
-        { type: 'Agama', selector: '.elem-group:nth-child(6) .elem-cards' },
-        { type: 'Sistem Sihir', selector: '.elem-group:nth-child(7) .elem-cards' },
-        { type: 'Teknologi', selector: '.elem-group:nth-child(8) .elem-cards' },
-        { type: 'Bahasa', selector: '.elem-group:nth-child(9) .elem-cards' },
-        { type: 'Item', selector: '.elem-group:nth-child(10) .elem-cards' },
-        { type: 'Kelompok', selector: '.elem-group:nth-child(11) .elem-cards' },
-        { type: 'Dewa', selector: '.elem-group:nth-child(12) .elem-cards' },
-        { type: 'Gelar', selector: '.elem-group:nth-child(13) .elem-cards' },
-      ];
-
-      for (var i = 0; i < types.length; i++) {
-        var t = types[i];
-        var container = document.querySelector(t.selector);
-        if (!container) continue;
-        
-        var elements = await query.getElements(t.type);
-        var countEl = document.querySelector('.elem-cat-item:nth-child(' + (i + 3) + ') .elem-count'); // +3 because first two are "Semua Element" and "Entry Element"
-        if (countEl) countEl.textContent = elements.length;
-        
-        renderElements(container, elements, t.type);
-      }
-    }
-
-    function renderElements(container, elements, type) {
-      if (!elements || elements.length === 0) {
-        container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-faint);font-size:0.85rem;">Belum ada ' + type + '<br><button class="btn-action" style="margin-top:0.5rem;" onclick="openElementModal(\'' + type + '\')">+ Tambah ' + type + '</button></div>';
-        return;
-      }
-
-      container.innerHTML = elements.map(function(e) {
-        return '<div class="elem-card" onclick="openElementDetail(' + e.id + ')">' +
-          '<div class="elem-card-top"><span class="elem-thumb"><iconify-icon icon="lucide:image" width="28"></iconify-icon></span><span class="elem-card-type">' + type + '</span></div>' +
-          '<div class="elem-card-body">' +
-          '<div class="elem-card-headrow">' +
-          '<div class="elem-card-name">' + (e.name || 'Unknown') + '</div>' +
-          '<div class="elem-card-actions"><iconify-icon icon="lucide:pen-line" width="14" onclick="event.stopPropagation();openElementModal(\'' + type + '\', ' + e.id + ')"></iconify-icon><iconify-icon icon="lucide:trash-2" width="14" style="color:var(--danger);" onclick="event.stopPropagation();deleteElement(' + e.id + ')"></iconify-icon></div>' +
-          '</div>' +
-          '<div class="elem-card-desc">' + (e.data?.description || e.data?.deskripsi || '-') + '</div>' +
-          '<div class="elem-card-tags">' + (e.data?.tags?.join(' ') || '') + '</div>' +
-          '</div></div>';
-      }).join('');
-    }
-
-    function openElementModal(type, id) {
-      // Map type to modal ID
-      var modalMap = {
-        'Makhluk': 'modal-buat-makhluk',
-        'Faksi': 'modal-buat-faksi',
-        'Pekerjaan': 'modal-buat-pekerjaan',
-        'Lokasi': 'modal-buat-lokasi',
-        'Agama': 'modal-buat-agama',
-        'Sistem Sihir': 'modal-buat-sihir',
-        'Teknologi': 'modal-buat-teknologi',
-        'Bahasa': 'modal-buat-bahasa',
-        'Item': 'modal-buat-item',
-        'Kelompok': 'modal-buat-kelompok',
-        'Dewa': 'modal-buat-dewa',
-        'Gelar': 'modal-buat-gelar',
-        'Spesies': 'modal-buat-spesies',
-        'Power Tier': 'modal-buat-tier',
-      };
-      var modalId = modalMap[type];
-      if (modalId) {
-        document.getElementById(modalId).classList.add('open');
-      }
-    }
-
-    async function deleteElement(id) {
-      if (!confirm('Hapus element ini?')) return;
-      if (!window.elementDuniaQuery) return;
-      await window.elementDuniaQuery.deleteElement(id);
-      await window.elementDuniaQuery.logActivity('delete', 'element', id, 'Element', 'Dihapus dari daftar');
-      loadElementsByType(window.elementDuniaQuery);
-    }
-
-    function openElementDetail(id) {
-      console.log('openElementDetail:', id);
-      // TODO: Open detail sidebar
-    }
-
-    initElementDuniaPage();
-  </script>
+  <script src="/js/element-dunia.js"></script>
 </body>
 </html>
