@@ -68,6 +68,19 @@
       activityLog: "++id, projectId, entityType, entityId, timestamp",
       state: "key",
     });
+    // v3: tabel elementTypes — tipe element custom per proyek (nama, ikon, daftar field).
+    // Versi lama (v1, v2) tidak diubah; migrasi = tabel baru, tanpa migrasi data.
+    db.version(3).stores({
+      projects: "++id, name, desc, createdAt, lastUpdated, order",
+      characters: "++id, projectId, name, lastUpdated",
+      elements: "++id, projectId, name, type, lastUpdated",
+      events: "++id, projectId, name, lastUpdated",
+      maps: "++id, projectId, name, lastUpdated",
+      documents: "++id, projectId, name, lastUpdated",
+      activityLog: "++id, projectId, entityType, entityId, timestamp",
+      state: "key",
+      elementTypes: "++id, projectId, name, lastUpdated",
+    });
   } catch (err) {
     // Dexie belum terload (mis. offline) — semua operasi jadi no-op.
     console.warn("Dexie init failed:", err);
@@ -147,7 +160,7 @@
 
     deleteProject: function (id) {
       if (!db) return Promise.resolve();
-      return db.transaction("rw", [db.projects, db.characters, db.elements, db.events, db.maps, db.documents, db.activityLog], function () {
+      return db.transaction("rw", [db.projects, db.characters, db.elements, db.events, db.maps, db.documents, db.activityLog, db.elementTypes], function () {
         return Promise.all([
           db.projects.delete(id),
           db.characters.where("projectId").equals(id).delete(),
@@ -156,6 +169,7 @@
           db.maps.where("projectId").equals(id).delete(),
           db.documents.where("projectId").equals(id).delete(),
           db.activityLog.where("projectId").equals(id).delete(),
+          db.elementTypes.where("projectId").equals(id).delete(),
         ]);
       });
     },
@@ -277,6 +291,77 @@
     deleteElement: function (id) {
       if (!db) return Promise.resolve();
       return db.elements.delete(id);
+    },
+
+    // ===== Element Types (custom) =====
+    // Tipe element custom per proyek. Record: { id, projectId, name, icon, fields[], lastUpdated }
+    // `fields`: array { key, label, kind, options?, linkedRef? }
+    // kind: text | number | textarea | select | tags | linked
+    getCustomTypes: function (projectId) {
+      if (!db) return Promise.resolve([]);
+      return db.elementTypes.where("projectId").equals(projectId).toArray();
+    },
+
+    addCustomType: function (projectId, typeDef) {
+      if (!db) return Promise.resolve(null);
+      var now = new Date().toISOString();
+      var data = Object.assign({}, typeDef, { projectId: projectId, lastUpdated: now });
+      return db.elementTypes.add(data).then(function (id) {
+        return db.elementTypes.get(id);
+      });
+    },
+
+    updateCustomType: function (id, updates) {
+      if (!db) return Promise.resolve(null);
+      var data = Object.assign({}, updates, { lastUpdated: new Date().toISOString() });
+      return db.elementTypes.update(id, data).then(function () {
+        return db.elementTypes.get(id);
+      });
+    },
+
+    deleteCustomType: function (id) {
+      if (!db) return Promise.resolve();
+      return db.elementTypes.delete(id);
+    },
+
+    // Hapus tipe custom beserta semua element di bawahnya (di satu transaksi).
+    // `names`: daftar nama tipe yang element-nya harus dihapus (nama saat ini + nama lama saat rename).
+    // Return: { deletedType: bool, deletedElements: number }
+    deleteCustomTypeWithElements: function (id, projectId, names) {
+      if (!db) return Promise.resolve({ deletedType: false, deletedElements: 0 });
+      var keys = (Array.isArray(names) && names.length) ? names : [];
+      return db.transaction("rw", [db.elementTypes, db.elements], function () {
+        var countP = keys.reduce(function (acc, nm) {
+          return acc.then(function (total) {
+            return db.elements.where("projectId").equals(projectId)
+              .and(function (e) { return e.type === nm; })
+              .count().then(function (c) { return total + c; });
+          });
+        }, Promise.resolve(0));
+        return countP.then(function (deletedElements) {
+          var del = Promise.resolve();
+          keys.forEach(function (nm) {
+            del = del.then(function () {
+              return db.elements.where("projectId").equals(projectId)
+                .and(function (e) { return e.type === nm; })
+                .delete();
+            });
+          });
+          return del.then(function () {
+            return db.elementTypes.delete(id).then(function () {
+              return { deletedType: true, deletedElements: deletedElements };
+            });
+          });
+        });
+      });
+    },
+
+    // Hitung jumlah element di bawah sebuah tipe custom (untuk konfirmasi hapus)
+    countElementsOfType: function (projectId, typeName) {
+      if (!db) return Promise.resolve(0);
+      return db.elements.where("projectId").equals(projectId)
+        .and(function (e) { return e.type === typeName; })
+        .count();
     },
 
     // ===== Events/Timeline =====
@@ -436,6 +521,7 @@
         db.maps.where("projectId").equals(projectId).toArray(),
         db.documents.where("projectId").equals(projectId).toArray(),
         db.activityLog.where("projectId").equals(projectId).toArray(),
+        db.elementTypes.where("projectId").equals(projectId).toArray(),
       ]).then(function (results) {
         return {
           project: results[0],
@@ -445,6 +531,7 @@
           maps: results[4],
           documents: results[5],
           activityLog: results[6],
+          elementTypes: results[7],
           exportedAt: new Date().toISOString(),
         };
       });
@@ -452,7 +539,7 @@
 
     importProject: function (projectId, data) {
       if (!db) return Promise.resolve();
-      return db.transaction("rw", [db.characters, db.elements, db.events, db.maps, db.documents, db.activityLog], function () {
+      return db.transaction("rw", [db.characters, db.elements, db.events, db.maps, db.documents, db.activityLog, db.elementTypes], function () {
         var promises = [];
         if (data.characters) {
           data.characters.forEach(function (c) {
@@ -482,6 +569,11 @@
         if (data.activityLog) {
           data.activityLog.forEach(function (a) {
             promises.push(db.activityLog.put(Object.assign({}, a, { projectId: projectId })));
+          });
+        }
+        if (data.elementTypes) {
+          data.elementTypes.forEach(function (t) {
+            promises.push(db.elementTypes.put(Object.assign({}, t, { projectId: projectId })));
           });
         }
         return Promise.all(promises);

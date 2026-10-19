@@ -488,8 +488,12 @@
 }
 
 .elem-thumb {
-  width: 64px;
-  height: 56px;
+  /* Fill box .elem-card-top (min-height 110px grid / 56px list) */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
   border: 1px solid var(--border);
   border-radius: 4px;
   background: var(--bg-dark);
@@ -498,6 +502,27 @@
   justify-content: center;
   color: var(--text-faint);
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* Gambar (baik dari form maupun saat load) — object-fit:cover agar fill box */
+.elem-thumb img,
+.elem-thumb .elem-img-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Placeholder saat URL gagal / kosong */
+.elem-thumb .elem-thumb-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  font-size: 1.4rem;
 }
 
 .elem-card-type {

@@ -1,554 +1,722 @@
-// Element Dunia Main Logic
-const ELEMENT_TYPES = [
-  'Makhluk', 'Faksi', 'Pekerjaan', 'Lokasi', 'Agama', 'Sistem Sihir',
-  'Teknologi', 'Bahasa', 'Item', 'Kelompok', 'Dewa', 'Gelar', 'Spesies', 'Power Tier'
-];
+// public/js/element-dunia.js
+// Orkestrator halaman Element Dunia.
+// Form dinamis di-render oleh form-renderer.js berdasarkan schema per-tipe di folder schemas/types/.
+// Menambah tipe element baru: tambah 1 file kecil di schemas/types/ lalu daftarkan di schemas/index.js.
+(function () {
+  "use strict";
 
-const MODAL_MAP = {
-  'Makhluk': 'modal-buat-makhluk',
-  'Faksi': 'modal-buat-faksi',
-  'Pekerjaan': 'modal-buat-pekerjaan',
-  'Lokasi': 'modal-buat-lokasi',
-  'Agama': 'modal-buat-agama',
-  'Sistem Sihir': 'modal-buat-sihir',
-  'Teknologi': 'modal-buat-teknologi',
-  'Bahasa': 'modal-buat-bahasa',
-  'Item': 'modal-buat-item',
-  'Kelompok': 'modal-buat-kelompok',
-  'Dewa': 'modal-buat-dewa',
-  'Gelar': 'modal-buat-gelar',
-  'Spesies': 'modal-buat-spesies',
-  'Power Tier': 'modal-buat-tier',
-};
+  // ---------- Konfigurasi ----------
+  var FORM_MODAL_ID = "modal-buat-element";
+  var PICKER_MODAL_ID = "modal-pilih-entry";
+  var IMAGE_POPUP_ID = "pop-elem-img";
 
-var allElements = [];
-var currentViewMode = 'grid';
-var currentSearchTerm = '';
-var currentEditingType = null;
-var currentEditingId = null;
+  // ---------- State ----------
+  var allElements = [];
+  // Pilihan view (grid/list) diingat di localStorage supaya konsisten setelah refresh
+  var VIEW_STORAGE_KEY = "awb_element_view_mode";
+  var currentViewMode = (function () {
+    try {
+      var v = localStorage.getItem(VIEW_STORAGE_KEY);
+      return v === "list" || v === "grid" ? v : "grid";
+    } catch (e) { return "grid"; }
+  })();
+  var currentSearchTerm = "";
+  var currentEditingId = null;
+  var currentEditingType = null;
+  var currentImageTargetInput = null; // .elem-img-url yang sedang diedit
 
-function debounce(fn, ms) {
-  var timer;
-  return function() {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, arguments), ms);
-  };
-}
-
-// Save element form - called from modal button onclick
-window.saveElementForm = async function(type) {
-  const modalId = MODAL_MAP[type];
-  const modal = document.getElementById(modalId);
-  if (!modal) return;
-
-  // Validate nama wajib
-  const nameInputs = modal.querySelectorAll('input[type="text"]');
-  const nameInput = nameInputs[0]; // First text input is always Name
-  if (!nameInput || !nameInput.value.trim()) {
-    alert('Nama elemen wajib diisi');
-    return;
+  // ---------- Utilities ----------
+  function debounce(fn, ms) {
+    var timer;
+    return function () {
+      var args = arguments, ctx = this;
+      clearTimeout(timer);
+      timer = setTimeout(function () { fn.apply(ctx, args); }, ms);
+    };
   }
 
-  const id = currentEditingId;
-  const descInput = modal.querySelectorAll('textarea')[0]; // First textarea is description
-  const imgInput = modal.querySelector('.elem-img-url'); // Image URL dari hidden input
-  const tagBadges = modal.querySelectorAll('.badge');
+  function $(sel, root) { return (root || document).querySelector(sel); }
+  function $all(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
 
-  const data = {
-    name: nameInput.value.trim(),
-    type: type,
-    data: {
-      description: descInput?.value || '',
-      imageUrl: imgInput?.value || '',
-      tags: Array.from(tagBadges).map(b => b.textContent.replace(/\s*[xX]\s*$/, '').trim()).filter(t => t),
-      extraFields: {},
-      linkedElements: {}
-    }
-  };
+  function getAllTypes() {
+    return window.AwbElementForm ? window.AwbElementForm.getAllTypes() : [];
+  }
+  function getIcons() {
+    return (window.AwbElementForm && window.AwbElementForm.getIcons()) || {};
+  }
 
-  // Collect extra fields
-  const extraItems = modal.querySelectorAll('.extra-item');
-  extraItems.forEach(item => {
-    const inputs = item.querySelectorAll('input[type="text"]');
-    const selects = item.querySelectorAll('select');
-    if (inputs.length >= 1 && selects.length >= 1 && inputs[0].value.trim()) {
-      data.data.extraFields[inputs[0].value.trim()] = {
-        type: selects[0].value || 'text',
-        value: inputs.length > 1 ? inputs[inputs.length - 1].value : ''
-      };
-    }
-  });
+  // ---------- Render sidebar kategori ----------
+  function renderCategoryList() {
+    var host = document.getElementById("elem-cat-list");
+    if (!host) return;
+    var icons = getIcons();
+    var types = getAllTypes();
+    var html = '<button class="elem-cat-item active" data-type="">' +
+      '<span class="elem-cat-label"><iconify-icon icon="lucide:layers" width="14"></iconify-icon>' +
+      '<span class="cat-label-text">Semua Element</span></span>' +
+      '<span class="elem-count" data-count="">0</span></button>';
+    types.forEach(function (t) {
+      var icon = icons[t] || "lucide:shapes";
+      html += '<button class="elem-cat-item" data-type="' + t + '">' +
+        '<span class="elem-cat-label"><iconify-icon icon="' + icon + '" width="14"></iconify-icon>' +
+        '<span class="cat-label-text">' + escapeHtml(t) + '</span></span>' +
+        '<span class="elem-count" data-count="' + t + '">0</span></button>';
+    });
+    host.innerHTML = html;
+  }
 
-  try {
+  function escapeHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
+  // ---------- Picker "Entry Element" ----------
+  function renderEntryPicker() {
+    var body = document.getElementById("modal-pilih-entry-list");
+    if (!body) return;
+    var icons = getIcons();
+    body.innerHTML = getAllTypes().map(function (t) {
+      var icon = icons[t] || "lucide:shapes";
+      return '<button class="elem-cat-btn" data-pick-type="' + escapeHtml(t) + '">' +
+        '<iconify-icon icon="' + icon + '" width="14"></iconify-icon>' +
+        escapeHtml(t) +
+      '</button>';
+    }).join("");
+  }
+
+  function openEntryPicker() {
+    renderEntryPicker();
+    document.getElementById(PICKER_MODAL_ID)?.classList.add("open");
+  }
+  function closeEntryPicker() {
+    document.getElementById(PICKER_MODAL_ID)?.classList.remove("open");
+  }
+
+  // ---------- Render form ke modal tunggal ----------
+  function openElementForm(type, id) {
+    if (!window.AwbFormRenderer) return;
+    var modal = document.getElementById(FORM_MODAL_ID);
+    if (!modal) return;
+    var titleEl = document.getElementById("modal-buat-element-title");
+    var body = document.getElementById("modal-buat-element-body");
+    if (!body) return;
+
+    // Render schema
+    var schema = window.AwbElementForm.getSchema(type);
+    body.innerHTML = window.AwbFormRenderer.renderForm(schema);
+    window.AwbFormRenderer.clearModal(modal);
+
+    // Title
+    var action = id ? "Edit" : "Buat";
+    if (titleEl) titleEl.innerHTML =
+      '<span style="width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;">' +
+      '<iconify-icon icon="lucide:image" width="16"></iconify-icon></span>' +
+      action + " " + escapeHtml(type);
+
+    // Populate kalau edit
+    currentEditingId = id || null;
+    currentEditingType = type;
     if (id) {
-      await window.elementDuniaQuery.updateElement(id, data);
-      await window.elementDuniaQuery.logActivity('update', 'element', id, data.name, `${type} diperbarui`);
-    } else {
-      const created = await window.elementDuniaQuery.addElement(data);
-      await window.elementDuniaQuery.logActivity('create', 'element', created.id, data.name, `${type} dibuat`);
-    }
-
-    modal.classList.remove('open');
-    currentEditingId = null;
-    currentEditingType = null;
-    
-    // Reload data
-    const utils = await window.AetherPageUtils.initPage();
-    if (utils.query) {
-      var promises = ELEMENT_TYPES.map(t => utils.query.getElements(t));
-      var results = await Promise.all(promises);
-      
-      allElements = [];
-      ELEMENT_TYPES.forEach((t, idx) => {
-        if (results[idx]) {
-          allElements = allElements.concat(results[idx].map(e => Object.assign({}, e, { _type: t })));
-        }
-      });
-
-      filterAndRender();
-      updateCategoryCounts();
-    }
-  } catch (err) {
-    console.error('Error saving element:', err);
-    alert('Gagal menyimpan elemen: ' + err.message);
-  }
-};
-
-document.getElementById('btn-collapse-cat')?.addEventListener('click', e => { const btn = e.currentTarget; const c = btn.closest('.elem-cat'); c?.classList.toggle('collapsed'); btn.textContent = c?.classList.contains('collapsed') ? '>' : '<'; });
-document.getElementById('btn-entry-element')?.addEventListener('click', () => document.getElementById('modal-pilih-entry').classList.add('open'));
-document.getElementById('btn-custom-element')?.addEventListener('click', () => document.getElementById('modal-custom').classList.add('open'));
-
-document.querySelector('#modal-pilih-entry .modal-body')?.addEventListener('click', e => {
-  const b = e.target.closest('button');
-  if (!b) return;
-  const t = b.textContent;
-  for (const k in MODAL_MAP) {
-    if (t.includes(k)) {
-      document.getElementById('modal-pilih-entry').classList.remove('open');
-      openElementForm(k);
-      break;
-    }
-  }
-});
-
-function setView(v) {
-  currentViewMode = v;
-  document.querySelectorAll('.elem-cards').forEach(c => c.classList.toggle('list-mode', v === 'list'));
-  document.getElementById('view-grid')?.classList.toggle('active', v === 'grid');
-  document.getElementById('view-list')?.classList.toggle('active', v === 'list');
-}
-
-document.getElementById('view-grid')?.addEventListener('click', () => setView('grid'));
-document.getElementById('view-list')?.addEventListener('click', () => setView('list'));
-
-document.querySelector('.search-field')?.addEventListener('input', debounce(function(e) {
-  currentSearchTerm = e.target.value.toLowerCase();
-  filterAndRender();
-}, 300));
-
-document.querySelectorAll('.elem-cat-item').forEach(btn => {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('.elem-cat-item').forEach(x => x.classList.remove('active'));
-    this.classList.add('active');
-    filterAndRender();
-  });
-});
-
-document.addEventListener('click', e => {
-  const add = e.target.closest('.extra-add,.extra-add-top');
-  if (add) { const w = add.closest('.extra-wrap'); const l = w?.querySelector('.extra-list'); const f = l?.querySelector('.extra-item'); if (l && f) l.appendChild(f.cloneNode(true)); return; }
-  const del = e.target.closest('.extra-del');
-  if (del) { const w = del.closest('.extra-wrap'); const l = w?.querySelector('.extra-list'); const it = del.closest('.extra-item'); if (l && it && l.querySelectorAll('.extra-item').length > 1) it.remove(); return; }
-});
-
-async function initElementDuniaPage() {
-  if (!window.AetherPageUtils) return;
-  var utils = await window.AetherPageUtils.initPage();
-  if (!utils.query) {
-    console.warn('Tidak ada proyek aktif');
-    return;
-  }
-
-  window.elementDuniaQuery = utils.query;
-  
-  // Load hanya element yang sudah dibuat (jangan placeholder)
-  var promises = ELEMENT_TYPES.map(type => utils.query.getElements(type));
-  var results = await Promise.all(promises);
-  
-  allElements = [];
-  ELEMENT_TYPES.forEach((type, idx) => {
-    if (results[idx]) {
-      allElements = allElements.concat(results[idx].map(e => Object.assign({}, e, { _type: type })));
-    }
-  });
-
-  renderGroups();
-  updateCategoryCounts();
-}
-
-function renderGroups() {
-  const container = document.getElementById('elem-groups-container');
-  if (!container) return;
-
-  container.innerHTML = ELEMENT_TYPES.map(type => `
-    <div class="elem-group open" data-type="${type}">
-      <button class="elem-group-head" onclick="this.parentElement.classList.toggle('open')">
-        ${type}
-        <span class="chev" style="margin-left:auto;display:inline-block;transition:transform .15s;">v</span>
-      </button>
-      <div class="elem-cards"></div>
-    </div>
-  `).join('');
-
-  filterAndRender();
-}
-
-function filterAndRender() {
-  const activeCategory = document.querySelector('.elem-cat-item.active');
-  const selectedType = activeCategory?.textContent.includes('Semua') ? null : activeCategory?.textContent.trim().split('\n')[0];
-
-  // Group by type and filter
-  var groups = {};
-  ELEMENT_TYPES.forEach(t => groups[t] = []);
-
-  allElements.forEach(e => {
-    if (selectedType && e._type !== selectedType) return;
-    if (currentSearchTerm && !e.name.toLowerCase().includes(currentSearchTerm)) return;
-    groups[e._type].push(e);
-  });
-
-  // Render each group
-  ELEMENT_TYPES.forEach(type => {
-    const groupEl = document.querySelector(`[data-type="${type}"]`);
-    if (!groupEl) return;
-    const cardsContainer = groupEl.querySelector('.elem-cards');
-    if (!cardsContainer) return;
-
-    const elements = groups[type];
-    if (elements.length === 0) {
-      cardsContainer.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--text-faint);font-size:0.85rem;">Belum ada ${type}</div>`;
-      return;
-    }
-
-    cardsContainer.className = 'elem-cards' + (currentViewMode === 'list' ? ' list-mode' : '');
-    cardsContainer.innerHTML = elements.map(e => renderCard(e, type)).join('');
-  });
-}
-
-function renderCard(e, type) {
-  const imgUrl = e.data?.imageUrl || e.data?.image || '';
-  const img = imgUrl ? `<img src="${imgUrl}" style="width:100%;height:100%;object-fit:cover;">` : '<iconify-icon icon="lucide:image" width="28"></iconify-icon>';
-  const desc = e.data?.description || '';
-  const tags = (e.data?.tags || []).join(' ');
-
-  return `<div class="elem-card">
-    <div class="elem-card-top"><span class="elem-thumb">${img}</span><span class="elem-card-type">${type}</span></div>
-    <div class="elem-card-body">
-      <div class="elem-card-headrow">
-        <div class="elem-card-name">${e.name || 'Unknown'}</div>
-        <div class="elem-card-actions">
-          <iconify-icon icon="lucide:pen-line" width="14" onclick="event.stopPropagation();openElementForm('${type}', ${e.id})" style="cursor:pointer;"></iconify-icon>
-          <iconify-icon icon="lucide:trash-2" width="14" style="color:var(--danger);cursor:pointer;" onclick="event.stopPropagation();deleteElement(${e.id})"></iconify-icon>
-        </div>
-      </div>
-      <div class="elem-card-desc">${desc}</div>
-      <div class="elem-card-tags">${tags}</div>
-    </div>
-  </div>`;
-}
-
-function updateCategoryCounts() {
-  const counts = {};
-  ELEMENT_TYPES.forEach(t => counts[t] = 0);
-  allElements.forEach(e => counts[e._type]++);
-
-  document.querySelectorAll('.elem-cat-item').forEach((btn, i) => {
-    const text = btn.textContent.trim();
-    if (text.includes('Semua Element')) {
-      const countEl = btn.querySelector('.elem-count');
-      if (countEl) countEl.textContent = allElements.length;
-    } else {
-      for (const type of ELEMENT_TYPES) {
-        if (text.includes(type)) {
-          const countEl = btn.querySelector('.elem-count');
-          if (countEl) countEl.textContent = counts[type];
-          break;
-        }
-      }
-    }
-  });
-}
-
-function clearFormData(modal) {
-  modal.querySelectorAll('input[type="text"], input[type="number"], textarea, select').forEach(f => f.value = '');
-  modal.querySelectorAll('input[type="checkbox"]').forEach(f => f.checked = false);
-  modal.querySelectorAll('.badge').forEach(b => b.remove());
-  modal.querySelectorAll('.extra-item').forEach((item, i) => i > 0 && item.remove());
-}
-
-// Image preview popup handlers
-var currentImageButton = null;
-
-window.openElementImagePopup = function(button) {
-  currentImageButton = button;
-  const modal = button.closest('.modal-overlay') || button.closest('[class*="modal"]');
-  const imgUrlInput = modal?.querySelector('.elem-img-url');
-  
-  const popInput = document.getElementById('elem-pop-img-url');
-  if (popInput) popInput.value = imgUrlInput?.value || '';
-  updateImagePreview();
-  document.getElementById('pop-elem-img')?.classList.add('open');
-};
-
-function updateImagePreview() {
-  const inputEl = document.getElementById('elem-pop-img-url');
-  const preview = document.getElementById('elem-pop-img-preview');
-  if (!inputEl || !preview) return;
-  const url = inputEl.value.trim();
-  
-  if (!url) {
-    preview.textContent = 'Masukkan URL gambar untuk melihat pratinjau';
-    return;
-  }
-
-  const img = document.createElement('img');
-  img.src = url;
-  img.onload = function() {
-    preview.innerHTML = '';
-    preview.appendChild(img);
-  };
-  img.onerror = function() {
-    preview.textContent = 'URL gambar tidak valid';
-  };
-  preview.textContent = 'Loading...';
-}
-
-window.saveElementImagePreview = function() {
-  if (!currentImageButton) return;
-  
-  const inputEl = document.getElementById('elem-pop-img-url');
-  const url = inputEl?.value.trim() || '';
-  if (!url) {
-    alert('Masukkan URL gambar');
-    return;
-  }
-
-  const modal = currentImageButton.closest('.modal-overlay') || currentImageButton.closest('[class*="modal"]');
-  const imgUrlInput = modal?.querySelector('.elem-img-url');
-  const imgPreview = modal?.querySelector('.elem-img-preview');
-  
-  if (imgUrlInput) imgUrlInput.value = url;
-  
-  if (imgPreview) {
-    const img = document.createElement('img');
-    img.src = url;
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-    img.onload = function() {
-      imgPreview.innerHTML = '';
-      imgPreview.appendChild(img);
-    };
-    img.onerror = function() {
-      imgPreview.textContent = 'URL tidak valid';
-    };
-  }
-
-  document.getElementById('pop-elem-img')?.classList.remove('open');
-  currentImageButton = null;
-};
-
-// Live preview di image URL input
-document.getElementById('elem-pop-img-url')?.addEventListener('input', updateImagePreview);
-
-window.openElementForm = function(type, id) {
-  const modalId = MODAL_MAP[type];
-  if (!modalId) return;
-  
-  const modal = document.getElementById(modalId);
-  if (!modal) return;
-
-  clearFormData(modal);
-  
-  if (id) {
-    const elem = allElements.find(e => e.id === id);
-    if (elem) {
-      const nameInputs = modal.querySelectorAll('input[type="text"]');
-      if (nameInputs[0]) nameInputs[0].value = elem.name;
-
-      const textareas = modal.querySelectorAll('textarea');
-      if (textareas[0]) textareas[0].value = elem.data?.description || '';
-
-      // Load image ke preview & hidden input
-      const imgUrl = elem.data?.imageUrl || '';
-      const imgUrlInput = modal.querySelector('.elem-img-url');
-      const imgPreview = modal.querySelector('.elem-img-preview');
-      
-      if (imgUrlInput) imgUrlInput.value = imgUrl;
-      if (imgUrl && imgPreview) {
-        const img = document.createElement('img');
-        img.src = imgUrl;
-        img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-        img.onload = function() {
-          imgPreview.innerHTML = '';
-          imgPreview.appendChild(img);
-        };
-      }
-
-      // Load tags
-      if (elem.data?.tags && elem.data.tags.length > 0) {
-        const tagInputDiv = Array.from(modal.querySelectorAll('input[type="text"]')).find(inp => inp.placeholder && inp.placeholder.includes('Tag'))?.parentElement;
-        if (tagInputDiv) {
-          elem.data.tags.forEach(tag => {
-            const badge = document.createElement('span');
-            badge.className = 'badge';
-            badge.textContent = tag + ' x';
-            tagInputDiv.appendChild(badge);
+      var el = allElements.find(function (e) { return e.id === id; });
+      if (el) {
+        // Susun data untuk renderer
+        var baseData = el.data || {};
+        var fields = {};
+        // Ambil fields dari baseData.fields (baru) atau baseData langsung (legacy)
+        if (baseData.fields && typeof baseData.fields === "object") {
+          fields = Object.assign({}, baseData.fields);
+        } else {
+          // Migrasi: salin semua key yang bukan field inti
+          var reserved = { description: 1, imageUrl: 1, image: 1, tags: 1, extraFields: 1,
+            linkedElements: 1, lists: 1, fields: 1, notes: 1 };
+          Object.keys(baseData).forEach(function (k) {
+            if (!reserved[k]) fields[k] = baseData[k];
           });
         }
-      }
-
-      // Load extra fields
-      const extraLists = modal.querySelectorAll('.extra-list');
-      extraLists.forEach(list => {
-        if (elem.data?.extraFields) {
-          const fields = Object.entries(elem.data.extraFields);
-          const items = list.querySelectorAll('.extra-item');
-          items.forEach((item, i) => {
-            if (i < fields.length) {
-              const [name, field] = fields[i];
-              const inputs = item.querySelectorAll('input[type="text"]');
-              const selects = item.querySelectorAll('select');
-              if (inputs[0]) inputs[0].value = name;
-              if (selects[0]) selects[0].value = field.type;
-              if (inputs[1]) inputs[1].value = field.value;
-            }
-          });
-        }
-      });
-    }
-
-    currentEditingId = id;
-  } else {
-    currentEditingId = null;
-  }
-
-  currentEditingType = type;
-  modal.classList.add('open');
-};
-
-async function deleteElement(id) {
-  if (!confirm('Hapus element ini?')) return;
-  if (!window.elementDuniaQuery) return;
-
-  try {
-    await window.elementDuniaQuery.deleteElement(id);
-    await window.elementDuniaQuery.logActivity('delete', 'element', id, 'Element', 'Dihapus');
-    
-    allElements = allElements.filter(e => e.id !== id);
-    filterAndRender();
-    updateCategoryCounts();
-  } catch (err) {
-    console.error('Error deleting element:', err);
-    alert('Gagal menghapus elemen');
-  }
-}
-
-// Wire tag input handlers for all modals
-document.querySelectorAll('input[placeholder*="Tag"]').forEach(input => {
-  input.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const tag = this.value.trim();
-      if (!tag) return;
-      
-      const container = this.parentElement;
-      const badge = document.createElement('span');
-      badge.className = 'badge';
-      badge.textContent = tag + ' x';
-      container.appendChild(badge);
-      this.value = '';
-    }
-  });
-});
-
-document.querySelectorAll('.modal-overlay .btn-cancel').forEach(btn => {
-  btn.addEventListener('click', e => {
-    e.target.closest('.modal-overlay')?.classList.remove('open');
-    currentEditingId = null;
-  });
-});
-
-// Populate dropdown options per modal
-function populateDropdownOptions() {
-  const dropdownOptions = {
-    'Makhluk': {
-      'Type Makhluk': ['Natural', 'Magic', 'Hybrid'],
-      'Perilaku': ['Agresif', 'Netral', 'Pasif'],
-      'Kecerdasan': ['Hewan', 'Sapid', 'Sentient'],
-      'Ukuran': ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Colossal'],
-      'Makanan': ['Daging', 'Tumbuhan', 'Omnivore', 'Energi']
-    },
-    'Faksi': {
-      'Type Faksi': ['Politik', 'Militer', 'Religius', 'Komersial', 'Akademik'],
-      'Struktur': ['Hierarki', 'Demokratis', 'Anarkis', 'Oligarki'],
-      'Status': ['Aktif', 'Dormant', 'Bubar', 'Underground'],
-      'Pengaruh': ['Local', 'Regional', 'National', 'Global']
-    },
-    'Pekerjaan': {
-      'Kategori': ['Manual', 'Administrative', 'Kreatif', 'Teknis', 'Layanan'],
-      'Status Social': ['Rendah', 'Menengah', 'Tinggi', 'Elite']
-    },
-    'Lokasi': {
-      'Tipe': ['Kota', 'Desa', 'Wilderness', 'Dungeon', 'Sacred Site'],
-      'Status': ['Aktif', 'Abandoned', 'Legendary', 'Hidden']
-    },
-    'Agama': {
-      'Monotheism': ['Monotheism', 'Polytheism', 'Pantheism'],
-      'Praktik': ['Ritual', 'Kontemplasi', 'Zealotry']
-    },
-    'Sistem Sihir': {
-      'Tipe': ['Elemental', 'Divine', 'Arcane', 'Primal', 'Hybrid'],
-      'Source': ['Innate', 'Learned', 'Divine', 'Cursed']
-    },
-    'Teknologi': {
-      'Era': ['Stone', 'Bronze', 'Iron', 'Medieval', 'Industrial', 'Advanced'],
-      'Fokus': ['Military', 'Civilian', 'Medical', 'Transportation']
-    },
-    'Bahasa': {
-      'Tipe': ['Oral', 'Written', 'Gestural', 'Telepathic'],
-      'Spoken': ['Ja', 'Tidak']
-    },
-    'Item': {
-      'Kategori': ['Weapon', 'Armor', 'Tool', 'Magical', 'Artifact'],
-      'Rarity': ['Common', 'Uncommon', 'Rare', 'Legendary', 'Unique']
-    }
-  };
-
-  for (const [elemType, dropdowns] of Object.entries(dropdownOptions)) {
-    const modalId = MODAL_MAP[elemType];
-    if (!modalId) continue;
-    const modal = document.getElementById(modalId);
-    if (!modal) continue;
-
-    for (const [label, options] of Object.entries(dropdowns)) {
-      const selects = Array.from(modal.querySelectorAll('select'));
-      const targetSelect = selects.find(s => s.previousElementSibling?.textContent?.includes(label));
-      
-      if (targetSelect) {
-        // Remove placeholder
-        targetSelect.querySelectorAll('option').forEach((opt, i) => i > 0 && opt.remove());
-        targetSelect.innerHTML = '<option></option>';
-        
-        options.forEach(opt => {
-          const optionEl = document.createElement('option');
-          optionEl.value = opt;
-          optionEl.textContent = opt;
-          targetSelect.appendChild(optionEl);
+        window.AwbFormRenderer.populateModal(modal, schema, {
+          name: el.name || "",
+          description: baseData.description || "",
+          imageUrl: baseData.imageUrl || baseData.image || "",
+          tags: baseData.tags || [],
+          extraFields: baseData.extraFields || {},
+          linkedElements: baseData.linkedElements || {},
+          notes: baseData.notes || "",
+          fields: fields,
+          lists: baseData.lists || {}
         });
       }
     }
+
+    modal.classList.add("open");
   }
-}
 
-populateDropdownOptions();
+  function closeElementForm() {
+    document.getElementById(FORM_MODAL_ID)?.classList.remove("open");
+    currentEditingId = null;
+    currentEditingType = null;
+  }
 
-initElementDuniaPage();
+  // ---------- Save ----------
+  async function saveCurrentElement() {
+    if (!window.elementDuniaQuery) return;
+    var modal = document.getElementById(FORM_MODAL_ID);
+    if (!modal) return;
+    var collected = window.AwbFormRenderer.collectFromModal(modal);
+    if (!collected.name) {
+      alert("Nama elemen wajib diisi");
+      return;
+    }
+    var type = currentEditingType;
+    var id = currentEditingId;
+    var data = {
+      name: collected.name,
+      type: type,
+      data: {
+        description: collected.description,
+        imageUrl: collected.imageUrl,
+        tags: collected.tags,
+        extraFields: collected.extraFields,
+        linkedElements: collected.linkedElements,
+        notes: collected.notes,
+        fields: collected.fields,
+        lists: collected.lists
+      }
+    };
+    try {
+      if (id) {
+        await window.elementDuniaQuery.updateElement(id, data);
+        await window.elementDuniaQuery.logActivity("update", "element", id, data.name, type + " diperbarui");
+      } else {
+        var created = await window.elementDuniaQuery.addElement(data);
+        await window.elementDuniaQuery.logActivity("create", "element", created.id, data.name, type + " dibuat");
+      }
+      closeElementForm();
+      await reloadAll();
+    } catch (err) {
+      console.error("Error saving element:", err);
+      alert("Gagal menyimpan elemen: " + (err && err.message ? err.message : err));
+    }
+  }
+
+  // ---------- Reload + render grup ----------
+  async function reloadAll() {
+    if (!window.elementDuniaQuery) return;
+    var types = getAllTypes();
+    var promises = types.map(function (t) { return window.elementDuniaQuery.getElements(t); });
+    var results = await Promise.all(promises);
+    allElements = [];
+    types.forEach(function (t, idx) {
+      if (results[idx]) {
+        allElements = allElements.concat(
+          results[idx].map(function (e) { return Object.assign({}, e, { _type: t }); })
+        );
+      }
+    });
+    // Expose agar awb-tag-filter.js bisa membaca seluruh element untuk bangun daftar tag unik
+    window._elemDuniaAll = allElements;
+    renderGroups();
+    updateCategoryCounts();
+    // Refresh daftar tag dinamis (setelah create/edit/delete)
+    if (window._elemDuniaTagFilter && typeof window._elemDuniaTagFilter.renderTagFilter === "function") {
+      window._elemDuniaTagFilter.renderTagFilter();
+    }
+  }
+
+  function renderGroups() {
+    var container = document.getElementById("elem-groups-container");
+    if (!container) return;
+    container.innerHTML = "";
+    // Tipe yang punya minimal 1 element setelah filter pencarian & kategori
+    var visibleTypes = visibleTypesAfterFilter();
+    if (visibleTypes.length === 0) {
+      container.innerHTML =
+        '<div class="elem-empty-state" style="padding:3rem 1.5rem;text-align:center;border:1px dashed var(--border);border-radius:var(--radius-md);background:var(--bg-dark);">' +
+          '<div style="font-size:1rem;font-weight:700;margin-bottom:0.4rem;">Belum ada Element Dunia</div>' +
+          '<div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">Mulai buat element pertamamu untuk dunia yang sedang dibangun.</div>' +
+          '<button class="btn-confirm" data-empty-entry>+ Buat Element Pertama</button>' +
+        '</div>';
+      // Delegated click untuk tombol empty state
+      container.addEventListener("click", function _emptyClick(e) {
+        if (e.target.closest("[data-empty-entry]")) {
+          container.removeEventListener("click", _emptyClick);
+          openEntryPicker();
+        }
+      });
+      return;
+    }
+    container.innerHTML = visibleTypes.map(function (t) {
+      return '<div class="elem-group open" data-type="' + escapeHtml(t) + '">' +
+        '<button class="elem-group-head" data-toggle-group>' +
+          escapeHtml(t) +
+          '<span class="chev" style="margin-left:auto;display:inline-block;transition:transform .15s;">v</span>' +
+        '</button>' +
+        '<div class="elem-cards"></div>' +
+      '</div>';
+    }).join("");
+    filterAndRender();
+  }
+
+  // Tipe yang muncul setelah filter kategori + search diterapkan.
+  // Dipakai untuk render section — agar section kosong tidak ditampilkan
+  // (BUG 2). Sidebar tetap menampilkan semua tipe untuk filter & picker.
+  function visibleTypesAfterFilter() {
+    var activeBtn = document.querySelector(".elem-cat-item.active");
+    var selectedType = activeBtn ? (activeBtn.getAttribute("data-type") || null) : null;
+    var activeTag = (window._elemDuniaTagFilter && window._elemDuniaTagFilter.activeTag) || null;
+    var set = {};
+    allElements.forEach(function (e) {
+      if (selectedType && e._type !== selectedType) return;
+      if (currentSearchTerm && !(e.name || "").toLowerCase().includes(currentSearchTerm)) return;
+      if (activeTag && !(((e.data && e.data.tags) || []).indexOf(activeTag) >= 0)) return;
+      set[e._type] = true;
+    });
+    // Pertahankan urutan dari getAllTypes()
+    return getAllTypes().filter(function (t) { return set[t]; });
+  }
+
+  function filterAndRender() {
+    var container = document.getElementById("elem-groups-container");
+    if (!container) return;
+    // Re-render section karena daftar tipe bisa berubah (search/filter)
+    var visibleTypes = visibleTypesAfterFilter();
+    if (visibleTypes.length === 0) {
+      // Tampilkan empty state di tempat section
+      container.innerHTML =
+        '<div class="elem-empty-state" style="padding:2.5rem 1.5rem;text-align:center;border:1px dashed var(--border);border-radius:var(--radius-md);background:var(--bg-dark);color:var(--text-muted);font-size:0.9rem;">' +
+          'Tidak ada element yang cocok dengan filter saat ini.' +
+        '</div>';
+      return;
+    }
+    // Sinkronkan DOM dengan daftar tipe yang terlihat
+    var existingTypes = {};
+    Array.prototype.forEach.call(container.querySelectorAll(".elem-group"), function (g) {
+      existingTypes[g.getAttribute("data-type")] = g;
+    });
+    var frag = document.createDocumentFragment();
+    visibleTypes.forEach(function (t) {
+      if (existingTypes[t]) {
+        frag.appendChild(existingTypes[t]);
+        delete existingTypes[t];
+      } else {
+        var g = document.createElement("div");
+        g.className = "elem-group open";
+        g.setAttribute("data-type", t);
+        g.innerHTML =
+          '<button class="elem-group-head" data-toggle-group>' + escapeHtml(t) +
+            '<span class="chev" style="margin-left:auto;display:inline-block;transition:transform .15s;">v</span>' +
+          '</button>' +
+          '<div class="elem-cards"></div>';
+        frag.appendChild(g);
+      }
+    });
+    container.innerHTML = "";
+    container.appendChild(frag);
+
+    var groups = {};
+    visibleTypes.forEach(function (t) { groups[t] = []; });
+    var activeTag = (window._elemDuniaTagFilter && window._elemDuniaTagFilter.activeTag) || null;
+    allElements.forEach(function (e) {
+      if (selectedType() && e._type !== selectedType()) return;
+      if (currentSearchTerm && !(e.name || "").toLowerCase().includes(currentSearchTerm)) return;
+      if (activeTag && !(((e.data && e.data.tags) || []).indexOf(activeTag) >= 0)) return;
+      groups[e._type].push(e);
+    });
+
+    visibleTypes.forEach(function (type) {
+      // Scope ke container (jangan sampai ketemu .elem-cat-item di sidebar)
+      var groupEl = container.querySelector('.elem-group[data-type="' + cssEscapeAttr(type) + '"]');
+      if (!groupEl) return;
+      var cards = groupEl.querySelector(".elem-cards");
+      if (!cards) return;
+      var list = groups[type];
+      if (list.length === 0) {
+        cards.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-faint);font-size:0.85rem;">Belum ada ' +
+          escapeHtml(type) + '</div>';
+        return;
+      }
+      cards.className = "elem-cards" + (currentViewMode === "list" ? " list-mode" : "");
+      cards.innerHTML = list.map(function (e) { return renderCard(e, type); }).join("");
+    });
+  }
+
+  function selectedType() {
+    var activeBtn = document.querySelector(".elem-cat-item.active");
+    return activeBtn ? (activeBtn.getAttribute("data-type") || null) : null;
+  }
+
+  function renderCard(e, type) {
+    var imgUrl = (e.data && (e.data.imageUrl || e.data.image)) || "";
+    // Gambar fill box .elem-card-top via CSS .elem-thumb (object-fit:cover).
+    // URL gagal → JS swap ke fallback placeholder (data-thumb-img, delegation di wireEvents).
+    var img = imgUrl
+      ? '<img src="' + escapeHtml(imgUrl) + '" alt="" loading="lazy" data-thumb-img>'
+      : '<span class="elem-thumb-fallback"><iconify-icon icon="lucide:image" width="28"></iconify-icon></span>';
+    var desc = (e.data && e.data.description) || "";
+    var tags = ((e.data && e.data.tags) || []).join(" ");
+    return '<div class="elem-card">' +
+      '<div class="elem-card-top">' +
+        '<span class="elem-thumb">' + img + '</span>' +
+        '<span class="elem-card-type">' + escapeHtml(type) + '</span>' +
+      '</div>' +
+      '<div class="elem-card-body">' +
+        '<div class="elem-card-headrow">' +
+          '<div class="elem-card-name">' + escapeHtml(e.name || "Unknown") + '</div>' +
+          '<div class="elem-card-actions">' +
+            '<iconify-icon icon="lucide:pen-line" width="14" data-action="edit" data-id="' + e.id + '" data-type="' + escapeHtml(type) + '" style="cursor:pointer;"></iconify-icon>' +
+            '<iconify-icon icon="lucide:trash-2" width="14" data-action="del" data-id="' + e.id + '" style="color:var(--danger);cursor:pointer;"></iconify-icon>' +
+          '</div>' +
+        '</div>' +
+        '<div class="elem-card-desc">' + escapeHtml(desc) + '</div>' +
+        '<div class="elem-card-tags">' + escapeHtml(tags) + '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function updateCategoryCounts() {
+    var counts = {};
+    getAllTypes().forEach(function (t) { counts[t] = 0; });
+    allElements.forEach(function (e) { counts[e._type] = (counts[e._type] || 0) + 1; });
+    document.querySelectorAll(".elem-cat-item").forEach(function (btn) {
+      var key = btn.getAttribute("data-type") || "";
+      var el = btn.querySelector(".elem-count");
+      if (!el) return;
+      el.textContent = key === "" ? allElements.length : (counts[key] || 0);
+    });
+  }
+
+  function cssEscape(s) {
+    if (window.CSS && CSS.escape) return CSS.escape(s);
+    return String(s).replace(/[^a-zA-Z0-9_-]/g, function (c) { return "\\" + c; });
+  }
+
+  // Escape untuk attribute selector di dalam tanda kutip ganda.
+  // Dipakai saat membangun selector [data-type="..."] di querySelector.
+  function cssEscapeAttr(s) {
+    return String(s).replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  }
+
+  // ---------- Delete ----------
+  async function deleteElement(id) {
+    if (!confirm("Hapus element ini?")) return;
+    if (!window.elementDuniaQuery) return;
+    try {
+      await window.elementDuniaQuery.deleteElement(id);
+      await window.elementDuniaQuery.logActivity("delete", "element", id, "Element", "Dihapus");
+      allElements = allElements.filter(function (e) { return e.id !== id; });
+      window._elemDuniaAll = allElements;
+      // Tutup panel detail jika element yang dihapus sedang ditampilkan
+      if (window._elemDetailPanel && window._elemDetailPanel.currentId === id) {
+        window._elemDetailPanel.close();
+      }
+      filterAndRender();
+      updateCategoryCounts();
+    } catch (err) {
+      console.error("Error deleting element:", err);
+      alert("Gagal menghapus elemen");
+    }
+  }
+
+  // ---------- View mode ----------
+  function setView(v) {
+    if (v !== "grid" && v !== "list") return;
+    currentViewMode = v;
+    try { localStorage.setItem(VIEW_STORAGE_KEY, v); } catch (e) { /* storage penuh / private mode → abaikan */ }
+    document.querySelectorAll(".elem-cards").forEach(function (c) {
+      c.classList.toggle("list-mode", v === "list");
+    });
+    document.getElementById("view-grid")?.classList.toggle("active", v === "grid");
+    document.getElementById("view-list")?.classList.toggle("active", v === "list");
+  }
+
+  // ---------- Image popup ----------
+  function openImagePopupForInput(urlInput) {
+    currentImageTargetInput = urlInput;
+    var popInput = document.getElementById("elem-pop-img-url");
+    if (popInput) popInput.value = urlInput.value || "";
+    updateImagePreview();
+    document.getElementById(IMAGE_POPUP_ID)?.classList.add("open");
+  }
+  function updateImagePreview() {
+    var inputEl = document.getElementById("elem-pop-img-url");
+    var preview = document.getElementById("elem-pop-img-preview");
+    if (!inputEl || !preview) return;
+    var url = (inputEl.value || "").trim();
+    if (!url) { preview.textContent = "Masukkan URL gambar untuk melihat pratinjau"; return; }
+    var img = document.createElement("img");
+    img.src = url;
+    img.onload = function () { preview.innerHTML = ""; preview.appendChild(img); };
+    img.onerror = function () { preview.textContent = "URL gambar tidak valid"; };
+    preview.textContent = "Loading...";
+  }
+  function saveImagePopup() {
+    if (!currentImageTargetInput) return;
+    var inputEl = document.getElementById("elem-pop-img-url");
+    var url = (inputEl?.value || "").trim();
+    if (!url) { alert("Masukkan URL gambar"); return; }
+    currentImageTargetInput.value = url;
+    // Update preview di form
+    var preview = currentImageTargetInput.parentElement.querySelector(".elem-img-preview");
+    if (preview) {
+      var img = document.createElement("img");
+      img.src = url;
+      img.style.cssText = "width:100%;height:100%;object-fit:cover;";
+      img.onload = function () { preview.innerHTML = ""; preview.appendChild(img); };
+      img.onerror = function () { preview.textContent = "URL tidak valid"; };
+    }
+    document.getElementById(IMAGE_POPUP_ID)?.classList.remove("open");
+    currentImageTargetInput = null;
+  }
+
+  // ---------- Wire events ----------
+  function wireEvents() {
+    // Sidebar collapse
+    document.getElementById("btn-collapse-cat")?.addEventListener("click", function (e) {
+      var btn = e.currentTarget;
+      var c = btn.closest(".elem-cat");
+      c?.classList.toggle("collapsed");
+      btn.textContent = c?.classList.contains("collapsed") ? ">" : "<";
+    });
+
+    // Entry + custom
+    document.getElementById("btn-entry-element")?.addEventListener("click", openEntryPicker);
+    document.getElementById("btn-custom-element")?.addEventListener("click", function () {
+      if (window._elemCustomTypes && typeof window._elemCustomTypes.openManager === "function") {
+        window._elemCustomTypes.openManager();
+      }
+    });
+    document.getElementById("btn-tutup-pilih-entry")?.addEventListener("click", closeEntryPicker);
+
+    // Picker click
+    document.getElementById("modal-pilih-entry-list")?.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-pick-type]");
+      if (!b) return;
+      var t = b.getAttribute("data-pick-type");
+      closeEntryPicker();
+      openElementForm(t);
+    });
+
+    // Category filter
+    document.getElementById("elem-cat-list")?.addEventListener("click", function (e) {
+      var b = e.target.closest(".elem-cat-item");
+      if (!b) return;
+      document.querySelectorAll(".elem-cat-item").forEach(function (x) { x.classList.remove("active"); });
+      b.classList.add("active");
+      filterAndRender();
+    });
+
+    // View toggle
+    document.getElementById("view-grid")?.addEventListener("click", function () { setView("grid"); });
+    document.getElementById("view-list")?.addEventListener("click", function () { setView("list"); });
+
+    // Search
+    document.querySelector(".search-field")?.addEventListener("input", debounce(function (e) {
+      currentSearchTerm = (e.target.value || "").toLowerCase();
+      filterAndRender();
+    }, 300));
+
+    // Card actions (edit/del/klik untuk buka panel detail) — event delegation
+    document.getElementById("elem-groups-container")?.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-action]");
+      if (t) {
+        if (t.getAttribute("data-action") === "edit") {
+          openElementForm(t.getAttribute("data-type"), Number(t.getAttribute("data-id")));
+        } else if (t.getAttribute("data-action") === "del") {
+          deleteElement(Number(t.getAttribute("data-id")));
+        }
+        return; // Jangan lanjut ke buka panel detail
+      }
+      // Klik kartu → buka panel detail (jika module detail-panel tersedia)
+      var card = e.target.closest(".elem-card");
+      if (card) {
+        var idAttr = card.querySelector("[data-id]")?.getAttribute("data-id");
+        var id = idAttr ? Number(idAttr) : NaN;
+        if (!isNaN(id)) {
+          var elem = allElements.find(function (x) { return x.id === id; });
+          if (elem && window._elemDetailPanel && typeof window._elemDetailPanel.open === "function") {
+            window._elemDetailPanel.open(elem);
+          }
+        }
+      }
+    });
+
+    // Group toggle
+    document.getElementById("elem-groups-container")?.addEventListener("click", function (e) {
+      if (e.target.closest("[data-toggle-group]")) {
+        e.target.closest(".elem-group")?.classList.toggle("open");
+      }
+    });
+
+    // Thumbnail image error → fallback placeholder (URL mati / tidak valid)
+    document.getElementById("elem-groups-container")?.addEventListener("error", function (e) {
+      var img = e.target;
+      if (!img || !img.hasAttribute("data-thumb-img")) return;
+      var fb = document.createElement("span");
+      fb.className = "elem-thumb-fallback";
+      var ic = document.createElement("iconify-icon");
+      ic.setAttribute("icon", "lucide:image");
+      ic.setAttribute("width", "28");
+      fb.appendChild(ic);
+      img.replaceWith(fb);
+    }, true); // capture: error tidak bubble
+
+    // Modal save/cancel
+    document.getElementById("btn-simpan-element")?.addEventListener("click", saveCurrentElement);
+    document.getElementById("btn-batal-element")?.addEventListener("click", closeElementForm);
+
+    // Image popup
+    document.getElementById("btn-tutup-pop-img")?.addEventListener("click", function () {
+      document.getElementById(IMAGE_POPUP_ID)?.classList.remove("open");
+      currentImageTargetInput = null;
+    });
+    document.getElementById("btn-batal-pop-img")?.addEventListener("click", function () {
+      document.getElementById(IMAGE_POPUP_ID)?.classList.remove("open");
+      currentImageTargetInput = null;
+    });
+    document.getElementById("btn-simpan-pop-img")?.addEventListener("click", saveImagePopup);
+    document.getElementById("elem-pop-img-url")?.addEventListener("input", updateImagePreview);
+
+    // Form-body delegated handlers (open image popup, tag chips, extra add/del, list add/del, linked chips)
+    var body = document.getElementById("modal-buat-element-body");
+    if (body) {
+      body.addEventListener("click", function (e) {
+        // Image edit button
+        var imgBtn = e.target.closest("[data-image-edit]");
+        if (imgBtn) {
+          var wrap = imgBtn.closest("[data-kind='image']");
+          var urlInput = wrap?.querySelector("[data-image-url]");
+          if (urlInput) openImagePopupForInput(urlInput);
+          return;
+        }
+        // Tag input
+        var tagInput = e.target.closest("[data-tag-input]");
+        if (tagInput && e.key !== undefined) {/* handled in keydown */}
+        // Tag chip remove (click on .badge inside [data-tag-list])
+        var chip = e.target.closest("[data-tag-list] .badge, [data-linked-list] .badge");
+        if (chip) { chip.remove(); return; }
+        // Extra add
+        var extraAdd = e.target.closest("[data-extra-add], [data-extra-add-top]");
+        if (extraAdd) {
+          var list = body.querySelector("[data-extra-list]");
+          if (list) list.appendChild(window.AwbFormRenderer.buildExtraItem("", "Text", ""));
+          return;
+        }
+        // Extra delete
+        var extraDel = e.target.closest("[data-extra-del]");
+        if (extraDel) {
+          var item = extraDel.closest(".extra-item");
+          if (item) item.remove();
+          return;
+        }
+        // List add
+        var listAdd = e.target.closest("[data-list-add]");
+        if (listAdd) {
+          var wrap2 = listAdd.closest(".list-wrap");
+          var container = wrap2?.querySelector("[data-list-list]");
+          var tpl = wrap2?.querySelector("[data-list-template]");
+          if (container && tpl) container.appendChild(tpl.content.firstElementChild.cloneNode(true));
+          return;
+        }
+        // List delete
+        var listDel = e.target.closest("[data-list-del]");
+        if (listDel) {
+          var li = listDel.closest(".list-item");
+          if (li) li.remove();
+          return;
+        }
+      });
+
+      body.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter") return;
+        var tagInp = e.target.closest("[data-tag-input]");
+        if (tagInp) {
+          e.preventDefault();
+          var v = tagInp.value.trim();
+          if (!v) return;
+          var list = tagInp.parentElement.querySelector("[data-tag-list]");
+          if (!list) return;
+          var b = document.createElement("span");
+          b.className = "badge";
+          b.textContent = v + " x";
+          list.appendChild(b);
+          tagInp.value = "";
+          return;
+        }
+        var linkedInp = e.target.closest("[data-linked-input]");
+        if (linkedInp) {
+          e.preventDefault();
+          var v2 = linkedInp.value.trim();
+          if (!v2) return;
+          var list2 = linkedInp.parentElement.querySelector("[data-linked-list]");
+          if (!list2) return;
+          var b2 = document.createElement("span");
+          b2.className = "badge";
+          b2.textContent = v2 + " x";
+          list2.appendChild(b2);
+          linkedInp.value = "";
+        }
+      });
+    }
+  }
+
+  // ---------- Init ----------
+  async function initPage() {
+    if (!window.AetherPageUtils) return;
+    var utils = await window.AetherPageUtils.initPage();
+    if (!utils.query) {
+      console.warn("Tidak ada proyek aktif");
+      return;
+    }
+    window.elementDuniaQuery = utils.query;
+    if (window.AwbElementForm && typeof window.AwbElementForm.init === "function") {
+      window.AwbElementForm.init();
+    }
+    renderCategoryList();
+    // Sinkronkan state tombol view-grid / view-list dengan currentViewMode (mungkin persist dari localStorage)
+    document.getElementById("view-grid")?.classList.toggle("active", currentViewMode === "grid");
+    document.getElementById("view-list")?.classList.toggle("active", currentViewMode === "list");
+    wireEvents();
+    if (window._elemDetailPanel && typeof window._elemDetailPanel.init === "function") {
+      window._elemDetailPanel.init();
+    }
+    // Muat + register tipe custom proyek ini, lalu render ulang daftar
+    if (window._elemCustomTypes && typeof window._elemCustomTypes.init === "function") {
+      window._elemCustomTypes.init();
+    }
+    // Load tipe custom proyek aktif (register skema) sebelum reloadAll,
+    // agar tipe custom ikut termuat saat membaca element.
+    if (window._elemCustomTypes && typeof window._elemCustomTypes.loadForProject === "function") {
+      await window._elemCustomTypes.loadForProject();
+    }
+    await reloadAll();
+  }
+
+  // Expose untuk konsistensi dengan kode lama
+  // Expose untuk module tag-filter (awb-tag-filter.js)
+  window.filterAndRender = filterAndRender;
+  // Callback untuk modul custom-types.js: saat tipe custom berubah,
+  // re-render sidebar + picker + muat ulang data.
+  window._elemDuniaOnCustomTypesChanged = function () {
+    renderCategoryList();
+    reloadAll();
+  };
+  window.openElementForm = openElementForm;
+  window.saveElementForm = function (type) {
+    // Dipanggil dari button onclick lama; redirect ke flow baru
+    if (type) currentEditingType = type;
+    return saveCurrentElement();
+  };
+  window.openElementImagePopup = function (btn) {
+    var wrap = btn.closest("[data-kind='image']");
+    var urlInput = wrap?.querySelector("[data-image-url]");
+    if (urlInput) openImagePopupForInput(urlInput);
+  };
+  window.saveElementImagePreview = saveImagePopup;
+  window.deleteElement = deleteElement;
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initPage);
+  } else {
+    initPage();
+  }
+})();

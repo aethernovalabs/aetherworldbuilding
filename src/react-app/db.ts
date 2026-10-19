@@ -25,6 +25,23 @@ export interface Element {
   lastUpdated: string;
 }
 
+// Tipe element custom yang didefinisikan user (per proyek).
+// `fields`: array definisi field; `kind` salah satu dari 6 jenis yang didukung
+// renderer (text | number | textarea | select | tags | linked).
+export type CustomFieldType =
+  | { key: string; label: string; kind: 'text' | 'number' | 'textarea' | 'tags' }
+  | { key: string; label: string; kind: 'select'; options: string[] }
+  | { key: string; label: string; kind: 'linked'; linkedRef?: string };
+
+export interface ElementType {
+  id?: number;
+  projectId: number;
+  name: string;
+  icon?: string;
+  fields: CustomFieldType[];
+  lastUpdated: string;
+}
+
 export interface Event {
   id?: number;
   projectId: number;
@@ -70,6 +87,7 @@ export class AetherDB extends Dexie {
   maps!: Dexie.Table<MapData, number>;
   documents!: Dexie.Table<Document, number>;
   activityLog!: Dexie.Table<ActivityLog, number>;
+  elementTypes!: Dexie.Table<ElementType, number>;
 
   constructor() {
     super('aethernova');
@@ -81,6 +99,27 @@ export class AetherDB extends Dexie {
       maps: '++id, projectId, name, lastUpdated',
       documents: '++id, projectId, name, lastUpdated',
       activityLog: '++id, projectId, entityType, entityId, timestamp',
+    });
+    // v2 sinkron dengan aether-state.js (documents diindeks pada `name`).
+    this.version(2).stores({
+      projects: '++id, name, createdAt, lastUpdated, order',
+      characters: '++id, projectId, name, lastUpdated',
+      elements: '++id, projectId, name, type, lastUpdated',
+      events: '++id, projectId, name, lastUpdated',
+      maps: '++id, projectId, name, lastUpdated',
+      documents: '++id, projectId, name, lastUpdated',
+      activityLog: '++id, projectId, entityType, entityId, timestamp',
+    });
+    // v3: tabel elementTypes — tipe element custom per proyek.
+    this.version(3).stores({
+      projects: '++id, name, createdAt, lastUpdated, order',
+      characters: '++id, projectId, name, lastUpdated',
+      elements: '++id, projectId, name, type, lastUpdated',
+      events: '++id, projectId, name, lastUpdated',
+      maps: '++id, projectId, name, lastUpdated',
+      documents: '++id, projectId, name, lastUpdated',
+      activityLog: '++id, projectId, entityType, entityId, timestamp',
+      elementTypes: '++id, projectId, name, lastUpdated',
     });
   }
 }
@@ -129,17 +168,62 @@ export async function getProjectStats(projectId: number) {
   return { characters, elements, events, maps, documents };
 }
 
+// CRUD tipe element custom
+export async function getCustomTypes(projectId: number) {
+  return db.elementTypes.where('projectId').equals(projectId).toArray();
+}
+export async function addCustomType(projectId: number, typeDef: Omit<ElementType, 'id' | 'projectId' | 'lastUpdated'>) {
+  const lastUpdated = new Date().toISOString();
+  const id = await db.elementTypes.add({ ...typeDef, projectId, lastUpdated });
+  return db.elementTypes.get(id);
+}
+export async function updateCustomType(id: number, updates: Partial<ElementType>) {
+  await db.elementTypes.update(id, { ...updates, lastUpdated: new Date().toISOString() });
+  return db.elementTypes.get(id);
+}
+export async function deleteCustomType(id: number) {
+  await db.elementTypes.delete(id);
+}
+export async function countElementsOfType(projectId: number, typeName: string) {
+  return db.elements
+    .where('projectId')
+    .equals(projectId)
+    .filter((e) => e.type === typeName)
+    .count();
+}
+// Hapus tipe custom beserta semua element di bawahnya.
+// `names`: daftar nama (saat ini + nama lama saat rename) yang element-nya dihapus.
+export async function deleteCustomTypeWithElements(
+  projectId: number,
+  typeId: number,
+  names: string[]
+): Promise<{ deletedType: boolean; deletedElements: number }> {
+  const keys = Array.isArray(names) && names.length ? names : [];
+  return db.transaction('rw', [db.elementTypes, db.elements], async () => {
+    let total = 0;
+    for (const nm of keys) {
+      total += await countElementsOfType(projectId, nm);
+    }
+    for (const nm of keys) {
+      await db.elements.where('projectId').equals(projectId).filter((e) => e.type === nm).delete();
+    }
+    await db.elementTypes.delete(typeId);
+    return { deletedType: true, deletedElements: total };
+  });
+}
+
 // Export all data for a project as JSON
 export async function exportProjectData(projectId: number) {
-  const [project, characters, elements, events, maps, documents] = await Promise.all([
+  const [project, characters, elements, events, maps, documents, elementTypes] = await Promise.all([
     db.projects.get(projectId),
     db.characters.where('projectId').equals(projectId).toArray(),
     db.elements.where('projectId').equals(projectId).toArray(),
     db.events.where('projectId').equals(projectId).toArray(),
     db.maps.where('projectId').equals(projectId).toArray(),
     db.documents.where('projectId').equals(projectId).toArray(),
+    db.elementTypes.where('projectId').equals(projectId).toArray(),
   ]);
-  return { project, characters, elements, events, maps, documents };
+  return { project, characters, elements, events, maps, documents, elementTypes };
 }
 
 // Import data for a project
@@ -151,9 +235,10 @@ export async function importProjectData(
     events?: Event[];
     maps?: MapData[];
     documents?: Document[];
+    elementTypes?: ElementType[];
   }
 ) {
-  await db.transaction('rw', [db.characters, db.elements, db.events, db.maps, db.documents], async () => {
+  await db.transaction('rw', [db.characters, db.elements, db.events, db.maps, db.documents, db.elementTypes], async () => {
     if (data.characters) {
       for (const c of data.characters) {
         await db.characters.put({ ...c, projectId });
@@ -179,20 +264,30 @@ export async function importProjectData(
         await db.documents.put({ ...d, projectId });
       }
     }
+    if (data.elementTypes) {
+      for (const t of data.elementTypes) {
+        await db.elementTypes.put({ ...t, projectId });
+      }
+    }
   });
 }
 
 // Delete project and all related data
 export async function deleteProject(projectId: number) {
-  await db.transaction('rw', [db.projects, db.characters, db.elements, db.events, db.maps, db.documents, db.activityLog], async () => {
-    await db.projects.delete(projectId);
-    await db.characters.where('projectId').equals(projectId).delete();
-    await db.elements.where('projectId').equals(projectId).delete();
-    await db.events.where('projectId').equals(projectId).delete();
-    await db.maps.where('projectId').equals(projectId).delete();
-    await db.documents.where('projectId').equals(projectId).delete();
-    await db.activityLog.where('projectId').equals(projectId).delete();
-  });
+  await db.transaction(
+    'rw',
+    [db.projects, db.characters, db.elements, db.events, db.maps, db.documents, db.activityLog, db.elementTypes],
+    async () => {
+      await db.projects.delete(projectId);
+      await db.characters.where('projectId').equals(projectId).delete();
+      await db.elements.where('projectId').equals(projectId).delete();
+      await db.events.where('projectId').equals(projectId).delete();
+      await db.maps.where('projectId').equals(projectId).delete();
+      await db.documents.where('projectId').equals(projectId).delete();
+      await db.activityLog.where('projectId').equals(projectId).delete();
+      await db.elementTypes.where('projectId').equals(projectId).delete();
+    }
+  );
 }
 
 export default db;

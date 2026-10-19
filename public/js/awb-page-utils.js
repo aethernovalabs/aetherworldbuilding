@@ -93,6 +93,26 @@
         return AetherState.deleteElement(id);
       },
 
+      // Element Types (custom)
+      getCustomTypes: function () {
+        return AetherState.getCustomTypes(projectId);
+      },
+      addCustomType: function (data) {
+        return AetherState.addCustomType(projectId, data);
+      },
+      updateCustomType: function (id, data) {
+        return AetherState.updateCustomType(id, data);
+      },
+      deleteCustomType: function (id) {
+        return AetherState.deleteCustomType(id);
+      },
+      deleteCustomTypeWithElements: function (id, names) {
+        return AetherState.deleteCustomTypeWithElements(id, projectId, names);
+      },
+      countElementsOfType: function (typeName) {
+        return AetherState.countElementsOfType(projectId, typeName);
+      },
+
       // Events
       getEvents: function () {
         return AetherState.getEvents(projectId);
