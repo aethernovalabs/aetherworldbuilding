@@ -80,12 +80,19 @@
   function chipRow(names, clickable, fieldKey, elemType) {
     var row = document.createElement("div");
     row.className = "elem-chip-row";
-    (names || []).forEach(function (name) {
+    (names || []).forEach(function (item) {
+      // item bisa string (legacy) atau object {id, name, type}
+      var name = (item && item.name) ? item.name : item;
+      var id = (item && item.id) ? item.id : "";
+      var type = (item && item.type) ? item.type : "";
       if (clickable) {
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "elem-linked-chip";
         btn.textContent = name;
+        btn.dataset.linkedId = id;
+        btn.dataset.linkedName = name;
+        btn.dataset.linkedType = type;
         btn.addEventListener("click", function () {
           navigateToLinked(fieldKey, name, elemType);
         });

@@ -71,7 +71,8 @@
           '</div>';
       case "linked":
         return fieldWrap(field,
-          '<input type="text" class="' + inputCls() + '" data-linked-input data-linked-type="' + escapeHtml(field.linkedType || "") + '" placeholder="Ketik nama lalu Enter">' +
+          '<input type="text" class="' + inputCls() + '" data-linked-input data-linked-type="' + escapeHtml(field.linkedType || "") + '" placeholder="Ketik nama lalu Enter" autocomplete="off">' +
+          '<div class="linked-dropdown"></div>' +
           '<div data-linked-list style="display:flex;gap:0.3rem;flex-wrap:wrap;margin-top:0.3rem;font-size:0.72rem;"></div>');
       case "extra":
         return renderExtraField();
@@ -206,13 +207,17 @@
       }
     });
 
-    // linked elements
+    // linked elements - now stores {id, name, type} objects
     var linkedElements = {};
     modal.querySelectorAll('[data-linked-list]').forEach(function (list) {
       var key = list.parentElement.getAttribute("data-key");
-      var chips = Array.from(list.querySelectorAll('.badge')).map(function (b) {
-        return b.textContent.replace(/\s*[xX]\s*$/, "").trim();
-      }).filter(function (t) { return t; });
+      var chips = Array.from(list.querySelectorAll('.badge[data-linked-id]')).map(function (b) {
+        return {
+          id: b.dataset.linkedId,
+          name: b.dataset.linkedName,
+          type: b.dataset.linkedType
+        };
+      }).filter(function (t) { return t && t.id; });
       if (key) linkedElements[key] = chips;
     });
 
@@ -308,11 +313,16 @@
       }
     }
 
-    // linked
+    // linked - now uses makeLinkedChip with ID, name, type
     modal.querySelectorAll('[data-linked-list]').forEach(function (list) {
       var key = list.parentElement.getAttribute("data-key");
       list.innerHTML = "";
-      (linked[key] || []).forEach(function (name) { list.appendChild(makeChip(name)); });
+      (linked[key] || []).forEach(function (item) {
+        var name = item.name || item; // backward compat: string or object
+        var id = item.id || "";
+        var type = item.type || "";
+        list.appendChild(makeLinkedChip(id, name, type));
+      });
     });
 
     // field tambahan
@@ -345,6 +355,180 @@
     b.className = "badge";
     b.textContent = text + " x";
     return b;
+  }
+
+  // --- Linked field helpers ---
+
+  // Buat chip linked dengan ID, nama, tipe
+  function makeLinkedChip(id, name, type) {
+    var b = document.createElement("span");
+    b.className = "badge";
+    b.dataset.linkedId = id;
+    b.dataset.linkedName = name;
+    b.dataset.linkedType = type;
+    b.style.cursor = "pointer";
+    b.innerHTML = '<span class="linked-name">' + escapeHtml(name) + '</span>' +
+      '<button type="button" class="linked-remove" title="Hapus tautan" aria-label="Hapus ' + escapeHtml(name) + '">&times;</button>';
+    return b;
+  }
+
+  // Cari/buat element target saat user tekan Enter di linked input
+  async function handleLinkedInputEnter(modal, inputEl, linkedType) {
+    var name = inputEl.value.trim();
+    if (!name) return;
+
+    // Cek duplikat di list
+    var list = inputEl.parentElement.querySelector('[data-linked-list]');
+    var existing = Array.from(list.querySelectorAll('.badge[data-linked-name]')).some(function (b) {
+      return b.dataset.linkedName.toLowerCase() === name.toLowerCase();
+    });
+    if (existing) {
+      inputEl.value = "";
+      closeLinkedDropdown(inputEl);
+      return;
+    }
+
+    // Cari element existing di allElements (by name, case-insensitive, same type)
+    var all = window._elemDuniaAll || [];
+    var target = all.find(function (e) {
+      return e._type === linkedType && (e.name || "").trim().toLowerCase() === name.toLowerCase();
+    });
+
+    var targetId, targetName, targetResType;
+    if (target) {
+      targetId = target.id;
+      targetName = target.name;
+      targetResType = target._type;
+    } else {
+      // Buat element baru otomatis (pakai linkedType, bukan target._type)
+      if (!window.elementDuniaQuery) return;
+      try {
+        var created = await window.elementDuniaQuery.addElement({
+          name: name,
+          type: linkedType,
+          data: { description: "", imageUrl: "", tags: [], extraFields: {}, linkedElements: {}, notes: "", fields: {}, lists: {} }
+        });
+        targetId = created.id;
+        targetName = name;
+        targetResType = linkedType;
+        target = created;
+        // Refresh allElements
+        if (window._elemDuniaAll) {
+          window._elemDuniaAll.push(Object.assign({}, created, { _type: linkedType }));
+        }
+      } catch (err) {
+        console.error("Gagal buat element linked:", err);
+        alert("Gagal membuat element terautomasi: " + err.message);
+        return;
+      }
+    }
+
+    // Tambah chip
+    var chip = makeLinkedChip(targetId, targetName, targetResType);
+    list.appendChild(chip);
+    inputEl.value = "";
+    closeLinkedDropdown(inputEl);
+  }
+
+  // ---------- Linked dropdown (mirip LinkedInput di karakter.js) ----------
+
+  var linkedDropdownState = { input: null, type: null };
+
+  function closeLinkedDropdown(inputEl) {
+    var dd = inputEl ? inputEl.parentElement.querySelector('.linked-dropdown') : null;
+    if (dd) dd.classList.remove('open');
+    linkedDropdownState.input = null;
+    linkedDropdownState.type = null;
+  }
+
+  function renderLinkedDropdown(inputEl, linkedType) {
+    var name = (inputEl.value || '').trim().toLowerCase();
+    var dd = inputEl.parentElement.querySelector('.linked-dropdown');
+    if (!dd) return;
+
+    // Refresh cache dari allElements (sinkron dengan DB terakhir)
+    var all = window._elemDuniaAll || [];
+    var cache = all.filter(function (e) { return e._type === linkedType; })
+      .map(function (e) { return { id: e.id, name: e.name, type: e._type }; });
+
+    dd.innerHTML = '';
+    var shown = 0;
+
+    // Tampilkan match dari cache
+    cache.forEach(function (e) {
+      if (e.name.toLowerCase().indexOf(name) === -1) return;
+      // Skip yang sudah ter-link di list ini
+      var list = inputEl.parentElement.querySelector('[data-linked-list]');
+      var already = Array.from(list.querySelectorAll('.badge[data-linked-id]')).some(function (b) {
+        return b.dataset.linkedId && String(b.dataset.linkedId) === String(e.id);
+      });
+      if (already) return;
+
+      var opt = document.createElement('div');
+      opt.className = 'linked-opt';
+      opt.innerHTML = '<span>' + escapeHtml(e.name) + '</span><span class="linked-opt-type">' + escapeHtml(e.type) + '</span>';
+      opt.dataset.linkedId = e.id;
+      opt.dataset.linkedName = e.name;
+      opt.dataset.linkedType = e.type;
+      opt.addEventListener('mousedown', function (ev) {
+        ev.preventDefault();
+        addLinkedItemFromDropdown(inputEl, e);
+      });
+      dd.appendChild(opt);
+      shown++;
+    });
+
+    // Opsi buat baru jika nama tidak kosong dan belum ada exact match
+    if (name) {
+      var exactExists = cache.some(function (e) { return e.name.toLowerCase() === name; });
+      if (!exactExists) {
+        var createOpt = document.createElement('div');
+        createOpt.className = 'linked-opt create';
+        createOpt.innerHTML = '<span>+ Buat "' + escapeHtml(inputEl.value.trim()) + '"</span><span class="linked-opt-type">' + escapeHtml(linkedType) + '</span>';
+        createOpt.addEventListener('mousedown', function (ev) {
+          ev.preventDefault();
+          var newName = inputEl.value.trim();
+          if (!newName) return;
+          // Simulasi Enter untuk auto-create
+          inputEl.value = newName;
+          closeLinkedDropdown(inputEl);
+          if (window.AwbFormRenderer && window.AwbFormRenderer.handleLinkedInputEnter) {
+            window.AwbFormRenderer.handleLinkedInputEnter(modalForInput(inputEl), inputEl, linkedType);
+          }
+        });
+        dd.appendChild(createOpt);
+        shown++;
+      }
+    }
+
+    if (shown > 0) {
+      dd.classList.add('open');
+      linkedDropdownState.input = inputEl;
+      linkedDropdownState.type = linkedType;
+    } else {
+      dd.classList.remove('open');
+    }
+  }
+
+  function addLinkedItemFromDropdown(inputEl, item) {
+    var list = inputEl.parentElement.querySelector('[data-linked-list]');
+    // Cek duplikat
+    var already = Array.from(list.querySelectorAll('.badge[data-linked-id]')).some(function (b) {
+      return b.dataset.linkedId && String(b.dataset.linkedId) === String(item.id);
+    });
+    if (already) {
+      closeLinkedDropdown(inputEl);
+      inputEl.value = '';
+      return;
+    }
+    var chip = makeLinkedChip(item.id, item.name, item.type);
+    list.appendChild(chip);
+    inputEl.value = '';
+    closeLinkedDropdown(inputEl);
+  }
+
+  function modalForInput(inputEl) {
+    return inputEl.closest('.modal-overlay') || document.getElementById('modal-buat-element');
   }
 
   function buildExtraItem(name, type, value) {
@@ -380,6 +564,10 @@
     collectFromModal: collectFromModal,
     populateModal: populateModal,
     clearModal: clearModal,
-    buildExtraItem: buildExtraItem
+    buildExtraItem: buildExtraItem,
+    makeLinkedChip: makeLinkedChip,
+    handleLinkedInputEnter: handleLinkedInputEnter,
+    renderLinkedDropdown: renderLinkedDropdown,
+    closeLinkedDropdown: closeLinkedDropdown
   };
 })();

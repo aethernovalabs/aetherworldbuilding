@@ -645,15 +645,54 @@
         var linkedInp = e.target.closest("[data-linked-input]");
         if (linkedInp) {
           e.preventDefault();
-          var v2 = linkedInp.value.trim();
-          if (!v2) return;
-          var list2 = linkedInp.parentElement.querySelector("[data-linked-list]");
-          if (!list2) return;
-          var b2 = document.createElement("span");
-          b2.className = "badge";
-          b2.textContent = v2 + " x";
-          list2.appendChild(b2);
-          linkedInp.value = "";
+          var linkedType = linkedInp.dataset.linkedType;
+          if (window.AwbFormRenderer && window.AwbFormRenderer.handleLinkedInputEnter) {
+            window.AwbFormRenderer.handleLinkedInputEnter(modal, linkedInp, linkedType);
+          }
+          return;
+        }
+        if (e.key === "Escape") {
+          var escInp = e.target.closest("[data-linked-input]");
+          if (escInp && window.AwbFormRenderer && window.AwbFormRenderer.closeLinkedDropdown) {
+            window.AwbFormRenderer.closeLinkedDropdown(escInp);
+          }
+        }
+      });
+
+      // Linked dropdown: input/focus → tampilkan, blur → sembunyikan (delay)
+      var linkedBlurTimer = null;
+      body.addEventListener("input", function (e) {
+        var linkedInp = e.target.closest("[data-linked-input]");
+        if (!linkedInp) return;
+        var linkedType = linkedInp.dataset.linkedType;
+        if (window.AwbFormRenderer && window.AwbFormRenderer.renderLinkedDropdown) {
+          window.AwbFormRenderer.renderLinkedDropdown(linkedInp, linkedType);
+        }
+      });
+      body.addEventListener("focus", function (e) {
+        var linkedInp = e.target.closest("[data-linked-input]");
+        if (!linkedInp) return;
+        if (linkedBlurTimer) { clearTimeout(linkedBlurTimer); linkedBlurTimer = null; }
+        var linkedType = linkedInp.dataset.linkedType;
+        if (window.AwbFormRenderer && window.AwbFormRenderer.renderLinkedDropdown) {
+          window.AwbFormRenderer.renderLinkedDropdown(linkedInp, linkedType);
+        }
+      }, true);
+      body.addEventListener("blur", function (e) {
+        var linkedInp = e.target.closest("[data-linked-input]");
+        if (!linkedInp) return;
+        linkedBlurTimer = setTimeout(function () {
+          if (window.AwbFormRenderer && window.AwbFormRenderer.closeLinkedDropdown) {
+            window.AwbFormRenderer.closeLinkedDropdown(linkedInp);
+          }
+        }, 150);
+      }, true);
+
+      // Chip removal: only on click of "x" button (linked-remove), not on name
+      body.addEventListener("click", function (e) {
+        var removeBtn = e.target.closest(".linked-remove");
+        if (removeBtn) {
+          removeBtn.closest(".badge")?.remove();
         }
       });
     }

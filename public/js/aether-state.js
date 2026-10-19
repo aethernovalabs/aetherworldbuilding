@@ -277,6 +277,14 @@
       var data = Object.assign({}, element, { projectId: projectId, lastUpdated: now });
       return db.elements.add(data).then(function (id) {
         return db.elements.get(id);
+      }).then(function (created) {
+        // Bi-directional linking for new element
+        if (created && created.data && created.data.linkedElements) {
+          return AetherState._syncBidirectionalLinks(db, created.id, created.data.linkedElements, created._type || created.type, projectId).then(function () {
+            return created;
+          });
+        }
+        return created;
       });
     },
 
@@ -285,6 +293,14 @@
       var data = Object.assign({}, updates, { lastUpdated: new Date().toISOString() });
       return db.elements.update(id, data).then(function () {
         return db.elements.get(id);
+      }).then(function (updated) {
+        // Bi-directional linking: if linkedElements changed, update target elements
+        if (updated && updates.data && updates.data.linkedElements) {
+          return AetherState._syncBidirectionalLinks(db, updated.id, updated.data.linkedElements, updated._type || updated.type).then(function () {
+            return updated;
+          });
+        }
+        return updated;
       });
     },
 
@@ -362,6 +378,59 @@
       return db.elements.where("projectId").equals(projectId)
         .and(function (e) { return e.type === typeName; })
         .count();
+    },
+
+    // ===== Bidirectional Linking Helper =====
+    // Sinkronkan tautan dua arah: saat element A taut ke B, B juga taut ke A
+    // Mencari field reverse di skema target (field linked dengan linkedType = tipe source)
+        _syncBidirectionalLinks: function (db, sourceId, linkedElements, sourceType, projectId) {
+      var promises = [];
+      for (var fieldKey in linkedElements) {
+        var links = linkedElements[fieldKey];
+        if (!Array.isArray(links)) continue;
+        for (var i = 0; i < links.length; i++) {
+          var link = links[i];
+          if (!link || !link.id) continue;
+          var targetId = link.id;
+          var targetType = link.type;
+          var reverseKey = AetherState._findReverseFieldKey(targetType, sourceType);
+          if (!reverseKey) continue;
+          promises.push(
+            db.elements.get(targetId).then(function (target) {
+              if (!target) return;
+              var targetData = target.data || {};
+              var targetLinked = targetData.linkedElements || {};
+              var reverseLinks = targetLinked[reverseKey] || [];
+              var exists = reverseLinks.some(function (l) { return l && l.id === sourceId; });
+              if (!exists) {
+                reverseLinks.push({ id: sourceId, name: "", type: sourceType });
+                targetLinked[reverseKey] = reverseLinks;
+                return db.elements.update(targetId, {
+                  data: Object.assign({}, targetData, { linkedElements: targetLinked }),
+                  lastUpdated: new Date().toISOString()
+                });
+              }
+            })
+          );
+        }
+      }
+      return Promise.all(promises);
+    },
+
+    // Helper: cari field reverse di schema target
+    // Cari field kind=linked dengan linkedType = sourceType
+    _findReverseFieldKey: function (targetType, sourceType) {
+      var schema = window.AwbElementSchemas && window.AwbElementSchemas[targetType];
+      if (!schema) return null;
+      for (var i = 0; i < schema.length; i++) {
+        var flds = schema[i].fields || [];
+        for (var j = 0; j < flds.length; j++) {
+          if (flds[j].kind === "linked" && (flds[j].linkedType === sourceType || flds[j].linkedRef === sourceType)) {
+            return flds[j].key;
+          }
+        }
+      }
+      return null;
     },
 
     // ===== Events/Timeline =====
