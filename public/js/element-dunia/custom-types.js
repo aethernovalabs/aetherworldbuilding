@@ -111,10 +111,10 @@
         '<button type="button" class="elem-cat-btn" data-ct-add-field style="width:100%;margin-top:0.4rem;">+ Tambah Field</button>' +
         '<div class="ct-form-actions" style="display:flex;gap:0.5rem;margin-top:0.8rem;">' +
           (isEdit
-            ? '<button class="btn-cancel" data-ct-cancel style="color:var(--danger);">Batal Edit</button>'
-            : '<button class="btn-cancel" data-ct-cancel>Reset</button>') +
+            ? '<button class="btn-cancel" data-ct-reset style="color:var(--danger);">Batal Edit</button>'
+            : '<button class="btn-cancel" data-ct-reset>Reset</button>') +
           '<div style="flex:1;display:flex;gap:0.5rem;">' +
-            '<button class="btn-cancel" data-ct-cancel style="flex:1;">Batal</button>' +
+            '<button class="btn-cancel" data-ct-close style="flex:1;">Batal</button>' +
             '<button class="btn-confirm" data-ct-save style="flex:1;">' + (isEdit ? "Simpan Perubahan" : "Simpan Tipe") + '</button>' +
           '</div>' +
         '</div>' +
@@ -149,6 +149,14 @@
   function wireForm(body, origType, isEdit) {
     var formEl = body.querySelector(".ct-form");
     var ctId = formEl.getAttribute("data-ct-id") || "";
+    var formDirty = false;
+
+    function markDirty() { formDirty = true; }
+    function resetDirty() { formDirty = false; }
+
+    // Tandai kotor saat input berubah
+    formEl.addEventListener("input", markDirty);
+    formEl.addEventListener("change", markDirty);
 
     // Tambah field
     body.querySelector("[data-ct-add-field]").addEventListener("click", function () {
@@ -156,29 +164,42 @@
       var tmp = document.createElement("div");
       tmp.innerHTML = fieldRowHtml({ key: "", label: "", kind: "text" });
       list.appendChild(tmp.firstElementChild);
+      markDirty();
     });
 
     // Hapus field (delegated)
     body.addEventListener("click", function (e) {
       var del = e.target.closest("[data-f-del]");
-      if (del) del.closest(".ct-field-row").remove();
+      if (del) { del.closest(".ct-field-row").remove(); markDirty(); }
     });
 
-    // Ganti jenis field → tampilkan/sembunyikan input opsional
-    formEl.querySelectorAll("[data-f-kind]").forEach(function (sel) {
-      sel.addEventListener("change", function () {
-        var row = sel.closest(".ct-field-row");
-        var optWrap = row.querySelector("[data-f-optwrap]");
-        var refWrap = row.querySelector("[data-f-refwrap]");
-        if (optWrap) optWrap.style.display = sel.value === "select" ? "" : "none";
-        if (refWrap) refWrap.style.display = sel.value === "linked" ? "" : "none";
+    // Ganti jenis field → tampilkan/sembunyikan input opsional (event delegation)
+    body.addEventListener("change", function (e) {
+      var sel = e.target.closest("[data-f-kind]");
+      if (!sel) return;
+      var row = sel.closest(".ct-field-row");
+      var optWrap = row.querySelector("[data-f-optwrap]");
+      var refWrap = row.querySelector("[data-f-refwrap]");
+      if (optWrap) optWrap.style.display = sel.value === "select" ? "" : "none";
+      if (refWrap) refWrap.style.display = sel.value === "linked" ? "" : "none";
+    });
+
+    // Reset form — konfirmasi jika sudah ada isian
+    body.querySelectorAll("[data-ct-reset]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var hasContent = formEl.querySelector("[data-ct-name]").value.trim() ||
+          formEl.querySelector("[data-ct-field-list]").querySelectorAll(".ct-field-row").length > 0;
+        if (hasContent && !confirm("Yakin ingin mereset formulir? Isian yang belum disimpan akan hilang.")) return;
+        loadForm(null);
+        resetDirty();
       });
     });
 
-    // Batal
-    body.querySelectorAll("[data-ct-cancel]").forEach(function (btn) {
+    // Batal / tutup modal — konfirmasi jika ada perubahan yang belum disimpan
+    body.querySelectorAll("[data-ct-close]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        loadForm(null); // reset ke form kosong
+        if (formDirty && !confirm("Yakin ingin membatalkan? Perubahan yang belum disimpan akan hilang.")) return;
+        closeManager();
       });
     });
 

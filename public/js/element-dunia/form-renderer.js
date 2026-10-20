@@ -353,7 +353,8 @@
   function makeChip(text) {
     var b = document.createElement("span");
     b.className = "badge";
-    b.textContent = text + " x";
+    b.innerHTML = '<span class="tag-name">' + escapeHtml(text) + '</span>' +
+      '<button type="button" class="tag-remove" title="Hapus tag" aria-label="Hapus tag ' + escapeHtml(text) + '">&times;</button>';
     return b;
   }
 
@@ -377,6 +378,11 @@
     var name = inputEl.value.trim();
     if (!name) return;
 
+    // ID element yang sedang diedit/dibuat (untuk mencegah self-linking)
+    var currentEditingId = window.AwbElementDunia && window.AwbElementDunia.state
+      ? window.AwbElementDunia.state.currentEditingId
+      : null;
+
     // Cek duplikat di list
     var list = inputEl.parentElement.querySelector('[data-linked-list]');
     var existing = Array.from(list.querySelectorAll('.badge[data-linked-name]')).some(function (b) {
@@ -396,6 +402,13 @@
 
     var targetId, targetName, targetResType;
     if (target) {
+      // Cegah self-linking: tidak boleh link ke elemen yang sedang diedit/dibuat
+      if (currentEditingId && String(target.id) === String(currentEditingId)) {
+        alert("Nama element tidak boleh sama dengan elemen yang sedang Anda buat/edit.");
+        inputEl.value = "";
+        closeLinkedDropdown(inputEl);
+        return;
+      }
       targetId = target.id;
       targetName = target.name;
       targetResType = target._type;
@@ -446,6 +459,11 @@
     var dd = inputEl.parentElement.querySelector('.linked-dropdown');
     if (!dd) return;
 
+    // ID element yang sedang diedit/dibuat (untuk mencegah self-linking di dropdown)
+    var currentEditingId = window.AwbElementDunia && window.AwbElementDunia.state
+      ? window.AwbElementDunia.state.currentEditingId
+      : null;
+
     // Refresh cache dari allElements (sinkron dengan DB terakhir)
     var all = window._elemDuniaAll || [];
     var cache = all.filter(function (e) { return e._type === linkedType; })
@@ -456,6 +474,8 @@
 
     // Tampilkan match dari cache
     cache.forEach(function (e) {
+      // Cegah self-linking: tidak tampilkan elemen yang sedang diedit/dibuat
+      if (currentEditingId && String(e.id) === String(currentEditingId)) return;
       if (e.name.toLowerCase().indexOf(name) === -1) return;
       // Skip yang sudah ter-link di list ini
       var list = inputEl.parentElement.querySelector('[data-linked-list]');

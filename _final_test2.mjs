@@ -69,12 +69,11 @@ window.elementDuniaQuery=__Q;window.__getTypes=()=>__TYPES;window.__getDB=()=>__
 </script>`;
 const dom=new JSDOM(html.replace("</head>",stubs+"</head>"),{runScripts:"dangerously",url:"http://localhost/",pretendToBeVisual:true});
 const w=dom.window,d=w.document;const o=d.querySelectorAll.bind(d);d.querySelectorAll=function(s){return Array.from(o(s));};
-const fire=(el,ev)=>el.dispatchEvent(new w.Event(ev,{bubbles:true}));
-["public/js/element-dunia/schemas/types/spesies.js","public/js/element-dunia/schemas/index.js","public/js/element-dunia/form-renderer.js","public/js/element-dunia/custom-types.js","public/js/element-dunia.js"].forEach(p=>{const s=d.createElement("script");s.textContent=readFileSync(p,"utf8");d.head.appendChild(s);});
+const fire=(el,ev,key)=>el.dispatchEvent(new (key?w.KeyboardEvent:w.Event)(ev,{bubbles:true,key}));
+["public/js/element-dunia/schemas/types/spesies.js","public/js/element-dunia/schemas/index.js","public/js/element-dunia/form-renderer.js","public/js/element-dunia/custom-types.js","public/js/element-dunia/state.js","public/js/element-dunia/render.js","public/js/element-dunia/form.js","public/js/element-dunia/events.js","public/js/element-dunia/index.js"].forEach(p=>{const s=d.createElement("script");s.textContent=readFileSync(p,"utf8");d.head.appendChild(s);});
 await new Promise(r=>setTimeout(r,500));
 let pass=0,fail=0;function check(n,c,x=""){if(c){pass++;console.log("  ✓ "+n+(x?" ("+x+")":""))}else{fail++;console.log("  ✗ "+n+(x?" ("+x+")":""))}}
 const wait=(ms=80)=>new Promise(r=>setTimeout(r,ms));
-const fire=(el,ev)=>el.dispatchEvent(new w.Event(ev,{bubbles:true}));
 
 console.log("=== TEST LINKED FIELD ===");
 
@@ -89,18 +88,19 @@ d.getElementById("btn-simpan-element").click(); await wait(200);
 const lokasi=w.__getDB().find(e=>e.name==="Hutan Anggrek");
 check("Lokasi Hutan Anggrek dibuat", !!lokasi, "lokasi="+!!lokasi);
 
-// 2. Buat element Spesies Custom dengan linked ke Lokasi
+// 2. Buat element Spesies Custom dengan linked habitat ke Lokasi
 d.getElementById("btn-entry-element").click(); await wait(50);
 const pickSC=d.querySelector('[data-pick-type="Spesies Custom"]');
 check("picker Spesies Custom ada", !!pickSC);
 pickSC.click(); await wait(60);
-const body=d.querySelector("#modal-buat-element-body");
-const habitatInp=body.querySelector('[data-field="habitat"]');
-check("habitat field (linked) render", !!habitatInp);
-check("linked input data-linked-type=Lokasi", habitatInp?.closest('[data-kind="linked"]')?.querySelector('[data-linked-input]')?.getAttribute("data-linked-type")==="Lokasi", "type="+(habitatInp?.closest('[data-kind="linked"]')?.querySelector('[data-linked-input]')?.getAttribute("data-linked-type")||"NULL"));
+const body2=d.querySelector("#modal-buat-element-body");
+const habitatWrap=body2.querySelector('[data-key="habitat"]');
+check("habitat field (linked) render", !!habitatWrap);
+const habitatInput=habitatWrap?.querySelector('[data-linked-input]');
+check("linked input data-linked-type=Lokasi", habitatInput?.getAttribute("data-linked-type")==="Lokasi", "type="+(habitatInput?.getAttribute("data-linked-type")||"NULL"));
 
-habitatInp.value="Hutan Anggrek"; fire(habitatInp,"keydown"); await wait(50);
-body.querySelector('[data-field="name"]').value="Kelinci Hutan";
+habitatInput.value="Hutan Anggrek"; fire(habitatInput,"keydown","Enter"); await wait(50);
+body2.querySelector('[data-field="name"]').value="Kelinci Hutan";
 d.getElementById("btn-simpan-element").click(); await wait(400);
 
 const kelinci=w.__getDB().find(e=>e.name==="Kelinci Hutan");
@@ -109,12 +109,12 @@ check("Linked habitat tersimpan dengan ID", kelinci&&kelinci.data.linkedElements
 check("Linked habitat type=Lokasi", kelinci&&kelinci.data.linkedElements.habitat[0].type==="Lokasi", "type="+kelinci?.data.linkedElements.habitat[0].type);
 
 console.log("\n=== Bi-directional: Lokasi harus punya link balik ===");
-const lokasi=w.__getDB().find(e=>e.name==="Hutan Anggrek");
-check("Lokasi punya linkedElements", lokasi&&lokasi.data.linkedElements);
-const reverseKey = Object.keys(lokasi.data.linkedElements||{}).find(k=>lokasi.data.linkedElements[k]?.some(l=>l.id===kelinci.id));
+const lokasi2=w.__getDB().find(e=>e.name==="Hutan Anggrek");
+check("Lokasi punya linkedElements", lokasi2&&lokasi2.data.linkedElements);
+const reverseKey = Object.keys(lokasi2.data.linkedElements||{}).find(k=>lokasi2.data.linkedElements[k]?.some(l=>l.id===kelinci.id));
 check("Lokasi punya link balik ke Spesies Custom", !!reverseKey, "reverseKey="+reverseKey);
 if (reverseKey) {
-  check("Link balik ke Kelinci Hutan", lokasi.data.linkedElements[reverseKey].some(l=>l.id===kelinci.id));
+  check("Link balik ke Kelinci Hutan", lokasi2.data.linkedElements[reverseKey].some(l=>l.id===kelinci.id));
 }
 
 console.log("\n===== SUMMARY =====");
